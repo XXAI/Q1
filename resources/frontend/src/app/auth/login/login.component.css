@@ -1,0 +1,28 @@
+.login {
+    min-height:100%;
+    background: rgb(244,244,244);
+    background: linear-gradient(90deg, rgba(244,244,244,1) 0%, rgba(244,244,244,1) 48%, rgba(244,244,244,1) 100%);
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color:white;
+    text-align: center;
+    padding: 30px;
+}
+.boder_card {
+
+    border-radius: 10px !important;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+    border: #000 !important;
+    margin:0px;
+    padding-bottom:10px;
+    padding-top:10px;
+}
+
+.welcome {
+    color: #235B4E!important;
+    font-family: 'Gotham Black', sans-serif;
+    font-size: 1.2em;
+}
+
