@@ -75,7 +75,7 @@ export class ListaLesionesComponent implements OnInit {
     '4':'swap_horizontal_circle' //en transferencia
   };
 
-  displayedColumns: string[] = ['#','folio', 'fecha_accidente', 'municipio', 'localidad', 'tipo_zona', 'carretera_estatal', 'opciones'];
+  displayedColumns: string[] = ['#','folio', 'fecha', 'municipio', 'localidad', 'opciones'];
   dataSource: any = [];
   dataSourceFilters: any = [];
 
@@ -119,13 +119,13 @@ export class ListaLesionesComponent implements OnInit {
 
   ngOnInit() {
 
-    this.mediaObserver.media$.subscribe(
+    /*this.mediaObserver.media$.subscribe(
       response => {
         this.mediaSize = response.mqAlias;
     });
 
     let appStoredData = this.sharedService.getArrayDataFromCurrentApp(['searchQuery','paginator','filter']);
-    console.log(appStoredData);
+    //console.log(appStoredData);
 
     if(appStoredData['searchQuery']){
       this.searchQuery = appStoredData['searchQuery'];
@@ -161,7 +161,7 @@ export class ListaLesionesComponent implements OnInit {
 
     this.loadDonantesData(event);
     this.loadFilterCatalogs();
-    //console.log(this.filteredDiagnosticos);
+    //console.log(this.filteredDiagnosticos);*/
 
   }
 
@@ -174,12 +174,10 @@ export class ListaLesionesComponent implements OnInit {
   }
 
   applyFilter(){
-
     this.selectedItemIndex = -1;
     this.paginator.pageIndex = 0;
     this.paginator.pageSize = this.pageSize;
     this.loadDonantesData(null);
-
   }
 
   cleanFilter(filter){

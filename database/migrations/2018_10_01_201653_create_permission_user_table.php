@@ -14,12 +14,12 @@ class CreatePermissionUserTable extends Migration
     public function up()
     {
         Schema::create('permission_user', function (Blueprint $table) {
-            
+
             $table->string('permission_id');
-            $table->unsignedInteger('user_id');
+            $table->foreignId('user_id')->constrained();
             $table->boolean('status');
 
-            $table->foreign('user_id')->references('id')->on('users');
+
             $table->foreign('permission_id')->references('id')->on('permissions');
         });
     }

@@ -1,255 +1,683 @@
-<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
-    <div class="form-loading-shade" *ngIf="isLoading"><mat-spinner></mat-spinner></div>
-
-    <!-- <section fxFlex fxLayout="row">
-        <mat-card fxFlex="50" fxLayout="column" >
-
-            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" fxLayoutAlign="center center">
-                <div>
-                    <img style="width:50%" src="assets/icons/logo.jpeg" alt="">
-                </div>
-                <div></div>
-                <div>
-                    <img style="width:50%" src="assets/icons/cetra.jpeg" alt="">
-                </div>
-            </div>
-    
-        </mat-card>
-
-    </section> -->
-
+<section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; overflow: auto; flex: 1 1 0%;">
+    <div class="form-loading-shade" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+    </div>
 
     <section fxFlex fxLayout="row">
-
         <section fxFlex></section>
 
-        <mat-card fxFlex="75" fxLayout="column">
+        <mat-card fxFlex="97" fxLayout="column">
+            <mat-tab-group>
+                <!--<mat-tab label="LUGAR">
+                    <section fxflex="none" fxLayout="column" [formGroup]="donadoresForm">
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <mat-form-field fxFlex appearance="fill">
+                                <mat-label>FECHA</mat-label>
+                                <input matInput #curpInput id="curp" formControlName="curp" placeholder="CURP">
+                                <mat-hint align="end">{{curpInput.value.length}} / 18</mat-hint>
+                                <mat-error *ngIf="donadoresForm.get('curp').invalid && (donadoresForm.get('curp').dirty || donadoresForm.get('curp').touched)">
+                                    <span *ngIf="donadoresForm.get('curp').hasError('pattern')">La CURP con un documento oficial...</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field fxFlex appearance="fill">
+                                <mat-label>HORA</mat-label>
+                                <input matInput #curpInput id="curp" formControlName="curp" placeholder="CURP">
+                                <mat-hint align="end">{{curpInput.value.length}} / 18</mat-hint>
+                                <mat-error *ngIf="donadoresForm.get('curp').invalid && (donadoresForm.get('curp').dirty || donadoresForm.get('curp').touched)">
+                                    <span *ngIf="donadoresForm.get('curp').hasError('pattern')">La CURP con un documento oficial...</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field fxFlex appearance="fill">
+                                <mat-label>ENTIDAD</mat-label>
+                                <input matInput #curpInput id="curp" formControlName="curp" placeholder="CURP">
+                                <mat-hint align="end">{{curpInput.value.length}} / 18</mat-hint>
+                                <mat-error *ngIf="donadoresForm.get('curp').invalid && (donadoresForm.get('curp').dirty || donadoresForm.get('curp').touched)">
+                                    <span *ngIf="donadoresForm.get('curp').hasError('pattern')">La CURP con un documento oficial...</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field fxFlex appearance="fill">
+                                <mat-label>MUNICIPIO</mat-label>
+                                <input matInput #curpInput id="curp" formControlName="curp" placeholder="CURP">
+                                <mat-hint align="end">{{curpInput.value.length}} / 18</mat-hint>
+                                <mat-error *ngIf="donadoresForm.get('curp').invalid && (donadoresForm.get('curp').dirty || donadoresForm.get('curp').touched)">
+                                    <span *ngIf="donadoresForm.get('curp').hasError('pattern')">La CURP con un documento oficial...</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field fxFlex appearance="fill">
+                                <mat-label>LOCALIDAD</mat-label>
+                                <input matInput #curpInput id="curp" formControlName="curp" placeholder="CURP">
+                                <mat-hint align="end">{{curpInput.value.length}} / 18</mat-hint>
+                                <mat-error *ngIf="donadoresForm.get('curp').invalid && (donadoresForm.get('curp').dirty || donadoresForm.get('curp').touched)">
+                                    <span *ngIf="donadoresForm.get('curp').hasError('pattern')">La CURP con un documento oficial...</span>
+                                </mat-error>
 
-            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" fxLayoutAlign="space-around center">
-                <div fxLayoutAlign="start center">
-                    <img style="width:35%" src="assets/icons/logo.jpeg" alt="">
-                </div>
-                <div fxFlex></div>
-                <div fxFlex></div>
-                <div fxLayoutAlign="end center">
-                    <img style="width:35%" src="assets/icons/cetra.png" alt="">
-                </div>
-            </div>
-            <br>
-            
-            <!-- <section fxFlex="none" fxLayout="row">
+                            </mat-form-field>
 
-                <div fxFlex></div>
-                <mat-form-field fxFlex="60" appearance="outline" [floatLabel]="'always'">
-                    <mat-label>CURP</mat-label>
-                    <input matInput #curpInput placeholder="Por favor, teclee su CURP" type="text" maxlength="18" [(ngModel)]="CURP" (keyup.enter)="validarCurp()" autocomplete="off" [disabled]="isValidatingCURP">
-                    <button *ngIf="curpInput.value.length == 18" matSuffix mat-icon-button aria-label="Clear" (click)="validarCurp()" [class.button-spinner]="isValidatingCURP" [disabled]="isValidatingCURP">
-                        <mat-icon *ngIf="!isValidatingCURP">input</mat-icon>
-                        <mat-icon *ngIf="isValidatingCURP" class="material-icons-outlined">pending</mat-icon>
-                    </button>
-                    <button *ngIf="isValidatingCURP" mat-icon-button matPrefix (click)="validarCurp()"><mat-icon>clear</mat-icon></button>
-                    <mat-hint align="end">{{curpInput.value.length}} / 18</mat-hint>
-                </mat-form-field>
-                <div fxFlex></div>
-                
-            </section> -->
-            
-            <section fxflex="none" fxLayout="column" [formGroup]="donadoresForm">
+                        </div>
 
-                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-
-                    <mat-form-field fxFlex  appearance="fill">
-                        <mat-label>CURP</mat-label>
-                        <input matInput #curpInput id="curp" formControlName="curp" placeholder="CURP">
-                        <mat-hint align="end">{{curpInput.value.length}} / 18</mat-hint>
-
-                        <mat-error *ngIf="donadoresForm.get('curp').invalid && (donadoresForm.get('curp').dirty || donadoresForm.get('curp').touched)">
-                            <span *ngIf="donadoresForm.get('curp').hasError('pattern')">La CURP con un documento oficial...</span>
-                        </mat-error>
-
-                    </mat-form-field>
-
-                </div>
-
-                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-                    
-                    <mat-form-field appearance="fill" fxFlex >
-                        <mat-label>Nombre(s)</mat-label>
-                        <input matInput id="nombre" formControlName="nombre" placeholder="Nombre" required>
-                        <mat-error *ngIf="donadoresForm.get('nombre').invalid && (donadoresForm.get('nombre').dirty || donadoresForm.get('nombre').touched)">
-                            <span *ngIf="donadoresForm.get('nombre').errors.required">El Nombre es obligatorio</span>
-                        </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Apellido Paterno</mat-label>
-                        <input matInput id="apellido_paterno" formControlName="apellido_paterno" placeholder="Apellido Paterno">
-                    </mat-form-field>
-
-                    <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Apellido Materno</mat-label>
-                        <input matInput id="apellido_materno" formControlName="apellido_materno" placeholder="Apellido Materno">
-                    </mat-form-field>
-                </div>
-
-                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-
-                    <mat-form-field  appearance="fill" fxFlex>
-
-                        <mat-label>Fecha de Nacimiento: </mat-label>
-
-                        <input type="date" matInput (change)="calcularEdad()" formControlName="fecha_nacimiento" placeholder="Año/Mes/Día" required>
-
-                        <mat-error *ngIf="donadoresForm.get('fecha_nacimiento').hasError('isValidDate')">La fecha no es valida</mat-error>
-                        <mat-error *ngIf="donadoresForm.get('fecha_nacimiento').hasError('required')">Este campo es requerido</mat-error>
-
-                    </mat-form-field>
-
-                    <!-- <mat-form-field  appearance="fill" fxFlex>
-
-                        <mat-label>Fecha de Nacimiento: </mat-label>
-                        <input matInput (dateChange)="calcularEdad()" [matDatepicker]="picker2" formControlName="fecha_nacimiento" placeholder="Fecha de Nacimiento" required>
-                        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                        <mat-datepicker #picker2></mat-datepicker>
-
-                        <mat-error *ngIf="donadoresForm.get('fecha_nacimiento').invalid && (donadoresForm.get('fecha_nacimiento').dirty || donadoresForm.get('fecha_nacimiento').touched)">
-                            <span *ngIf="donadoresForm.get('fecha_nacimiento').errors.required">La Fecha de Nacimiento es obligatoria</span>
-                        </mat-error>
-
-                    </mat-form-field> -->
-
-                    <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Edad: </mat-label>
-                        <input matInput formControlName="edad" placeholder="Edad" readonly>
-                        <mat-error *ngIf="donadoresForm.get('edad').invalid && (donadoresForm.get('edad').dirty || donadoresForm.get('edad').touched)">
-                            <span *ngIf="donadoresForm.get('edad').errors.required">La edad se calcula capturando la fecha de nacimiento</span>
-                        </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Sexo</mat-label>
-                        <mat-select formControlName="sexo">
-                            <mat-option value="M">Masculino</mat-option>
-                            <mat-option value="F">Femenino</mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="donadoresForm.get('sexo').invalid && (donadoresForm.get('sexo').dirty || donadoresForm.get('sexo').touched)">
-                            <span *ngIf="donadoresForm.get('sexo').errors.required">El sexo es obligatorio</span>
-                        </mat-error>
-                    </mat-form-field>
-
-                </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>COLONIA</mat-label>
+                                <input matInput id="nombre" formControlName="nombre" placeholder="Nombre" required>
+                                <mat-error *ngIf="donadoresForm.get('nombre').invalid && (donadoresForm.get('nombre').dirty || donadoresForm.get('nombre').touched)">
+                                    <span *ngIf="donadoresForm.get('nombre').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>CALLE</mat-label>
+                                <input matInput id="nombre" formControlName="nombre" placeholder="Nombre" required>
+                                <mat-error *ngIf="donadoresForm.get('nombre').invalid && (donadoresForm.get('nombre').dirty || donadoresForm.get('nombre').touched)">
+                                    <span *ngIf="donadoresForm.get('nombre').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>N°</mat-label>
+                                <input matInput id="nombre" formControlName="nombre" placeholder="Nombre" required>
+                                <mat-error *ngIf="donadoresForm.get('nombre').invalid && (donadoresForm.get('nombre').dirty || donadoresForm.get('nombre').touched)">
+                                    <span *ngIf="donadoresForm.get('nombre').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>LATITUD</mat-label>
+                                <input matInput id="nombre" formControlName="nombre" placeholder="Nombre" required>
+                                <mat-error *ngIf="donadoresForm.get('nombre').invalid && (donadoresForm.get('nombre').dirty || donadoresForm.get('nombre').touched)">
+                                    <span *ngIf="donadoresForm.get('nombre').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>LONGITUD</mat-label>
+                                <input matInput id="nombre" formControlName="nombre" placeholder="Nombre" required>
+                                <mat-error *ngIf="donadoresForm.get('nombre').invalid && (donadoresForm.get('nombre').dirty || donadoresForm.get('nombre').touched)">
+                                    <span *ngIf="donadoresForm.get('nombre').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
 
 
-                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                    </section>
+                </mat-tab>-->
+                <!--<mat-tab label="ZONA">
+                    <section fxflex="none" fxLayout="column" [formGroup]="zonaForm">
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <mat-form-field fxFlex="50" fxFlex.xs="100" appearance="fill">
+                                <mat-label>Zona</mat-label>
+                                <mat-select formControlName="zona" #zona required>
+                                    <mat-option [value]="1">ZONA URBANA</mat-option>
+                                    <mat-option [value]="2">ZONA SUBURBANA</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div fxFlex="50" fxFlex.xs="100" appearance="fill" *ngIf="zona.value == 1">
+                                <section style="padding: 13px;">
+                                    <mat-checkbox formControlName="carretera">CARRETERA ESTATAL</mat-checkbox>
+                                </section>
+                            </div>
 
-                    <!-- <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Estado</mat-label>
-                        <mat-select formControlName="entidad_federativa_id">
-                            <mat-option value="1">Estados</mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="donadoresForm.get('entidad_federativa_id').invalid && (donadoresForm.get('entidad_federativa_id').dirty || donadoresForm.get('entidad_federativa_id').touched)">
-                            <span *ngIf="donadoresForm.get('entidad_federativa_id').errors.required">El sexo es obligatorio</span>
-                        </mat-error>
-                    </mat-form-field> -->
+                        </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" *ngIf="zona.value == 1">
+                            <mat-form-field fxFlex="20" fxFlex.xs="100" appearance="fill">
+                                <mat-label>¿Fue Intersección?</mat-label>
+                                <mat-select formControlName="interseccion" required>
+                                    <mat-option [value]="1">SI</mat-option>
+                                    <mat-option [value]="2">NO</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field fxFlex="40" fxFlex.xs="100" appearance="fill">
+                                <mat-label>Entre Calle</mat-label>
+                                <input matInput formControlName="calle1" placeholder="Entre calle" required>
+                                <mat-error *ngIf="zonaForm.get('calle1').invalid && (zonaForm.get('calle1').dirty || zonaForm.get('calle1').touched)">
+                                    <span *ngIf="zonaForm.get('calle1').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>Y Calle</mat-label>
+                                <input matInput formControlName="calle2" placeholder="Y calle" required>
+                                <mat-error *ngIf="zonaForm.get('calle2').invalid && (zonaForm.get('calle2').dirty || zonaForm.get('calle2').touched)">
+                                    <span *ngIf="zonaForm.get('calle2').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" *ngIf="zona.value == 1">
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>Punto de Referencia</mat-label>
+                                <input matInput formControlName="referencia" placeholder="Referencia" required>
+                                <mat-error *ngIf="zonaForm.get('referencia').invalid && (zonaForm.get('referencia').dirty || zonaForm.get('referencia').touched)">
+                                    <span *ngIf="zonaForm.get('referencia').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
 
-                    <mat-form-field fxFlex appearance="fill"  *ngIf="!catalogos['estados']">
-                        <mat-label>Entidad Federativa de Nacimiento: </mat-label>
-                        <input matInput formControlName="entidad_federativa">
-                        <mat-hint>Escribe el nombre de la Entidad Federativa de Nacimiento</mat-hint>
-                        <mat-error *ngIf="donadoresForm.get('entidad_federativa').hasError('required')">Este campo es obligatorio</mat-error>
-                    </mat-form-field>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" *ngIf="zona.value == 2">
+                            <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                                <mat-label>Tipo Camino</mat-label>
+                                <mat-select formControlName="tipo_camino" #tipoCamino required>
+                                    <mat-option [value]="1">CAMINO RURAL</mat-option>
+                                    <mat-option [value]="2">CARRETERA ESTATAL</mat-option>
+                                    <mat-option [value]="3">OTRO</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill" fxFlex *ngIf="tipoCamino.value == 3">
+                                <mat-label>Otro Camino</mat-label>
+                                <input matInput formControlName="otro_camino" placeholder="Otro Camino" required>
+                                <mat-error *ngIf="zonaForm.get('otro_camino').invalid && (zonaForm.get('otro_camino').dirty || zonaForm.get('otro_camino').touched)">
+                                    <span *ngIf="zonaForm.get('otro_camino').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <mat-form-field fxFlex appearance="fill">
+                                <mat-label>Via</mat-label>
+                                <mat-select formControlName="via" required #via>
+                                    <mat-option [value]="1">PAVIMENTADA</mat-option>
+                                    <mat-option [value]="2">NO PAVIMENTADA</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field fxFlex appearance="fill" *ngIf="via.value == 1">
+                                <mat-label>Tipo Pavimentado</mat-label>
+                                <mat-select formControlName="tipo_pavimentado" required>
+                                    <mat-option [value]="1">ASFALTO</mat-option>
+                                    <mat-option [value]="2">CONCRETO</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field fxFlex appearance="fill" *ngIf="via.value == 2">
+                                <mat-label>Tipo Via</mat-label>
+                                <mat-select formControlName="tipo_via" #tipoCamino (selectionChange)="campoOtro(tipoCamino.value)" required>
+                                    <mat-option [value]="1">TERRACERIA</mat-option>
+                                    <mat-option [value]="2">EMPEDRADO</mat-option>
+                                    <mat-option [value]="3">OTRO</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field fxFlex appearance="fill" fxFlex *ngIf="tipo == 3">
+                                <mat-label>Otro Tipo de Via</mat-label>
+                                <input matInput formControlName="otro_tipo_via" placeholder="Otro Tipo Via" required>
+                                <mat-error *ngIf="zonaForm.get('otro_tipo_via').invalid && (zonaForm.get('otro_tipo_via').dirty || zonaForm.get('otro_tipo_via').touched)">
+                                    <span *ngIf="zonaForm.get('otro_tipo_via').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                       
+                    </section>
+                </mat-tab>
+                <mat-tab label="TIPO">
+                    <section fxflex="none" fxLayout="column" [formGroup]="tipoAccidenteForm">
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_1">Colisión con vehículo automotor</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_2">Atropellamiento</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_3">Colisión con animal</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_4">Colisión con objeto fijo</mat-checkbox>
+                            </div>
+                        </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_5">Volcadura</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_6">Caída de pasaje</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_7">Salida de camino</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_8">Incendio</mat-checkbox>
+                            </div>
+                        </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_9">Colisión con ferrocarril</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_10">Colisión con motocicleta</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_11">Colisión con ciclista</mat-checkbox>
+                            </div>
+                            <div fxFlex.xs="100" fxFlex>
+                                <mat-checkbox formControlName="tipoAccidente_12">Otro</mat-checkbox>
+                            </div>
+                        </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>Otro Tipo Accidente</mat-label>
+                                <input matInput formControlName="otro_accidente" placeholder="Otro Tipo Accidente" required>
+                                <mat-error *ngIf="tipoAccidenteForm.get('otro_accidente').invalid && (tipoAccidenteForm.get('otro_accidente').dirty || tipoAccidenteForm.get('otro_accidente').touched)">
+                                    <span *ngIf="tipoAccidenteForm.get('otro_accidente').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <button mat-raised-button color="primary" (click)="showVehiculoDialog()"><mat-icon>add_circle</mat-icon>AGREGAR VEHICULO</button>
+                        </div>
+                        <div class="data-container ">
+                            <div class="data-table-container">
+                                <table #dataTable mat-table [dataSource]="dataSourceVehiculos" class="data-table" matSort>
+                                    <ng-container matColumnDef="tipo">
+                                        <th mat-header-cell *matHeaderCellDef> Tipo </th>
+                                        <td mat-cell *matCellDef="let row">
+                                            {{ row.tipo_vehiculo }}
+                                        </td>
+                                    </ng-container>
 
-                    <mat-form-field fxFlex appearance="fill" *ngIf="catalogos['estados']">
-                        <mat-label>Entidad Federativa de Nacimiento: </mat-label>
-                        <input type="text" aria-label="entidad_federativa_id" matInput formControlName="entidad_federativa_id" [matAutocomplete]="entidadFederativaAutocomplete" required>
-                        <mat-autocomplete #entidadFederativaAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('nombre')">
-                            <mat-option *ngFor="let item of filteredCatalogs['estados'] | async" [value]="item">
-                                {{item.nombre}}
-                            </mat-option>
-                        </mat-autocomplete>
+                                    <ng-container matColumnDef="marca">
+                                        <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Marca / Modelo </th>
+                                        <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                            {{ row.marca }} {{ row.modelo }}
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="placas">
+                                        <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Placas </th>
+                                        <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                            {{ row.placas }}
+                                        </td>
+                                    </ng-container>
 
-                        <mat-hint *ngIf="!donadoresForm.get('entidad_federativa_id').value">Seleccione un Entidad Federativa de la lista</mat-hint>
-                        <mat-hint [style.text-align]="'start'" *ngIf="donadoresForm.get('entidad_federativa_id').value">Clave: [{{donadoresForm.get('entidad_federativa_id').value.clave}}]</mat-hint>
-                        <mat-error *ngIf="donadoresForm.get('entidad_federativa_id').hasError('required')">Este campo es obligatorio</mat-error>
-                    </mat-form-field>
+                                    <ng-container matColumnDef="ocupantes">
+                                        <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Ocupantes </th>
+                                        <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                            {{row.ocupantes}}
 
-                    <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Ciudad</mat-label>
-                        <input matInput id="ciudad" formControlName="ciudad" placeholder="Ciudad">
-                        
-                        <mat-error *ngIf="donadoresForm.get('ciudad').invalid && (donadoresForm.get('ciudad').dirty || donadoresForm.get('ciudad').touched)">
-                            <span *ngIf="donadoresForm.get('ciudad').errors.required">La Cuidad es obligatoria</span>
-                        </mat-error>
-                    </mat-form-field>
+                                        </td>
+                                    </ng-container>
 
-                    <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Código Postal</mat-label>
-                        <input matInput (keypress)="soloNumeros($event)" id="codigo_postal" formControlName="codigo_postal" placeholder="Código Postal">
 
-                        <mat-error *ngIf="donadoresForm.get('codigo_postal').invalid && (donadoresForm.get('codigo_postal').dirty || donadoresForm.get('codigo_postal').touched)">
-                            <span *ngIf="donadoresForm.get('codigo_postal').errors.required">El Código Postal es obligatorio</span>
-                        </mat-error>
-                    </mat-form-field>
+                                    <ng-container matColumnDef="noResultsFound">
+                                        <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                                            No se encontraron registros
+                                        </td>
+                                    </ng-container>
 
-                </div>
-                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-                    <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Correo Electrónico: </mat-label>
-                        <input matInput type="email" id="email" formControlName="email" placeholder="Correo Electrónico">
+                                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                    <tr mat-row [ngClass]="{'selected-item': i==selectedItemIndex}" *matRowDef="let row; let i = index; columns: displayedColumns;"></tr>
 
-                        <mat-error *ngIf="donadoresForm.get('email').invalid && (donadoresForm.get('email').dirty || donadoresForm.get('email').touched)">
-                            <span *ngIf="donadoresForm.get('email').errors.required">El Correo es obligatorio</span>
-                            <span *ngIf="donadoresForm.get('email').errors.email">Escriba un Correo Electrónico Valido</span>
-                        </mat-error>
+                                    <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(datosVehiculo!=null && datosVehiculo.length==0)}"></tr>
+                                </table>
+                            </div>
 
-                    </mat-form-field>
-                    <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Teléfono de Contacto</mat-label>
-                        <input matInput (keypress)="soloNumeros($event)" id="telefono_contacto" formControlName="telefono_contacto" placeholder="Telefono de Contacto">
-                    </mat-form-field>
-                </div>
+                        </div>
+                    </section>
+                </mat-tab>
+                <mat-tab label="CAUSAS" [formGroup]="causasForm">
+                    <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                        <div fxFlex.xs="100" fxFlex>
+                            <mat-checkbox formControlName="causas_1" #chkConductor>Conductor</mat-checkbox>
 
-                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                        </div>
+                        <div fxFlex.xs="100" fxFlex>
+                            <mat-checkbox formControlName="causas_2" #chkPeaton>Peatón</mat-checkbox>
+                        </div>
+                        <div fxFlex.xs="100" fxFlex>
+                            <mat-checkbox formControlName="causas_3" #chkPasajero>Pasajero</mat-checkbox>
+                        </div>
+                        <div fxFlex.xs="100" fxFlex>
+                            <mat-checkbox formControlName="causas_4" #chkFalla>Falla del Vehiculo</mat-checkbox>
+                        </div>
+                        <div fxFlex.xs="100" fxFlex>
+                            <mat-checkbox formControlName="causas_5" #chkCamino>Condición del camino</mat-checkbox>
+                        </div>
+                        <div fxFlex.xs="100" fxFlex>
+                            <mat-checkbox formControlName="causas_6" #chkAgente>Agentes Naturales</mat-checkbox>
+                        </div>
+                    </div>
+                    <mat-accordion>
+                        <mat-expansion-panel hideToggle *ngIf="chkConductor.checked">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Conductor
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            
+                            <section fxflex="none" fxLayout="column" [formGroup]="tipoConductorForm">
+                                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_1">Iba a exceso de velocidad</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_2">No cedió el paso</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_3">Dormitando</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_4">Invadió el carril contrario</mat-checkbox>
+                                    </div>
+                                </div>
+                                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_5">No guardó distancia</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_6">Utilizaba el teléfono móvil</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_7">Rebasó indebidamente</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_8">Viró indebidamente</mat-checkbox>
+                                    </div>
+                                </div>
+                                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_9">No respetó las señales viales</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_10">Deslumbramiento</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_11">No respetó el semáforo</mat-checkbox>
+                                    </div>
+                                    <div fxFlex.xs="100" fxFlex>
+                                        <mat-checkbox formControlName="tipo_12">Presumible estado de ebriedad</mat-checkbox>
+                                    </div>
+                                </div>
+                                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                                    <mat-form-field fxFlex appearance="fill">
+                                        <mat-label>Sexo</mat-label>
+                                        <mat-select formControlName="sexo" required>
+                                            <mat-option [value]="1">HOMBRE</mat-option>
+                                            <mat-option [value]="2">MUJER</mat-option>
+                                            <mat-option [value]="3">SE FUGÓ</mat-option>
+                                            <mat-option [value]="3">SE IGNORA</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field fxFlex appearance="fill">
+                                        <mat-label>Aliento Alcoholico</mat-label>
+                                        <mat-select formControlName="aliento_alcoholico" required>
+                                            <mat-option [value]="1">SI</mat-option>
+                                            <mat-option [value]="2">NO</mat-option>
+                                            <mat-option [value]="3">SE IGNORA</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field fxFlex appearance="fill">
+                                        <mat-label>Usaba Cinturon de Seguridad</mat-label>
+                                        <mat-select formControlName="cinturon_seguridad" required>
+                                            <mat-option [value]="1">SI</mat-option>
+                                            <mat-option [value]="2">NO</mat-option>
+                                            <mat-option [value]="3">SE IGNORA</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" fxFlex>
+                                        <mat-label>Edad</mat-label>
+                                        <input matInput formControlName="edad" placeholder="Edad" required>
+                                        <mat-error *ngIf="tipoConductorForm.get('edad').invalid && (tipoConductorForm.get('edad').dirty || tipoConductorForm.get('edad').touched)">
+                                            <span *ngIf="tipoConductorForm.get('edad').errors.required">El Nombre es obligatorio</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <mat-checkbox formControlName="ignora_edad">Se Ignora</mat-checkbox>
+                                </div>
+                            </section>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" *ngIf="chkPeaton.checked" [formGroup]="tipoPeatonForm">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Peatón
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_1">Cruzó la calle inapropiadamente</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_2">Subía o bajaba del vehículo</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_3">No respetó el semáforo</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_4">Presumible estado de ebriedad</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_5">Empujaba o trabajaba en el vehículo</mat-checkbox>
+                                </div>
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="otro" #chkAgente>Otro</mat-checkbox>
+                                </div>
+                                <mat-form-field appearance="fill" fxFlex>
+                                    <mat-label>Descripción Otro</mat-label>
+                                    <input matInput formControlName="descripcion_otro" placeholder="Descripcion " required>
+                                    <mat-error *ngIf="tipoPeatonForm.get('descripcion_otro').invalid && (tipoPeatonForm.get('descripcion_otro').dirty || tipoPeatonForm.get('descripcion_otro').touched)">
+                                        <span *ngIf="tipoPeatonForm.get('descripcion_otro').errors.required">El Nombre es obligatorio</span>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
 
-                    <mat-form-field fxFlex appearance="fill"  *ngIf="!catalogos['seguros']">
-                        <mat-label>Derechohabiencia: </mat-label>
-                        <input matInput formControlName="seguro">
-                        <mat-hint>Escribe el nombre del Estado</mat-hint>
-                        <mat-error *ngIf="donadoresForm.get('seguro').hasError('required')">Este campo es obligatorio</mat-error>
-                    </mat-form-field>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" *ngIf="chkPasajero.checked" [formGroup]="tipoPasajeroForm">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Pasajero
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <mat-form-field appearance="fill" fxFlex>
+                                <mat-label>¿Cómo fue que el pasajero causo el accidente?</mat-label>
+                                <input matInput formControlName="causa_pasajero" placeholder="Causa" required>
+                                <mat-error *ngIf="tipoPasajeroForm.get('causa_pasajero').invalid && (tipoPasajeroForm.get('causa_pasajero').dirty || tipoPasajeroForm.get('causa_pasajero').touched)">
+                                    <span *ngIf="tipoPasajeroForm.get('causa_pasajero').errors.required">El Nombre es obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" *ngIf="chkFalla.checked" [formGroup]="fallaForm">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Falla de Vehiculo
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_1">Llantas</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_2">Ejes</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_3">Frenos</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_4">Transmisión</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_5">Dirección</mat-checkbox>
+                                </div>
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_6">Motor</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_7">Suspensión</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_8">Sobrecarga</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_9">Luces</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_10">Exceso de dimensiones</mat-checkbox>
+                                </div>
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="otro" #chkAgente>Otro</mat-checkbox>
+                                </div>
+                                <mat-form-field appearance="fill" fxFlex>
+                                    <mat-label>Descripción Otro</mat-label>
+                                    <input matInput formControlName="descripcion_otro" placeholder="Descripcion " required>
+                                    <mat-error *ngIf="fallaForm.get('descripcion_otro').invalid && (fallaForm.get('descripcion_otro').dirty || fallaForm.get('descripcion_otro').touched)">
+                                        <span *ngIf="fallaForm.get('descripcion_otro').errors.required">El Nombre es obligatorio</span>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" *ngIf="chkCamino.checked" [formGroup]="caminoForm">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Condiciones del camino
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_1">Mala condición de la vía</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_2">Falta de señales</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_3">Objetos en el camino</mat-checkbox>
+                                </div>
 
-                    <mat-form-field fxFlex appearance="fill" *ngIf="catalogos['seguros']">
-                        <mat-label>Derechohabiencia: </mat-label>
-                        <input type="text" aria-label="seguro_id" matInput formControlName="seguro_id" [matAutocomplete]="municipioAutocomplete" required>
-                        <mat-autocomplete #municipioAutocomplete="matAutocomplete" [displayWith]="getDisplayFn('descripcion')">
-                            <mat-option *ngFor="let item of filteredCatalogs['seguros'] | async" [value]="item">
-                                {{item.descripcion}}
-                            </mat-option>
-                        </mat-autocomplete>
 
-                        <mat-hint *ngIf="!donadoresForm.get('seguro_id').value">Seleccione una Derechohabiencia de la lista</mat-hint>
-                        <mat-hint [style.text-align]="'start'" *ngIf="donadoresForm.get('seguro_id').value">Nombre: [{{donadoresForm.get('seguro_id').value.descripcion}}]</mat-hint>
-                        <mat-error *ngIf="donadoresForm.get('seguro_id').hasError('required')">Este campo es obligatorio</mat-error>
-                    </mat-form-field>
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_4">Camino mojado o encharcado (vía mojada)</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_5">Vía resbalosa /presenta un riesgo de resbalar<br>fácilmente/provoca falta de adherencia del vehículo</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_6">Obstrucción de la vía por animales</mat-checkbox>
+                                </div>
 
-                    <!-- <mat-form-field  appearance="fill" fxFlex>
-                        <mat-label>Otra Derechohabiencia ó Seguro:</mat-label>
-                        <input matInput id="seguro_otro" formControlName="seguro_otro" placeholder="Otra Derechohabiencia ó Seguro">
-                    </mat-form-field> -->
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="otro" #chkAgente>Otro</mat-checkbox>
+                                </div>
+                                <mat-form-field appearance="fill" fxFlex>
+                                    <mat-label>Descripción Otro</mat-label>
+                                    <input matInput formControlName="descripcion_otro" placeholder="Descripcion " required>
+                                    <mat-error *ngIf="caminoForm.get('descripcion_otro').invalid && (caminoForm.get('descripcion_otro').dirty || caminoForm.get('descripcion_otro').touched)">
+                                        <span *ngIf="caminoForm.get('descripcion_otro').errors.required">El Nombre es obligatorio</span>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" *ngIf="chkAgente.checked" [formGroup]="agentesForm">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Agentes naturales
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_1">Llovizna</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_2">Neblina</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_3">Lluvia</mat-checkbox>
+                                </div>
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_4">Humo</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_5">Aguacero</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_6">Tolvanera</mat-checkbox>
+                                </div>
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_7">Nieve</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_8">Vientos fuertes</mat-checkbox>
+                                </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="tipo_9">Granizo</mat-checkbox>
+                                </div>
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <mat-checkbox formControlName="otro" #chkAgente>Otro</mat-checkbox>
+                                </div>
+                                <mat-form-field appearance="fill" fxFlex>
+                                    <mat-label>Descripción Otro</mat-label>
+                                    <input matInput formControlName="descripcion_otro" placeholder="Descripcion " required>
+                                    <mat-error *ngIf="agentesForm.get('descripcion_otro').invalid && (agentesForm.get('descripcion_otro').dirty || agentesForm.get('descripcion_otro').touched)">
+                                        <span *ngIf="agentesForm.get('descripcion_otro').errors.required">El Nombre es obligatorio</span>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </mat-tab>-->
+                <mat-tab label="VICTIMAS">
+                    <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                        <button mat-raised-button color="primary" (click)="showVistimaDialog()"><mat-icon>add_circle</mat-icon>AGREGAR VICTIMA</button>
+                    </div>
+                    <div class="data-container ">
+                        <div class="data-table-container">
+                            <table #dataTable mat-table [dataSource]="dataSourceVictima" class="data-table" matSort>
+                                <ng-container matColumnDef="tipo">
+                                    <th mat-header-cell *matHeaderCellDef> Tipo </th>
+                                    <td mat-cell *matCellDef="let row">
+                                        {{ row.tipo_vehiculo }}
+                                    </td>
+                                </ng-container>
 
-                </div>
-            </section>
+                                <ng-container matColumnDef="marca">
+                                    <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Nombre </th>
+                                    <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                        {{ row.marca }} {{ row.modelo }}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="placas">
+                                    <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Edad / Sexo </th>
+                                    <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                        {{ row.placas }}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="ocupantes">
+                                    <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Tipo usuario </th>
+                                    <td mat-cell *matCellDef="let row" fxHide.xs="true">
+                                        {{row.ocupantes}}
+
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="noResultsFound">
+                                    <td mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                                        No se encontraron registros
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></tr>
+                                <tr mat-row [ngClass]="{'selected-item': i==selectedItemIndex}" *matRowDef="let row; let i = index; columns: displayColumns;"></tr>
+
+                                <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(datosVictima!=null && datosVictima.length==0)}"></tr>
+                            </table>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="FOTOGRAFIAS"> Content 3 </mat-tab>
+            </mat-tab-group>
+
             <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                 <div fxFlex></div>
                 <!-- <div fxFlex="none">
                     <button mat-button>Cancelar</button>
                 </div> -->
                 <div fxFlex="none">
-                    <button mat-raised-button color="primary" (click)="guardarDonante()" [disabled]="!donadoresForm.valid || isLoading"><mat-icon>save</mat-icon> Guardar</button>
+                    <button mat-raised-button color="primary" [disabled]="!donadoresForm.valid || isLoading"><mat-icon>save</mat-icon> Guardar</button>
                     <!-- (click)="registroDonante(null,null)" !donadoresForm.valid ||  -->
                 </div>
             </section>
-            
+
         </mat-card>
         <section fxFlex></section>
     </section>

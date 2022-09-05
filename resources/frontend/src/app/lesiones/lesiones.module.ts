@@ -10,13 +10,17 @@ import { getEspPaginatorIntl } from 'src/app/esp-paginator-intl';
 import { LesionesRoutingModule } from './lesiones-routing.module';
 import { RegistroLesionComponent } from './registro-lesiones/registro-lesion.component';
 import { ListaLesionesComponent } from './lista-lesiones/lista-lesiones.component';
+import { VehiculosDialogComponent } from './vehiculos-dialog/vehiculos-dialog.component';
+import { VictimasDialogComponent } from './victimas-dialog/victimas-dialog.component';
 
 
 
 @NgModule({
     declarations: [
         RegistroLesionComponent,
-        ListaLesionesComponent
+        ListaLesionesComponent,
+        VehiculosDialogComponent,
+        VictimasDialogComponent
     ],
     imports: [
         CommonModule,

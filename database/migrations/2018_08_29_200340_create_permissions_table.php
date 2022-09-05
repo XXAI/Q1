@@ -14,12 +14,14 @@ class CreatePermissionsTable extends Migration
     public function up()
     {
         Schema::create('permissions', function (Blueprint $table) {
-            $table->string('id', 40)->primary();
+            
+            $table->string('id')->primary();
             $table->string('description');
             $table->string('group');
             $table->boolean('is_super')->default(false);
             $table->timestamps();
             $table->softDeletes();
+            
         });
     }
 

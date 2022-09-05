@@ -2,11 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { startWith, map } from 'rxjs/operators';
 import { PublicService } from '../lesiones.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SharedService } from '../../shared/shared.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { formatDate } from '@angular/common';
+import { VehiculosDialogComponent } from '../vehiculos-dialog/vehiculos-dialog.component';
+import { VictimasDialogComponent } from '../victimas-dialog/victimas-dialog.component';
 
 import { ReportWorker } from '../../web-workers/report-worker';
 import * as FileSaver from 'file-saver';
@@ -19,55 +23,46 @@ import * as FileSaver from 'file-saver';
 export class RegistroLesionComponent implements OnInit {
 
   isLoading:boolean;
-  isValidatingCURP:boolean;
-  CURP:string;
-
-  donante_id:number = 0;
-  donante:any = {};
-
+  
   catalogos: any = {};
   filteredCatalogs:any = {};
 
-  isLoadingPDF: boolean = false;
-  showMyStepper:boolean = false;
-  showReportForm:boolean = false;
-  stepperConfig:any = {};
-  reportTitle:string;
-  reportIncludeSigns:boolean = false;
-
   selectedItemIndex: number = -1;
-  fechaActual:any = '';
+  tipo:number = 1;
 
-  isLinear:boolean = true;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
   donadoresForm:FormGroup;
-  
+  zonaForm:FormGroup;
+  tipoAccidenteForm:FormGroup;
+  causasForm:FormGroup;
+  tipoConductorForm:FormGroup;
+  tipoPeatonForm:FormGroup;
+  tipoPasajeroForm:FormGroup;
+  fallaForm:FormGroup;
+  caminoForm:FormGroup;
+  agentesForm:FormGroup;
+  datosVehiculo:any = [];
+  datosVictima:any = [];
+  mediaSize: string;
 
+  displayedColumns: string[] = ['tipo','marca','placas','ocupantes'];
+  displayColumns: string[] = ['tipo','marca','placas','ocupantes'];
+  dataSourceVehiculos:any = new MatTableDataSource(this.datosVehiculo);
+  dataSourceVictima:any = new MatTableDataSource(this.datosVehiculo);
+
+  panelOpenState = false;
   constructor(
     private fb: FormBuilder,
     private publicService: PublicService,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
     public router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
-
-    this.CURP = '';
-    // this.firstFormGroup = this._formBuilder.group({
-    //   firstCtrl: ['', Validators.required]
-    // });
-    // this.secondFormGroup = this._formBuilder.group({
-    //   secondCtrl: ['', Validators.required]
-    // });
-
-    this.fechaActual = new Date();
-
-    //this.fechaActual = formatDate(new Date(), 'yyyy-MM-dd', 'en');
-
-
     this.donadoresForm = this.fb.group ({
 
       id:[''],
@@ -91,22 +86,176 @@ export class RegistroLesionComponent implements OnInit {
 
     });
 
-    this.route.params.subscribe(params => {
-      
-      this.donante_id = params['id'];
-      if(this.donante_id){
+    
+    this.zonaForm = this.fb.group ({
+      zona:[1],
+      carretera:[''],
+      interseccion:[''],
+      calle1:[''],
+      calle2:[''],
+      referencia:[''],
+      tipo_camino:[''],
+      otro_camino:[''],
+      via:[1],
+      tipo_via:[1],
+      tipo_pavimentado:[''],
+      otro_tipo_via:['']
+    });
 
-        this.obtenerDonante();
+    this.tipoAccidenteForm = this.fb.group ({
+      tipoAccidente_1:[''],
+      tipoAccidente_2:[''],
+      tipoAccidente_3:[''],
+      tipoAccidente_4:[''],
+      tipoAccidente_5:[''],
+      tipoAccidente_6:[''],
+      tipoAccidente_7:[''],
+      tipoAccidente_8:[''],
+      tipoAccidente_9:[''],
+      tipoAccidente_10:[''],
+      tipoAccidente_11:[''],
+      tipoAccidente_12:[''],
+      otro_accidente: ['']
+    });
+    this.causasForm = this.fb.group ({
+      causas_1:[''],
+      causas_2:[''],
+      causas_3:[''],
+      causas_4:[''],
+      causas_5:[''],
+      causas_6:['']
+    });
 
-        console.log("hay un ID");
+    this.tipoConductorForm = this.fb.group ({
+      tipo_1:[''],
+      tipo_2:[''],
+      tipo_3:[''],
+      tipo_4:[''],
+      tipo_5:[''],
+      tipo_6:[''],
+      tipo_7:[''],
+      tipo_8:[''],
+      tipo_9:[''],
+      tipo_10:[''],
+      tipo_11:[''],
+      tipo_12:[''],
+      otro_tipo:[''],
+      otro:[''],
+      sexo:[''],
+      aliento_alcoholico:[''],
+      cinturon_seguridad:[''],
+      edad:[''],
+      ignora_edad:[''],
+    });
 
+    this.tipoPeatonForm = this.fb.group ({
+      tipo_1:[''],
+      tipo_2:[''],
+      tipo_3:[''],
+      tipo_4:[''],
+      tipo_5:[''],
+      otro:[''],
+      descripcion_otro:['']
+    });
+
+    this.tipoPasajeroForm = this.fb.group ({
+      causa_pasajero:[''],
+    });
+    
+    this.fallaForm = this.fb.group ({
+      tipo_1:[''],
+      tipo_2:[''],
+      tipo_3:[''],
+      tipo_4:[''],
+      tipo_5:[''],
+      tipo_6:[''],
+      tipo_7:[''],
+      tipo_8:[''],
+      tipo_9:[''],
+      tipo_10:[''],
+      otro:[''],
+      descripcion_otro:['']
+    });
+    
+    this.caminoForm = this.fb.group ({
+      tipo_1:[''],
+      tipo_2:[''],
+      tipo_3:[''],
+      tipo_4:[''],
+      tipo_5:[''],
+      tipo_6:[''],
+      otro:[''],
+      descripcion_otro:['']
+    });
+
+    this.agentesForm = this.fb.group ({
+      tipo_1:[''],
+      tipo_2:[''],
+      tipo_3:[''],
+      tipo_4:[''],
+      tipo_5:[''],
+      tipo_6:[''],
+      tipo_7:[''],
+      tipo_8:[''],
+      tipo_9:[''],
+      otro:[''],
+      descripcion_otro:['']
+    });
+  }
+  
+  public campoOtro(valor)
+  {
+    this.tipo =valor;
+  }
+
+  showVehiculoDialog(){
+    let configDialog = {};
+    if(this.mediaSize == 'xs'){
+      configDialog = {
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        height: '100%',
+        width: '100%',
+        data:{scSize:this.mediaSize}
+      };
+    }else{
+      configDialog = {
+        width: '50%',
+        data:{}
       }
+    }
+    const dialogRef = this.dialog.open(VehiculosDialogComponent, configDialog);
 
-  });
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid){ 
+      }
+    });
+  }
+  
+  showVistimaDialog(){
+    let configDialog = {};
+    if(this.mediaSize == 'xs'){
+      configDialog = {
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        height: '100%',
+        width: '100%',
+        data:{scSize:this.mediaSize}
+      };
+    }else{
+      configDialog = {
+        width: '50%',
+        data:{}
+      }
+    }
+    const dialogRef = this.dialog.open(VictimasDialogComponent, configDialog);
 
-    this.IniciarCatalogos(null);
-
-
+    dialogRef.afterClosed().subscribe(valid => {
+      
+      if(valid){
+        
+      }
+    });
   }
 
   public IniciarCatalogos(obj:any)
@@ -159,245 +308,4 @@ export class RegistroLesionComponent implements OnInit {
   displayFn(value: any, valueLabel: string){
     return value ? value[valueLabel] : value;
   }
-
-  validarCurp(){
-    if(this.CURP.length == 18){
-      this.isValidatingCURP = !this.isValidatingCURP;
-    }else{
-      console.log('CURP invalida');
-    }
-  }
-
-
-  calcularEdad() {
-    var today = new Date();
-    var nacimiento = new Date(this.donadoresForm.get('fecha_nacimiento').value);
-    console.log(nacimiento);
-    //Restamos los años
-    var años = today.getFullYear() - nacimiento.getFullYear();
-    // Si no ha llegado su cumpleaños le restamos el año por cumplir
-    if ( nacimiento.getMonth() > (today.getMonth()) || nacimiento.getDay() > today.getDay())
-        años--;
-    this.donadoresForm.get('edad').patchValue(años);
-}
-
-  soloNumeros(event): boolean {
-
-    const charCode = (event.which) ? event.which : event.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false;
-    }
-    return true;
-
-  }
-
-  guardarDonante(){
-
-    let formData =  JSON.parse(JSON.stringify(this.donadoresForm.value));
-
-    if(formData.entidad_federativa_id){
-      formData.entidad_federativa_id = formData.entidad_federativa_id.id;
-    }
-
-    if(formData.seguro_id){
-      formData.seguro_id = formData.seguro_id.id;
-    }
-
-    // let datoGuardado = {
-    //   data: formData
-    // }
-
-    this.isLoading = true;
-
-    if(this.donante_id > 0 ){
-
-      this.publicService.updateDonante(this.donante_id, formData).subscribe(
-        response =>{
-          //this.dialogRef.close(true);
-          this.isLoading = false;
-
-          var Message = "";            
-
-          Message = "Se Editaron los datos del Donante: "+" "+response.data.nombre+" "+response.data.apellido_paterno+" "+response.data.apellido_materno+" "+" con Éxito!";
-
-          this.sharedService.showSnackBar(Message, 'Cerrar', 5000);
-          this.router.navigate(['/donantes']);
-
-        },
-        errorResponse => {
-          console.log(errorResponse);
-          this.isLoading = false;
-      });
-
-    }else{
-
-      this.publicService.createDonante(formData).subscribe(
-        response =>{
-          console.log(response);
-          this.isLoading = false;
-
-
-
-          if(response.status != 409){
-
-            var Message = "Donante Registrado con Éxito!";
-
-            this.sharedService.showSnackBar(Message, 'Cerrar', 3000);
-
-            this.QRDonante(response.datos, response.datos.codigo);
-            this.donadoresForm.reset();
-            this.router.navigate(['/qr-donante/'+response.datos.codigo]);
-
-          }else if(response.status == 409){
-
-            var error = response.errores.curp[0];
-
-            this.sharedService.showSnackBar(error, 'Cerrar', 3000);
-
-          }
-
-          errorResponse => {
-            console.log(errorResponse.error.errores);
-            this.reponseErrorsPaciente(errorResponse);
-            this.isLoading = false;
-          }
-          
-
-      });
-
-    }
-
-  }
-
-  obtenerDonante():void{
-    this.isLoading = true;
-    
-    this.publicService.getDonante(this.donante_id).subscribe(
-      response => {
-
-        this.donante = response.donante;        
-        this.donadoresForm.reset();
-        this.donadoresForm.patchValue(response.donante);
-        
-        this.calcularEdad();
-        this.IniciarCatalogos(response.donante);
-
-        this.isLoading = false;
-      },
-      errorResponse =>{
-        var errorMessage = "Ocurrió un error.";
-        if(errorResponse.status == 409){
-          errorMessage = errorResponse.error.message;
-        }
-        this.sharedService.showSnackBar(errorMessage, null, 3000);
-        this.isLoading = false;
-      }
-    );
-  }
-
-  reponseErrorsPaciente(errorResponse:any){
-
-    if(errorResponse.error.errores){
-
-      for(let i in errorResponse.error.errores){
-
-        if(i == 'curp'){
-          let errores = errorResponse.error.errores[i];
-          for(let j in errores){
-
-              let message = errores[j];
-
-              this.sharedService.showSnackBar(message, 'Cerrar', 7000);
-          }
-          break;
-        }
-      }
-    }
-  }
-
-  QRDonante(obj, index){
-
-    console.log("acaaa",obj);
-
-    this.selectedItemIndex = index;
-
-      //this.showMyStepper = true;
-      this.isLoadingPDF = true;
-      this.showMyStepper = true;
-      this.showReportForm = false;
-
-      let params:any = {};
-      let countFilter = 0;
-      let fecha_reporte = new Intl.DateTimeFormat('es-ES', {year: 'numeric', month: 'numeric', day: '2-digit'}).format(new Date());
-
-      let appStoredData = this.sharedService.getArrayDataFromCurrentApp(['searchQuery','filter']);
-      
-      params.reporte = 'registro-donador';
-      if(appStoredData['searchQuery']){
-        params.query = appStoredData['searchQuery'];
-      }
-      this.stepperConfig = {
-        steps:[
-          {
-            status: 1, //1:standBy, 2:active, 3:done, 0:error
-            label: { standBy: 'Cargar Datos', active: 'Cargando Datos', done: 'Datos Cargados' },
-            icon: 'settings_remote',
-            errorMessage: '',
-          },
-          {
-            status: 1, //1:standBy, 2:active, 3:done, 0:error
-            label: { standBy: 'Generar PDF', active: 'Generando PDF', done: 'PDF Generado' },
-            icon: 'settings_applications',
-            errorMessage: '',
-          },
-          {
-            status: 1, //1:standBy, 2:active, 3:done, 0:error
-            label: { standBy: 'Descargar Archivo', active: 'Descargando Archivo', done: 'Archivo Descargado' },
-            icon: 'save_alt',
-            errorMessage: '',
-          },
-        ],
-        currentIndex: 0
-      }
-
-
-      this.stepperConfig.steps[0].status = 2;
-
-      this.stepperConfig.steps[0].status = 3;
-      this.stepperConfig.steps[1].status = 2;
-      this.stepperConfig.currentIndex = 1;
-
-      const reportWorker = new ReportWorker();
-      reportWorker.onmessage().subscribe(
-        data => {
-          this.stepperConfig.steps[1].status = 3;
-          this.stepperConfig.steps[2].status = 2;
-          this.stepperConfig.currentIndex = 2;
-
-          FileSaver.saveAs(data.data,'Registro-Donador '+'('+fecha_reporte+')');
-          reportWorker.terminate();
-
-          this.stepperConfig.steps[2].status = 3;
-          this.isLoadingPDF = false;
-          this.showMyStepper = false;
-      });
-
-      reportWorker.onerror().subscribe(
-        (data) => {
-          this.stepperConfig.steps[this.stepperConfig.currentIndex].status = 0;
-          this.stepperConfig.steps[this.stepperConfig.currentIndex].errorMessage = data.message;
-          this.isLoadingPDF = false;
-          reportWorker.terminate();
-        }
-      );
-      
-      let config = {
-        title: "Registro de Donación",
-        showSigns: this.reportIncludeSigns, 
-      };
-      reportWorker.postMessage({data:{items: obj, config:config, fecha_actual: this.fechaActual},reporte:'/registro-donante'});
-      this.isLoading = false;
-  }
-
-
 }

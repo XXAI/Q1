@@ -1,5 +1,7 @@
 <section fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start" style="padding:10px; height: 100%; overflow: auto; flex: 1 1 0%;">
-    <div class="form-loading-shade" *ngIf="isLoading"><mat-spinner></mat-spinner></div>
+    <div class="form-loading-shade" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+    </div>
 
     <!-- <section fxFlex fxLayout="row">
         <mat-card fxFlex="50" fxLayout="column" >
@@ -31,12 +33,10 @@
                 </div>
                 <div fxFlex></div>
                 <div fxFlex></div>
-                <div fxLayoutAlign="end center">
-                    <img style="width:35%" src="assets/icons/cetra.png" alt="">
-                </div>
+
             </div>
             <br>
-            
+
             <!-- <section fxFlex="none" fxLayout="row">
 
                 <div fxFlex></div>
@@ -53,12 +53,12 @@
                 <div fxFlex></div>
                 
             </section> -->
-            
+
             <section fxflex="none" fxLayout="column" [formGroup]="donadoresForm">
 
                 <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
 
-                    <mat-form-field fxFlex  appearance="fill">
+                    <mat-form-field fxFlex appearance="fill">
                         <mat-label>CURP</mat-label>
                         <input matInput #curpInput id="curp" formControlName="curp" placeholder="CURP">
                         <mat-hint align="end">{{curpInput.value.length}} / 18</mat-hint>
@@ -72,8 +72,8 @@
                 </div>
 
                 <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-                    
-                    <mat-form-field appearance="fill" fxFlex >
+
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Nombre(s)</mat-label>
                         <input matInput id="nombre" formControlName="nombre" placeholder="Nombre" required>
                         <mat-error *ngIf="donadoresForm.get('nombre').invalid && (donadoresForm.get('nombre').dirty || donadoresForm.get('nombre').touched)">
@@ -81,12 +81,12 @@
                         </mat-error>
                     </mat-form-field>
 
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Apellido Paterno</mat-label>
                         <input matInput id="apellido_paterno" formControlName="apellido_paterno" placeholder="Apellido Paterno">
                     </mat-form-field>
 
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Apellido Materno</mat-label>
                         <input matInput id="apellido_materno" formControlName="apellido_materno" placeholder="Apellido Materno">
                     </mat-form-field>
@@ -94,7 +94,7 @@
 
                 <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
 
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
 
                         <mat-label>Fecha de Nacimiento: </mat-label>
 
@@ -118,7 +118,7 @@
 
                     </mat-form-field> -->
 
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Edad: </mat-label>
                         <input matInput formControlName="edad" placeholder="Edad" readonly>
                         <mat-error *ngIf="donadoresForm.get('edad').invalid && (donadoresForm.get('edad').dirty || donadoresForm.get('edad').touched)">
@@ -126,7 +126,7 @@
                         </mat-error>
                     </mat-form-field>
 
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Sexo</mat-label>
                         <mat-select formControlName="sexo">
                             <mat-option value="M">Masculino</mat-option>
@@ -152,7 +152,7 @@
                         </mat-error>
                     </mat-form-field> -->
 
-                    <mat-form-field fxFlex appearance="fill"  *ngIf="!catalogos['estados']">
+                    <mat-form-field fxFlex appearance="fill" *ngIf="!catalogos['estados']">
                         <mat-label>Entidad Federativa de Nacimiento: </mat-label>
                         <input matInput formControlName="entidad_federativa">
                         <mat-hint>Escribe el nombre de la Entidad Federativa de Nacimiento</mat-hint>
@@ -173,16 +173,16 @@
                         <mat-error *ngIf="donadoresForm.get('entidad_federativa_id').hasError('required')">Este campo es obligatorio</mat-error>
                     </mat-form-field>
 
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Ciudad</mat-label>
                         <input matInput id="ciudad" formControlName="ciudad" placeholder="Ciudad">
-                        
+
                         <mat-error *ngIf="donadoresForm.get('ciudad').invalid && (donadoresForm.get('ciudad').dirty || donadoresForm.get('ciudad').touched)">
                             <span *ngIf="donadoresForm.get('ciudad').errors.required">La Cuidad es obligatoria</span>
                         </mat-error>
                     </mat-form-field>
 
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Código Postal</mat-label>
                         <input matInput (keypress)="soloNumeros($event)" id="codigo_postal" formControlName="codigo_postal" placeholder="Código Postal">
 
@@ -193,7 +193,7 @@
 
                 </div>
                 <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Correo Electrónico: </mat-label>
                         <input matInput type="email" id="email" formControlName="email" placeholder="Correo Electrónico">
 
@@ -203,7 +203,7 @@
                         </mat-error>
 
                     </mat-form-field>
-                    <mat-form-field  appearance="fill" fxFlex>
+                    <mat-form-field appearance="fill" fxFlex>
                         <mat-label>Teléfono de Contacto</mat-label>
                         <input matInput (keypress)="soloNumeros($event)" id="telefono_contacto" formControlName="telefono_contacto" placeholder="Telefono de Contacto">
                     </mat-form-field>
@@ -211,7 +211,7 @@
 
                 <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
 
-                    <mat-form-field fxFlex appearance="fill"  *ngIf="!catalogos['seguros']">
+                    <mat-form-field fxFlex appearance="fill" *ngIf="!catalogos['seguros']">
                         <mat-label>Derechohabiencia: </mat-label>
                         <input matInput formControlName="seguro">
                         <mat-hint>Escribe el nombre del Estado</mat-hint>
@@ -249,7 +249,7 @@
                     <!-- (click)="registroDonante(null,null)" !donadoresForm.valid ||  -->
                 </div>
             </section>
-            
+
         </mat-card>
         <section fxFlex></section>
     </section>
