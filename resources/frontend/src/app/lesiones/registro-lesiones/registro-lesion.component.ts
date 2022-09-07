@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { startWith, map } from 'rxjs/operators';
 import { PublicService } from '../lesiones.service';
@@ -32,7 +32,7 @@ export class RegistroLesionComponent implements OnInit {
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
-  donadoresForm:FormGroup;
+  principalForm:FormGroup;
   zonaForm:FormGroup;
   tipoAccidenteForm:FormGroup;
   causasForm:FormGroup;
@@ -42,11 +42,25 @@ export class RegistroLesionComponent implements OnInit {
   fallaForm:FormGroup;
   caminoForm:FormGroup;
   agentesForm:FormGroup;
-  datosVehiculo:any = [];
+  datosVehiculo:any = [{
+    activo: true,
+    color: "PLATA",
+    dataEstado: "CHIAPAS",
+    dataTipovehiculo: "VOLSWAGEN",
+    dataVehiculo: "VENTO",
+    estado: 1,
+    marca: 1,
+    modelo: "2018",
+    no_ocupantes: "4",
+    no_placa: "D1234",
+    tiene_placas: 1,
+    tipo: 1,
+    tipo_vehiculo: 1
+  }];
   datosVictima:any = [];
   mediaSize: string;
 
-  displayedColumns: string[] = ['tipo','marca','placas','ocupantes'];
+  displayedColumns: string[] = ['tipo','marca','placas','ocupantes', 'actions'];
   displayColumns: string[] = ['tipo','marca','placas','ocupantes'];
   dataSourceVehiculos:any = new MatTableDataSource(this.datosVehiculo);
   dataSourceVictima:any = new MatTableDataSource(this.datosVehiculo);
@@ -59,30 +73,24 @@ export class RegistroLesionComponent implements OnInit {
     private sharedService: SharedService,
     public router: Router,
     private route: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private changeDetectorRefs: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.donadoresForm = this.fb.group ({
+    this.principalForm = this.fb.group ({
 
-      id:[''],
-      codigo:[''],
-      nombre:['',Validators.required],
-      apellido_paterno:[''],
-      apellido_materno:[''],
-      edad:['',Validators.required],
-      fecha_nacimiento:['',Validators.required],
-      curp:['', Validators.pattern(/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/)],
-      sexo:['',Validators.required],
-      codigo_postal:['',Validators.required],
-      ciudad:['',Validators.required],
-      entidad_federativa:[''],
-      entidad_federativa_id:['7',Validators.required],
-      seguro:[''],
-      seguro_id:['',Validators.required],
-      seguro_otro:[''],
-      email: ['', [Validators.required, Validators.email]],
-      telefono_contacto:[''],
+      fecha:[''],
+      hora:[''],
+      entidad:[1],
+      municipio:[''],
+      localidad:[''],
+      colonia:['',Validators.required],
+      calle:['',Validators.required],
+      no:['', Validators.pattern(/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/)],
+      latitud:['',Validators.required],
+      longitud:['',Validators.required],
+      
 
     });
 
@@ -141,11 +149,10 @@ export class RegistroLesionComponent implements OnInit {
       tipo_12:[''],
       otro_tipo:[''],
       otro:[''],
-      sexo:[''],
-      aliento_alcoholico:[''],
-      cinturon_seguridad:[''],
-      edad:[''],
-      ignora_edad:[''],
+      sexo:[4],
+      aliento_alcoholico:[3],
+      cinturon_seguridad:[3],
+      edad:['']
     });
 
     this.tipoPeatonForm = this.fb.group ({
@@ -208,8 +215,8 @@ export class RegistroLesionComponent implements OnInit {
     this.tipo =valor;
   }
 
-  showVehiculoDialog(){
-    let configDialog = {};
+  showVehiculoDialog(objeto, indice = null){
+    let configDialog = {data:{}, width:'50%',maxWidth: null,maxHeight: null,height: null};
     if(this.mediaSize == 'xs'){
       configDialog = {
         maxWidth: '100vw',
@@ -218,18 +225,41 @@ export class RegistroLesionComponent implements OnInit {
         width: '100%',
         data:{scSize:this.mediaSize}
       };
-    }else{
-      configDialog = {
-        width: '50%',
-        data:{}
-      }
+    }
+
+    if(objeto != null)
+    {
+      objeto.index = indice;
+      configDialog.data = objeto;
     }
     const dialogRef = this.dialog.open(VehiculosDialogComponent, configDialog);
 
     dialogRef.afterClosed().subscribe(valid => {
-      if(valid){ 
+      if(valid.activo){ 
+        if(valid.index == null)
+        {
+          this.datosVehiculo.push(valid);
+        }else{
+          this.datosVehiculo[valid.index] = valid;
+        }
+        
+        this.dataSourceVehiculos.connect().next(this.datosVehiculo);
+        //this.changeDetectorRefs.detectChanges();
       }
+      console.log(valid);
     });
+  }
+
+  eliminarVehiculo(id)
+  {
+    let indice = this.datosVehiculo.findIndex(x=> x.id == id);
+    this.datosVehiculo.splice(indice,1);
+    this.dataSourceVehiculos.connect().next(this.datosVehiculo);
+  }
+
+  editarVehiculo(obj, indice)
+  {
+    this.showVehiculoDialog(obj, indice);
   }
   
   showVistimaDialog(){
@@ -272,14 +302,14 @@ export class RegistroLesionComponent implements OnInit {
 
         this.catalogos = response.data;
 
-        this.filteredCatalogs['estados'] = this.donadoresForm.get('entidad_federativa_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'estados','nombre')));
-        this.filteredCatalogs['seguros'] = this.donadoresForm.get('seguro_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'seguros','descripcion')));
+        this.filteredCatalogs['estados'] = this.principalForm.get('entidad_federativa_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'estados','nombre')));
+        this.filteredCatalogs['seguros'] = this.principalForm.get('seguro_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'seguros','descripcion')));
 
       
         if(obj)
         {
-          this.donadoresForm.get('entidad_federativa_id').setValue(obj.entidad_federativa);
-          this.donadoresForm.get('seguro_id').setValue(obj.seguro);
+          this.principalForm.get('entidad_federativa_id').setValue(obj.entidad_federativa);
+          this.principalForm.get('seguro_id').setValue(obj.seguro);
         }
         this.isLoading = false; 
       } 
