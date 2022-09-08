@@ -57,13 +57,30 @@ export class RegistroLesionComponent implements OnInit {
     tipo: 1,
     tipo_vehiculo: 1
   }];
-  datosVictima:any = [];
+  datosVictima:any = [{
+    activo: true,
+    apellido_materno: "x",
+    apellido_paterno: "x",
+    dataSexo: "MASCULINO",
+    dataTipousuario: "PEATÓN",
+    dataTipovictima: "LESIÓN",
+    dataValidacion: "",
+    edad: 23,
+    ignora_nombre: null,
+    no_acta_certificado: null,
+    nombre: "x",
+    sexo: 1,
+    tipo: 1,
+    tipo_usuario: 3,
+    unidad: "asd",
+    validacion: null
+  }];
   mediaSize: string;
 
   displayedColumns: string[] = ['tipo','marca','placas','ocupantes', 'actions'];
-  displayColumns: string[] = ['tipo','marca','placas','ocupantes'];
+  displayColumns: string[] = ['tipo','nombre','usuario','hospitalizacion', 'actions'];
   dataSourceVehiculos:any = new MatTableDataSource(this.datosVehiculo);
-  dataSourceVictima:any = new MatTableDataSource(this.datosVehiculo);
+  dataSourceVictima:any = new MatTableDataSource(this.datosVictima);
 
   panelOpenState = false;
   constructor(
@@ -262,8 +279,8 @@ export class RegistroLesionComponent implements OnInit {
     this.showVehiculoDialog(obj, indice);
   }
   
-  showVistimaDialog(){
-    let configDialog = {};
+  showVictimaDialog(objeto, indice = null){
+    let configDialog = {data:{}, width:'50%',maxWidth: null,maxHeight: null,height: null};
     if(this.mediaSize == 'xs'){
       configDialog = {
         maxWidth: '100vw',
@@ -272,20 +289,42 @@ export class RegistroLesionComponent implements OnInit {
         width: '100%',
         data:{scSize:this.mediaSize}
       };
-    }else{
-      configDialog = {
-        width: '50%',
-        data:{}
-      }
+    }
+
+    if(objeto != null)
+    {
+      objeto.index = indice;
+      configDialog.data = objeto;
     }
     const dialogRef = this.dialog.open(VictimasDialogComponent, configDialog);
 
     dialogRef.afterClosed().subscribe(valid => {
       
-      if(valid){
+      if(valid.activo){ 
+        if(valid.index == null)
+        {
+          this.datosVictima.push(valid);
+        }else{
+          this.datosVictima[valid.index] = valid;
+        }
         
+        this.dataSourceVictima.connect().next(this.datosVictima);
+        //this.changeDetectorRefs.detectChanges();
       }
+      console.log(valid);
     });
+  }
+
+  eliminarVictima(id)
+  {
+    let indice = this.datosVictima.findIndex(x=> x.id == id);
+    this.datosVictima.splice(indice,1);
+    this.dataSourceVictima.connect().next(this.datosVictima);
+  }
+
+  editarVictima(obj, indice)
+  {
+    this.showVictimaDialog(obj, indice);
   }
 
   public IniciarCatalogos(obj:any)

@@ -31,6 +31,7 @@ export class VehiculosDialogComponent implements OnInit {
   vehiculos:any = [{id:1, descripcion:"VENTO"},{id:2, descripcion:"MAZDA 3"}];
   estados:any = [{id:1, descripcion:"CHIAPAS"}];
   resultado:any = { index : null};
+  
   constructor(
     private sharedService: SharedService, 
     @Inject(MAT_DIALOG_DATA) public data: VehiculoClass,
@@ -52,7 +53,6 @@ export class VehiculosDialogComponent implements OnInit {
   });
 
   ngOnInit() {
-    console.log(this.data);
     if(this.data.index != null)
     {
       this.VehiculoForm.patchValue(this.data);

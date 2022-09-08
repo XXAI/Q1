@@ -6,22 +6,21 @@
                 <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                     <mat-label>Tipo</mat-label>
                     <mat-select formControlName="tipo" #tipoIncidente required>
-                        <mat-option [value]="1">LESIÓN</mat-option>
-                        <mat-option [value]="2">DEFUNSIÓN</mat-option>
+                        <mat-option *ngFor="let item of tipo_victima" [value]="item.id">{{ item.descripcion}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoIncidente.value == 2">
                     <mat-label>Tipo</mat-label>
                     <mat-select formControlName="validacion" required>
-                        <mat-option [value]="1">ACTA</mat-option>
-                        <mat-option [value]="2">CERTIFICADO</mat-option>
+                        <mat-option *ngFor="let item of validacion" [value]="item.id">{{ item.descripcion}}</mat-option>
                     </mat-select>
+                
                 </mat-form-field>
                 <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoIncidente.value == 2">
                     <mat-label>Número</mat-label>
                     <input matInput formControlName="no_acta_certificado" placeholder="No" autocomplete="disabled" required>
                     <mat-error *ngIf="VictimaForm.get('no_acta_certificado').invalid && (VictimaForm.get('no_acta_certificado').dirty || VictimaForm.get('no_acta_certificado').touched)">
-                        <span *ngIf="VictimaForm.get('no_acta_certificado').errors.required">El Nombre es obligatorio</span>
+                        <span *ngIf="VictimaForm.get('no_acta_certificado').errors.required">El Número es obligatorio</span>
                     </mat-error>
                 </mat-form-field>
 
@@ -42,7 +41,7 @@
                     <mat-label>Apellido Paterno</mat-label>
                     <input matInput formControlName="apellido_paterno" placeholder="Apellido Paterno" autocomplete="disabled" required>
                     <mat-error *ngIf="VictimaForm.get('apellido_paterno').invalid && (VictimaForm.get('apellido_paterno').dirty || VictimaForm.get('apellido_paterno').touched)">
-                        <span *ngIf="VictimaForm.get('apellido_paterno').errors.required">El Nombre es obligatorio</span>
+                        <span *ngIf="VictimaForm.get('apellido_paterno').errors.required">El Apellido Paterno es obligatorio</span>
                     </mat-error>
                 </mat-form-field>
 
@@ -50,38 +49,30 @@
                     <mat-label>Apellido Materno</mat-label>
                     <input matInput formControlName="apellido_materno" placeholder="Apellido Materno" autocomplete="disabled" required>
                     <mat-error *ngIf="VictimaForm.get('apellido_materno').invalid && (VictimaForm.get('apellido_materno').dirty || VictimaForm.get('apellido_materno').touched)">
-                        <span *ngIf="VictimaForm.get('apellido_materno').errors.required">El Nombre es obligatorio</span>
+                        <span *ngIf="VictimaForm.get('apellido_materno').errors.required">El Apellido Materno es obligatorio</span>
                     </mat-error>
                 </mat-form-field>
 
             </div>
             <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-                <div fxFlex.xs="100" fxFlex>
-                    <mat-checkbox formControlName="ignora_edad">Se ignora</mat-checkbox>
-                </div>
                 <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                     <mat-label>Edad</mat-label>
-                    <input matInput type="number" formControlName="edad" placeholder="Edad" required>
-                    <mat-error *ngIf="VictimaForm.get('edad').invalid && (VictimaForm.get('edad').dirty || VictimaForm.get('edad').touched)">
-                        <span *ngIf="VictimaForm.get('edad').errors.required">El Nombre es obligatorio</span>
-                    </mat-error>
+                    <input matInput type="number" formControlName="edad" placeholder="Edad">
+                   
                 </mat-form-field>
                 <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                     <mat-label>Sexo</mat-label>
-                    <mat-select formControlName="tipo" required>
-                        <mat-option [value]="1">HOMBRE</mat-option>
-                        <mat-option [value]="2">MUJER</mat-option>
+                    <mat-select formControlName="sexo"  required>
+                        <mat-option *ngFor="let item of sexo" [value]="item.id">{{ item.descripcion}}</mat-option>
                     </mat-select>
+                
                 </mat-form-field>
                 <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                     <mat-label>Tipo de usuario</mat-label>
-                    <mat-select formControlName="tipo" required>
-                        <mat-option [value]="1">CONDUCTOR</mat-option>
-                        <mat-option [value]="2">PASAJERO</mat-option>
-                        <mat-option [value]="3">PEATÓN</mat-option>
-                        <mat-option [value]="4">CLICLISTA</mat-option>
-                        <mat-option [value]="5">MOTOCICLISTA</mat-option>
+                    <mat-select formControlName="tipo_usuario" #tipoIncidente required>
+                        <mat-option *ngFor="let item of tipo_usuario" [value]="item.id">{{ item.descripcion}}</mat-option>
                     </mat-select>
+                    
                 </mat-form-field>
 
             </div>
