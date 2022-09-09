@@ -13,7 +13,7 @@ class CreateTablasRelacion extends Migration
      */
     public function up()
     {
-        Schema::create('vehiculos', function (Blueprint $table) {
+        Schema::create('rel_vehiculos', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
             $table->smallInteger('lesion_id')->unsigned();
             $table->smallInteger('catalogo_tipo_vehiculo_id')->unsigned();
@@ -28,32 +28,32 @@ class CreateTablasRelacion extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::create('tipo_accidente', function (Blueprint $table) {
+        Schema::create('rel_tipo_accidente', function (Blueprint $table) {
             $table->smallInteger('tipo_id')->unsigned();
             $table->smallInteger('lesion_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::create('causa_accidente', function (Blueprint $table) {
+        Schema::create('rel_causa_accidente', function (Blueprint $table) {
             $table->smallInteger('tipo_causa_id')->unsigned();
             $table->smallInteger('lesion_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::create('causa_peaton', function (Blueprint $table) {
+        Schema::create('rel_causa_peaton', function (Blueprint $table) {
             $table->smallInteger('causa_peaton_id')->unsigned();
             $table->smallInteger('lesion_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::create('causa_conductor', function (Blueprint $table) {
+        Schema::create('rel_causa_conductor', function (Blueprint $table) {
             $table->smallInteger('causa_conductor_id')->unsigned();
             $table->smallInteger('lesion_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
         });
 
-        Schema::create('causa_conductor_detalles', function (Blueprint $table) {
+        Schema::create('rel_causa_conductor_detalles', function (Blueprint $table) {
             $table->smallInteger('lesion_id')->unsigned();
             $table->smallInteger('sexo_id')->unsigned();
             $table->smallInteger('alcoholico')->unsigned();
@@ -64,7 +64,7 @@ class CreateTablasRelacion extends Migration
             $table->timestamps();
         });
 
-        Schema::create('victimas_lesionados', function (Blueprint $table) {
+        Schema::create('rel_victimas_lesionados', function (Blueprint $table) {
             $table->smallInteger('lesion_id')->unsigned();
             $table->string('nombre', 50);
             $table->string('apellido_paterno', 50);
@@ -82,20 +82,20 @@ class CreateTablasRelacion extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::create('falla_vehiculo', function (Blueprint $table) {
+        Schema::create('rel_falla_vehiculo', function (Blueprint $table) {
             $table->smallInteger('lesion_id')->unsigned();
             $table->smallInteger('falla_vehiculo_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
         });
 
-        Schema::create('agente_natural', function (Blueprint $table) {
+        Schema::create('rel_agente_natural', function (Blueprint $table) {
             $table->smallInteger('lesion_id')->unsigned();
             $table->smallInteger('agente_id')->unsigned();
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::create('condicion_camino', function (Blueprint $table) {
+        Schema::create('rel_condicion_camino', function (Blueprint $table) {
             $table->smallInteger('lesion_id')->unsigned();
             $table->smallInteger('condicion_camino_id')->unsigned();
             $table->softDeletes();
@@ -110,15 +110,15 @@ class CreateTablasRelacion extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vehiculos');
-        Schema::dropIfExists('tipo_accidente');
-        Schema::dropIfExists('causa_accidente');
-        Schema::dropIfExists('causa_peaton');
-        Schema::dropIfExists('causa_conductor');
-        Schema::dropIfExists('causa_conductor_detalles');
-        Schema::dropIfExists('victimas_lesionados');
-        Schema::dropIfExists('falla_vehiculo');
-        Schema::dropIfExists('agente_natural');
-        Schema::dropIfExists('condicion_camino');
+        Schema::dropIfExists('rel_vehiculos');
+        Schema::dropIfExists('rel_tipo_accidente');
+        Schema::dropIfExists('rel_causa_accidente');
+        Schema::dropIfExists('rel_causa_peaton');
+        Schema::dropIfExists('rel_causa_conductor');
+        Schema::dropIfExists('rel_causa_conductor_detalles');
+        Schema::dropIfExists('rel_victimas_lesionados');
+        Schema::dropIfExists('rel_falla_vehiculo');
+        Schema::dropIfExists('rel_agente_natural');
+        Schema::dropIfExists('rel_condicion_camino');
     }
 }

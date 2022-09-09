@@ -24,18 +24,6 @@ Route::group([
 Route::post('signin',   'API\Auth\AuthController@login');
 Route::post('refresh',  'API\Auth\AuthController@refresh');
 
-/**
- *  Para envio de correos
- */
-Route::get('enviar-recuperar-pass',             'API\Admin\MailerController@enviarRecuperarContrasena');
-
-Route::post('catalogos',                        'API\Catalogos\BusquedaCatalogosController@obtenerCatalogos');
-Route::get('qr-donador/{codigo}',      'API\Modulos\DonantesController@obtenerDatosDonante');
-
-//Donantes Lista
-Route::apiResource('donantes',  'API\Modulos\DonantesController');
-
-
 Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('user',          'API\Admin\UserController');
     Route::get('user-catalogs',         'API\Admin\UserController@getCatalogs');
@@ -45,14 +33,9 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('profile',       'API\ProfileController')->only([ 'show', 'update']);
 
     //Modulos del Sistema
-    Route::apiResource('proyectos',              'API\Modulos\ProyectosController')->only(['index','show']);
-    Route::get('catalogo-direcciones',           'API\Modulos\DireccionesController@datosDirecciones');
-    Route::get('concentrado-proyecto/{id}',      'API\Modulos\ConcentradosController@obtenerConcentrado');
-    Route::get('concentrado-checklist',          'API\Modulos\ConcentradosController@obtenerChecklist');
-    Route::get('reporte-respuestas',             'API\Modulos\ConcentradosController@obtenerReporte');
-    Route::post('guardar-reporte',               'API\Modulos\ConcentradosController@guardarReporte');
-    Route::get('exportar-concentrado',           'API\Modulos\ConcentradosController@exportExcel');
-
+    Route::apiResource('lesiones',              'API\Modulos\ProyectosController');
+    Route::get('lesiones',                      'API\Modulos\CatalogosController@getCatalogos');
+   
     /**
      *  Modulo de Reportes
      */

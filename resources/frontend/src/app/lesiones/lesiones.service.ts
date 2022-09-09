@@ -7,23 +7,13 @@ import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class PublicService {
+export class LesionesService {
 
-  url                                     = `${environment.base_url}/donantes`;                         
-  url_info_donante                        = `${environment.base_url}/qr-donador/`;
-  // url_catalogo_diagnostico_autocomplet    = `${environment.base_url}/busqueda-diagnosticos`;
-  url_personas_callcenter                 = `http://contingencia.saludchiapas.gob.mx/api/search-personas`;
-  url_id_persona_callCenter               = `http://contingencia.saludchiapas.gob.mx/api/search-personas`;
-
-  url_filter_catalogs                     =  `${environment.base_url}/catalogos-lista-filtros`;
-  url_obtener_catalogos                   =  `${environment.base_url}/catalogos`;
-  url_calcular_curp                       =  'http://curpmexico.ddns.net:8082/api/curp';
-
-
+  url                                     = `${environment.base_url}/lesiones`;       
 
   constructor(private http: HttpClient) { }
 
-  getDonantesList(payload):Observable<any> {
+  getLesionesList(payload):Observable<any> {
     return this.http.get<any>(this.url,{params: payload}).pipe(
       map( response => {
         return response;
@@ -31,15 +21,8 @@ export class PublicService {
     );
   }
 
-  getDonantesFilters(filters):Observable<any> {
-    return this.http.get<any>(this.url,{params: filters}).pipe(
-      map( response => {
-        return response;
-      })
-    );
-  }
 
-  getDonante(id) {
+  getIncidente(id) {
     return this.http.get<any>(this.url+'/'+id,{}).pipe(
       map( (response: any) => {
         return response;
@@ -47,40 +30,7 @@ export class PublicService {
     ));
   }
 
-  verInfoDonante(id:any,payload:any):Observable<any>{
-    return this.http.get<any>(this.url_info_donante + id, {params:payload}).pipe(
-      map( (response: any) => {
-        return response;
-      })
-    );
-  }
-
-  getFilterCatalogs():Observable<any>{
-    return this.http.get<any>(this.url_filter_catalogs).pipe(
-      map(response => {
-        return response;
-      })
-    );
-  }
-
-  calcularCurp(payload):Observable<any> {
-    return this.http.get<any>(this.url_calcular_curp+payload).pipe(
-      map( response => {
-        console.log("curp",response);
-        return response;
-      })
-    );
-  }
-
-  obtenerCatalogos(payload) {
-    return this.http.post<any>(this.url_obtener_catalogos,payload).pipe(
-      map( (response) => {
-        return response;
-      }
-    ));
-  }
-
-  updateDonante(id,payload) {
+  updateIncidente(id,payload) {
     return this.http.put<any>(this.url+'/'+id,payload).pipe(
       map( (response) => {
         return response;
@@ -88,7 +38,7 @@ export class PublicService {
     ));
   }
 
-  createDonante(payload) {
+  createIncidente(payload) {
     return this.http.post<any>(this.url,payload).pipe(
       map( (response) => {
         return response;
@@ -96,7 +46,7 @@ export class PublicService {
     ));
   }  
 
-  deleteDonante(id) {
+  deleteIncidente(id) {
     return this.http.delete<any>(this.url+'/'+id,{}).pipe(
       map( (response) => {
         return response;

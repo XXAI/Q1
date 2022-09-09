@@ -12,28 +12,33 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
-        \App\Models\User::create([
+        /*\App\Models\User::create([
             'name' => 'Usuario Root',
             'username' => 'root',
             'password' => Hash::make('ssa.l3siones'),
             'email' => 'root@localhost',
             'is_superuser' => 1,
             'avatar' => '/assets/avatars/50-king.svg'
-        ]);
+        ]);*/
 
         //Carga de archivos CSV
         $lista_csv = [
-            'permissions',
+            /*'permissions',
             'roles',
             'permission_role',
-            'role_user'
+            'role_user',*/
+            'catalogo_entidades',
+            'catalogo_municipios',
+            'catalogo_localidades',
+            //'catalogo_marca',
+            //'catalogo_vehiculos'
         ];
 
-        //DB::beginTransaction();
+        DB::beginTransaction();
 
-        //DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         
-        /*foreach($lista_csv as $csv){
+        foreach($lista_csv as $csv){
             $archivo_csv = storage_path().'/app/seeds/'.$csv.'.csv';
 
             $query = sprintf("
@@ -46,10 +51,10 @@ class DatabaseSeeder extends Seeder
                 IGNORE 1 LINES", addslashes($archivo_csv));
             echo $query;
             DB::connection()->getpdo()->exec($query);
-        }*/
+        }
             
-            //DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
-            //DB::commit();
+        DB::commit();
     }
 }
