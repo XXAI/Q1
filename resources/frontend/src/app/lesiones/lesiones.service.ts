@@ -10,9 +10,18 @@ import { map } from 'rxjs/operators';
 export class LesionesService {
 
   url                                     = `${environment.base_url}/lesiones`;       
+  url_catalogos                           = `${environment.base_url}/catalogos`;       
 
   constructor(private http: HttpClient) { }
 
+  getCatalogos(payload):Observable<any> {
+    return this.http.get<any>(this.url_catalogos,{params: payload}).pipe(
+      map( response => {
+        return response;
+      })
+    );
+  }
+  
   getLesionesList(payload):Observable<any> {
     return this.http.get<any>(this.url,{params: payload}).pipe(
       map( response => {

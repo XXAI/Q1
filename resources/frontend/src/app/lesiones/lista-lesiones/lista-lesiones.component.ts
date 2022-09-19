@@ -10,7 +10,7 @@ import { trigger, transition, animate, style } from '@angular/animations';
 import {Observable} from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout';
 import { ConfirmActionDialogComponent } from '../../utils/confirm-action-dialog/confirm-action-dialog.component';
-import { PublicService } from '../lesiones.service';
+import { LesionesService } from '../lesiones.service';
 import { ReportWorker } from '../../web-workers/report-worker';
 import * as FileSaver from 'file-saver';
 
@@ -107,7 +107,7 @@ export class ListaLesionesComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
-    private publicService: PublicService,
+    private lesionesService: LesionesService,
     private authService: AuthService,
     private fb: FormBuilder,
     public dialog: MatDialog,
@@ -209,7 +209,7 @@ export class ListaLesionesComponent implements OnInit {
       {nombre:'estados',orden:'nombre'},
     ];
 
-    this.publicService.obtenerCatalogos(carga_catalogos).subscribe(
+    this.lesionesService.getCatalogos(carga_catalogos).subscribe(
       response => {
 
         this.catalogos = response.data;
@@ -346,7 +346,7 @@ export class ListaLesionesComponent implements OnInit {
     this.sharedService.setDataToCurrentApp('searchQuery',this.searchQuery);
     this.sharedService.setDataToCurrentApp('filter',filterFormValues);
 
-    this.publicService.getDonantesList(params).subscribe(
+    this.lesionesService.getLesionesList(params).subscribe(
       response =>{
         console.log("aca", response.data.data);
         if(response.error) {
@@ -441,7 +441,7 @@ export class ListaLesionesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(reponse => {
       if(reponse){
-        this.publicService.deleteDonante(id).subscribe(
+        this.lesionesService.deleteIncidente(id).subscribe(
           response => {
             this.loadDonantesData(null);
           }
@@ -535,7 +535,7 @@ export class ListaLesionesComponent implements OnInit {
     
     this.stepperConfig.steps[0].status = 2;
 
-    this.publicService.getDonantesList(params).subscribe(
+    this.lesionesService.getLesionesList(params).subscribe(
       response =>{
         if(response.error) {
           let errorMessage = response.error.message;

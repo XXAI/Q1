@@ -11,15 +11,68 @@ use App\Http\Requests;
 
 use DB;
 
-use App\Models\Proyecto;
+use App\Models\Catalogos\Entidades;
+use App\Models\Catalogos\Localidades;
+use App\Models\Catalogos\Municipios;
 
 class CatalogosController extends Controller
 {
-    public function getCatalogos(){
+    public function getCatalogos(Request $request){
         try{
+            $parametros = $request->all();
+            
             $data = [];
-            $data = $this->getUserAccessData();
+            foreach ($parametros as $clave => $valor)
+            {
+                if($clave == 'Estados')
+                {
+                    $data['Entidades'] = $this->getEntidades()['data'];
+                }else if($clave == 'Municipio')
+                {
+                    $data['Municipio'] = $this->getMunicipio()['data'];
+                }
+            }
+            
+            return response()->json(['data'=>$data],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
 
+    public function getEntidades(){
+        try{
+            
+            $data = Entidades::orderBy("descripcion")->all();
+
+            return response()->json(['data'=>$data],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function getMunicipio(){
+        try{
+            
+            $data = Municipios::orderBy("descripcion")->all();
+
+            return response()->json(['data'=>$data],HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function getLocalidad(Request $request, $id){
+        try{
+            $parametros = $request->all();
+            $data = Localidades::orderBy("descripcion")->where("catalogo_municipio_id", $id);
+
+            if($parametros['localidad'])
+            {
+                $data =$data->whereRaw("descripcion like '%",$parametros['']."%");
+            }
+
+            $data = $data->all();
+            
             return response()->json(['data'=>$data],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { startWith, map } from 'rxjs/operators';
-import { PublicService } from '../lesiones.service';
+import { LesionesService } from '../lesiones.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -24,7 +24,7 @@ export class RegistroLesionComponent implements OnInit {
 
   isLoading:boolean;
   
-  catalogos: any = {};
+  catalogos: any = {'municipios':[]};
   filteredCatalogs:any = {};
 
   selectedItemIndex: number = -1;
@@ -42,6 +42,7 @@ export class RegistroLesionComponent implements OnInit {
   fallaForm:FormGroup;
   caminoForm:FormGroup;
   agentesForm:FormGroup;
+  
   datosVehiculo:any = [{
     activo: true,
     color: "PLATA",
@@ -85,7 +86,7 @@ export class RegistroLesionComponent implements OnInit {
   panelOpenState = false;
   constructor(
     private fb: FormBuilder,
-    private publicService: PublicService,
+    private lesionesService: LesionesService,
     private snackBar: MatSnackBar,
     private sharedService: SharedService,
     public router: Router,
@@ -225,6 +226,8 @@ export class RegistroLesionComponent implements OnInit {
       otro:[''],
       descripcion_otro:['']
     });
+
+    this.IniciarCatalogos();
   }
   
   public campoOtro(valor)
@@ -327,21 +330,22 @@ export class RegistroLesionComponent implements OnInit {
     this.showVictimaDialog(obj, indice);
   }
 
-  public IniciarCatalogos(obj:any)
+  public IniciarCatalogos(obj:any = null)
   {
     this.isLoading = true;
 
-    let carga_catalogos = [
-      {nombre:'estados',orden:'nombre'},
+    let carga_catalogos = {'Estados':0, 'Municipio':0};
+      /*{nombre:'estados',orden:'nombre'},
       {nombre:'seguros',orden:'descripcion'},
-    ];
+    ];*/
 
-    this.publicService.obtenerCatalogos(carga_catalogos).subscribe(
+    this.lesionesService.getCatalogos(carga_catalogos).subscribe(
       response => {
 
         this.catalogos = response.data;
 
-        this.filteredCatalogs['estados'] = this.principalForm.get('entidad_federativa_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'estados','nombre')));
+        console.log(this.catalogos);
+        /*this.filteredCatalogs['estados'] = this.principalForm.get('entidad_federativa_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'estados','nombre')));
         this.filteredCatalogs['seguros'] = this.principalForm.get('seguro_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'seguros','descripcion')));
 
       
@@ -349,7 +353,7 @@ export class RegistroLesionComponent implements OnInit {
         {
           this.principalForm.get('entidad_federativa_id').setValue(obj.entidad_federativa);
           this.principalForm.get('seguro_id').setValue(obj.seguro);
-        }
+        }*/
         this.isLoading = false; 
       } 
     );
