@@ -14,6 +14,7 @@ use DB;
 use App\Models\Catalogos\Entidades;
 use App\Models\Catalogos\Localidades;
 use App\Models\Catalogos\Municipios;
+use App\Models\Catalogos\Vehiculos;
 
 class CatalogosController extends Controller
 {
@@ -26,10 +27,15 @@ class CatalogosController extends Controller
             {
                 if($clave == 'Estados')
                 {
-                    $data['Entidades'] = $this->getEntidades()['data'];
+                    
+                    $data['Entidades'] = ($parametros[$clave] != 0)? Entidades::find($parametros[$clave]):Entidades::all();
                 }else if($clave == 'Municipio')
                 {
-                    $data['Municipio'] = $this->getMunicipio()['data'];
+                    $data['Municipio'] = ($parametros[$clave] != 0)? Municipios::find($parametros[$clave]):Municipios::all();
+                }else if($clave == 'TipoVehiculo')
+                {
+                    $data['TipoVehiculo'] = ($parametros[$clave] != 0)? Vehiculos::find($parametros[$clave]):Vehiculos::all();
+                    //$data['Municipio'] = $this->getMunicipio()['data'];
                 }
             }
             
@@ -39,12 +45,12 @@ class CatalogosController extends Controller
         }
     }
 
-    public function getEntidades(){
+    /*public function getEntidades(){
         try{
             
             $data = Entidades::orderBy("descripcion")->all();
 
-            return response()->json(['data'=>$data],HttpResponse::HTTP_OK);
+            return response()->json($data,HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
@@ -77,5 +83,5 @@ class CatalogosController extends Controller
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
-    }
+    }*/
 }
