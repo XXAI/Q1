@@ -43,39 +43,8 @@ export class RegistroLesionComponent implements OnInit {
   caminoForm:FormGroup;
   agentesForm:FormGroup;
   
-  datosVehiculo:any = [{
-    activo: true,
-    color: "PLATA",
-    dataEstado: "CHIAPAS",
-    dataTipovehiculo: "VOLSWAGEN",
-    dataVehiculo: "VENTO",
-    estado: 1,
-    marca: 1,
-    modelo: "2018",
-    no_ocupantes: "4",
-    no_placa: "D1234",
-    tiene_placas: 1,
-    tipo: 1,
-    tipo_vehiculo: 1
-  }];
-  datosVictima:any = [{
-    activo: true,
-    apellido_materno: "x",
-    apellido_paterno: "x",
-    dataSexo: "MASCULINO",
-    dataTipousuario: "PEATÓN",
-    dataTipovictima: "LESIÓN",
-    dataValidacion: "",
-    edad: 23,
-    ignora_nombre: null,
-    no_acta_certificado: null,
-    nombre: "x",
-    sexo: 1,
-    tipo: 1,
-    tipo_usuario: 3,
-    unidad: "asd",
-    validacion: null
-  }];
+  datosVehiculo:any = [];
+  datosVictima:any = [];
   mediaSize: string;
 
   displayedColumns: string[] = ['tipo','marca','placas','ocupantes', 'actions'];
@@ -105,7 +74,7 @@ export class RegistroLesionComponent implements OnInit {
       localidad:[''],
       colonia:['',Validators.required],
       calle:['',Validators.required],
-      no:['', Validators.pattern(/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/)],
+      no:['', Validators.required],
       latitud:['',Validators.required],
       longitud:['',Validators.required],
       
@@ -271,7 +240,6 @@ export class RegistroLesionComponent implements OnInit {
         this.dataSourceVehiculos.connect().next(this.datosVehiculo);
         //this.changeDetectorRefs.detectChanges();
       }
-      console.log(valid);
     });
   }
 
@@ -340,17 +308,9 @@ export class RegistroLesionComponent implements OnInit {
     this.isLoading = true;
 
     let carga_catalogos = {'Estados':0, 'Municipio':0, 'TipoVehiculo':0, 'Vehiculo':0};
-      /*{nombre:'estados',orden:'nombre'},
-      {nombre:'seguros',orden:'descripcion'},
-    ];*/
-
     this.lesionesService.getCatalogos(carga_catalogos).subscribe(
       response => {
-
         this.catalogos = response.data;
-
-        //console.log(this.catalogos);
-    
         this.isLoading = false; 
       } 
     );
@@ -377,5 +337,23 @@ export class RegistroLesionComponent implements OnInit {
 
   displayFn(value: any, valueLabel: string){
     return value ? value[valueLabel] : value;
+  }
+
+  public Guardar(etapa:number)
+  {
+    let formulario;
+    if(etapa == 1){ formulario = this.principalForm.value; }
+    if(etapa == 2){ formulario = this.principalForm.value; }
+    if(etapa == 3){ formulario = this.principalForm.value; }
+    if(etapa == 4){ formulario = this.principalForm.value; }
+    if(etapa == 5){ formulario = this.principalForm.value; }
+    formulario.etapa = etapa;
+
+    this.lesionesService.saveFormulario(formulario).subscribe(
+      response => {
+        this.catalogos = response.data;
+        this.isLoading = false; 
+      } 
+    );
   }
 }

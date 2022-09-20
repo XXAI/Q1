@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
 
 use App\Http\Controllers\Controller;
+use \Validator,\Hash, \Response, \DB;
 
 use App\Http\Requests;
 use App\Models\Lesiones;
@@ -85,42 +86,83 @@ class LesionesController extends Controller
             $validation_error_messajes = [];
 
             $parametros = $request->all(); 
-
-            if($parametros['parte'] == 1)
+            if($parametros['etapa'] == 1)
             {
-                $validation_rules = [
-                    'id'=>'required|unique:permissions',
-                    'description' => 'required',
-                    'group' => 'required'
-                ];
-                $validation_error_messajes = [
-                    'id.required' => 'El ID es requerido',
-                    'id.unique' => 'El ID debe ser único',
-                    'description.required' => 'La descripción es requerida',
-                    'group.required' => 'El grupo es requerido'
-                ];
-            }else if($parametros['parte'] == 2)
+                $return_data = $this->GuardarLugar($parametros);
+               
+            }else if($parametros['etapa'] == 2)
             {
 
-            }else if($parametros['parte'] == 3)
+            }else if($parametros['etapa'] == 3)
             {
                 
-            }else if($parametros['parte'] == 4)
+            }else if($parametros['etapa'] == 4)
             {
                 
-            }else if($parametros['parte'] == 5)
+            }else if($parametros['etapa'] == 5)
             {
                 
-            }else if($parametros['parte'] == 6)
+            }else if($parametros['etapa'] == 6)
             {
                 
             }
 
-            
-            $resultado = Validator::make($parametros,$validation_rules,$validation_error_messajes);
-            $return_data['data'] = [];
-
             return response()->json($return_data,HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function GuardarLugar($parametros)
+    {
+        try{
+            $validation_rules = [
+                'fecha'=>'required',
+                'hora' => 'required',
+                'entidad' => 'required',
+                'municipio' => 'required',
+                'localidad' => 'required',
+                'colonia' => 'required',
+                'calle' => 'required',
+                'no' => 'required',
+                'latitud' => 'required',
+                'longitud' => 'required'
+            ];
+            $validation_eror_messages = [
+                'fecha.unique' => 'La Fecha es requerido',
+                'hora.required' => 'La hora es requerido',
+                'entidad.required' => 'La entidad  es requerido',
+                'municipio.required'=>'El municipio  es requerido',
+                'localidad.required' => 'La localidad  es requerido',
+                'colonia.required'=> 'la colonia es requerido',
+                'calle.required' => 'La calle es requerido',
+                'no.required' => 'El no es requerido',
+                'latitud.required' => 'La latitud es requerido',
+                'longitud.required' => 'La longitud es requerido'
+            ];
+            $resultado = Validator::make($parametros,$validation_rules,$validation_eror_messages);
+
+            if($resultado->passes()){
+                DB::beginTransaction();
+                $obj = new Lesiones();//::create($parametros);
+                $obj->fecha = $parametros['fecha'];
+                $obj->hora = $parametros['hora'];
+                $obj->entidad_federativa_id = $parametros['entidad'];
+                $obj->municipio_id = $parametros['municipio'];
+                $obj->localidad_id = $parametros['localidad'];
+                $obj->colonia = $parametros['colonia'];
+                $obj->calle = $parametros['calle'];
+                $obj->numero = $parametros['no'];
+                $obj->latitud = $parametros['latitud'];
+                $obj->longitud = $parametros['longitud'];
+
+                $obj->save();
+                DB::commit();
+                return response()->json(['data'=>$parametros], HttpResponse::HTTP_OK);
+            }else{
+                return response()->json(['mensaje' => 'Error en los datos del formulario', 'validacion'=>$resultado->passes(), 'errores'=>$resultado->errors()], HttpResponse::HTTP_CONFLICT);
+            }
         }catch(\Exception $e){
             DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);

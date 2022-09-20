@@ -8,7 +8,7 @@
 
         <mat-card fxFlex="97" fxLayout="column">
             <mat-tab-group>
-                <!--<mat-tab label="LUGAR">
+                <mat-tab label="LUGAR">
                     <section fxflex="none" fxLayout="column" [formGroup]="principalForm">
                         <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                             <mat-form-field fxFlex appearance="fill">
@@ -89,11 +89,14 @@
                                 </mat-error>
                             </mat-form-field>
                         </div>
-
-
+                    </section>
+                    <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
+                        <div fxFlex="none">
+                            <button mat-raised-button color="primary" [disabled]="!principalForm.valid || isLoading" (click)="Guardar(1)"><mat-icon>save</mat-icon> Guardar</button>
+                        </div>
                     </section>
                 </mat-tab>
-                <mat-tab label="ZONA">
+                <!--<mat-tab label="ZONA">
                     <section fxflex="none" fxLayout="column" [formGroup]="zonaForm">
                         <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                             <mat-form-field fxFlex="50" fxFlex.xs="100" appearance="fill">
@@ -196,7 +199,7 @@
                         </div>
                        
                     </section>
-                </mat-tab>-->
+                </mat-tab>
                 <mat-tab label="TIPO">
                     <section fxflex="none" fxLayout="column" [formGroup]="tipoAccidenteForm">
                         <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
@@ -317,7 +320,7 @@
                         </div>
                     </section>
                 </mat-tab>
-                <!--mat-tab label="CAUSAS" [formGroup]="causasForm">
+                <mat-tab label="CAUSAS" [formGroup]="causasForm">
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
                         <div fxFlex.xs="100" fxFlex>
                             <mat-checkbox formControlName="causas_1" #chkConductor>Conductor</mat-checkbox>
@@ -659,8 +662,8 @@
                             </div>        
                         </mat-tab>
                       </mat-tab-group>
-                </mat-tab>-->
-                <!--mat-tab label="VICTIMAS">
+                </mat-tab>
+                <mat-tab label="VICTIMAS">
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                         <button mat-raised-button color="primary" (click)="showVictimaDialog(null)"><mat-icon>add_circle</mat-icon>AGREGAR VICTIMA</button>
                     </div>
@@ -735,16 +738,7 @@
                 <mat-tab label="FOTOGRAFIAS"> Content 3 </mat-tab>-->
             </mat-tab-group>
 
-            <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
-                <div fxFlex></div>
-                <!-- <div fxFlex="none">
-                    <button mat-button>Cancelar</button>
-                </div> -->
-                <div fxFlex="none">
-                    <button mat-raised-button color="primary" [disabled]="!principalForm.valid || isLoading"><mat-icon>save</mat-icon> Guardar</button>
-                    <!-- (click)="registroDonante(null,null)" ! principalForm.valid ||  -->
-                </div>
-            </section>
+            
 
         </mat-card>
         <section fxFlex></section>

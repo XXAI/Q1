@@ -6,6 +6,9 @@
             <mat-select formControlName="tipo_vehiculo" required #tipoVehiculo (selectionChange)="cargarMarcas(tipoVehiculo.value)">
                 <mat-option *ngFor="let item of tipo_vehiculos" [value]="item.id">{{ item.descripcion }}</mat-option>
             </mat-select>
+            <mat-error *ngIf="VehiculoForm.get('tipo_vehiculo').invalid && (VehiculoForm.get('tipo_vehiculo').dirty || VehiculoForm.get('tipo_vehiculo').touched)">
+                <span *ngIf="VehiculoForm.get('tipo_vehiculo').errors.required">El Tipo de Vehiculo es obligatorio</span>
+            </mat-error>
         </mat-form-field>
     </div>
     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
@@ -14,6 +17,9 @@
             <mat-select formControlName="marca" required>
                 <mat-option *ngFor="let item of vehiculos" [value]="item.id">{{ item.descripcion }}</mat-option>
             </mat-select>
+            <mat-error *ngIf="VehiculoForm.get('marca').invalid && (VehiculoForm.get('marca').dirty || VehiculoForm.get('marca').touched)">
+                <span *ngIf="VehiculoForm.get('marca').errors.required">La Marca es obligatorio</span>
+            </mat-error>
         </mat-form-field>
         <mat-form-field fxFlex="50" fxFlex.xs="100" appearance="fill">
             <mat-label>Modelo</mat-label>
@@ -21,6 +27,7 @@
             <mat-error *ngIf="VehiculoForm.get('modelo').invalid && (VehiculoForm.get('modelo').dirty || VehiculoForm.get('modelo').touched)">
                 <span *ngIf="VehiculoForm.get('modelo').errors.required">El Modelo es obligatorio</span>
             </mat-error>
+           
         </mat-form-field>
     </div>
     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
@@ -30,6 +37,9 @@
                 <mat-option [value]="1">SI</mat-option>
                 <mat-option [value]="2">NO</mat-option>
             </mat-select>
+            <mat-error *ngIf="VehiculoForm.get('tiene_placas').invalid && (VehiculoForm.get('tiene_placas').dirty || VehiculoForm.get('tiene_placas').touched)">
+                <span *ngIf="VehiculoForm.get('tiene_placas').errors.required">Campo es obligatorio</span>
+            </mat-error>
         </mat-form-field>
         <div *ngIf="placa.value == 1" fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
             <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
@@ -64,14 +74,14 @@
             <mat-label>No Ocupantes</mat-label>
             <input matInput formControlName="no_ocupantes" placeholder="no_ocupantes" required autocomplete="off">
             <mat-error *ngIf="VehiculoForm.get('no_ocupantes').invalid && (VehiculoForm.get('no_ocupantes').dirty || VehiculoForm.get('no_ocupantes').touched)">
-                <span *ngIf="VehiculoForm.get('no_ocupantes').errors.required">El Nombre es obligatorio</span>
+                <span *ngIf="VehiculoForm.get('no_ocupantes').errors.required">El Campo es obligatorio</span>
             </mat-error>
         </mat-form-field>
         <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
             <mat-label>Color</mat-label>
             <input matInput formControlName="color" placeholder="color" required autocomplete="off">
             <mat-error *ngIf="VehiculoForm.get('color').invalid && (VehiculoForm.get('color').dirty || VehiculoForm.get('color').touched)">
-                <span *ngIf="VehiculoForm.get('color').errors.required">El Nombre es obligatorio</span>
+                <span *ngIf="VehiculoForm.get('color').errors.required">El Campo es obligatorio</span>
             </mat-error>
         </mat-form-field>
     </div>

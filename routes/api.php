@@ -33,7 +33,7 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::apiResource('profile',       'API\ProfileController')->only([ 'show', 'update']);
 
     //Modulos del Sistema
-    Route::apiResource('lesiones',              'API\Modulos\ProyectosController');
+    Route::apiResource('lesiones',              'API\Modulos\LesionesController');
     Route::get('catalogos',                      'API\Modulos\CatalogosController@getCatalogos');
    
     /**

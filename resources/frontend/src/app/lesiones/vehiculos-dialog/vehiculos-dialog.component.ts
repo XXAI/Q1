@@ -16,7 +16,7 @@ export interface VehiculoClass {
   no_ocupantes?: number;
   color?: number;
   tipoVehiculo?:[],
-  vehiculo?:any
+  marcas?:any
 
 }
 
@@ -28,9 +28,9 @@ export interface VehiculoClass {
 })
 export class VehiculosDialogComponent implements OnInit {
 
-  tipo_vehiculos:any = [{id:1, descripcion:"VOLSWAGEN"},{id:2, descripcion:"MAZDA"}];
+  tipo_vehiculos:any = [];
   tipo_placas:any = [{id:1, descripcion:"NACIONAL"},{id:2, descripcion:"INTERNACIONAL"}];
-  vehiculos:any = [{id:1, descripcion:"VENTO"},{id:2, descripcion:"MAZDA 3"}];
+  vehiculos:any = [];
   estados:any = [{id:1, descripcion:"CHIAPAS"}];
   resultado:any = { index : null};
   
@@ -43,15 +43,15 @@ export class VehiculosDialogComponent implements OnInit {
   ) { }
 
   public VehiculoForm = this.fb.group({
-    'tipo_vehiculo':[], 
-    'marca':[], 
-    'modelo':[], 
-    'tiene_placas':[], 
+    'tipo_vehiculo':['',,Validators.required], 
+    'marca':['',,Validators.required], 
+    'modelo':['',,Validators.required], 
+    'tiene_placas':['',,Validators.required], 
     'tipo':[], 
     'no_placa':[], 
     'estado':[], 
-    'no_ocupantes':[], 
-    'color':[], 
+    'no_ocupantes':['',,Validators.required], 
+    'color':['',,Validators.required], 
   });
 
   ngOnInit() {
@@ -63,13 +63,18 @@ export class VehiculosDialogComponent implements OnInit {
     }else{
       this.resultado.index = 0;
     }
-    console.log(this.data);
   }
 
   public cargarMarcas(tipo:number)
   {
-    console.log(tipo);
-    console.log(this.data.vehiculo.where(x=>x.catalogo_vehiculo_id=tipo));
+    this.vehiculos = [{id:'',descripcion:"TIPO DE VEHICULO"}];
+    this.data.marcas.forEach(element => {
+      if(element.catalogo_vehiculo_id == tipo)
+      {
+        this.vehiculos.push(element);
+      }
+      
+    });
   }
 
 
