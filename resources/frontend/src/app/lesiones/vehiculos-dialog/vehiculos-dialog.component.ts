@@ -15,6 +15,8 @@ export interface VehiculoClass {
   estado?: number;
   no_ocupantes?: number;
   color?: number;
+  tipoVehiculo?:[],
+  vehiculo?:any
 
 }
 
@@ -53,15 +55,23 @@ export class VehiculosDialogComponent implements OnInit {
   });
 
   ngOnInit() {
+    this.tipo_vehiculos = this.data.tipoVehiculo;
     if(this.data.index != null)
     {
       this.VehiculoForm.patchValue(this.data);
-      //console.log(this.VehiculoForm.value);
-      
+
     }else{
       this.resultado.index = 0;
     }
+    console.log(this.data);
   }
+
+  public cargarMarcas(tipo:number)
+  {
+    console.log(tipo);
+    console.log(this.data.vehiculo.where(x=>x.catalogo_vehiculo_id=tipo));
+  }
+
 
   cancelar(): void {
     this.resultado.activo = false;

@@ -12,24 +12,26 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
-        /*\App\Models\User::create([
+        \App\Models\User::create([
             'name' => 'Usuario Root',
             'username' => 'root',
             'password' => Hash::make('ssa.l3siones'),
             'email' => 'root@localhost',
             'is_superuser' => 1,
             'avatar' => '/assets/avatars/50-king.svg'
-        ]);*/
+        ]);
 
         //Carga de archivos CSV
         $lista_csv = [
-            /*'permissions',
+            'permissions',
             'roles',
             'permission_role',
-            'role_user',*/
+            'role_user',
             'catalogo_entidades',
             'catalogo_municipios',
             'catalogo_localidades',
+            'catalogo_vehiculos',
+            'catalogo_marcas',
         ];
 
         DB::beginTransaction();

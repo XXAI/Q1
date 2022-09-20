@@ -228,7 +228,7 @@
                             <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="no-results-found" [ngClass]="{'hide':!(dataSource!=null && dataSource.length==0)}"></tr>
                         </table>
                     </div>
-                    <mat-paginator #paginator pageSize="20" [pageIndex]="currentPage" [length]="resultsLength" [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons (page)="pageEvent = loadDonantesData($event)"></mat-paginator>
+                    <mat-paginator #paginator pageSize="20" [pageIndex]="currentPage" [length]="resultsLength" [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons (page)="pageEvent = loadData($event)"></mat-paginator>
                 </div>
             </mat-card>
         </section>

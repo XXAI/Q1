@@ -58,7 +58,7 @@ class CreateCatalogosTable extends Migration
 			$table->timestamps();
 			$table->softDeletes();
         });
-        Schema::create('catalogo_marca', function (Blueprint $table) {
+        Schema::create('catalogo_marcas', function (Blueprint $table) {
             $table->smallIncrements('id')->unsigned();
             $table->smallInteger('catalogo_vehiculo_id')->unsigned();
             $table->string('descripcion', 100);
@@ -66,7 +66,7 @@ class CreateCatalogosTable extends Migration
 			$table->softDeletes();
         });
 
-        Schema::table('catalogo_marca', function($table) {
+        Schema::table('catalogo_marcas', function($table) {
             $table->foreign('catalogo_vehiculo_id')->references('id')->on('catalogo_vehiculos')->onUpdate('cascade');
         });
   
@@ -143,18 +143,12 @@ class CreateCatalogosTable extends Migration
         Schema::dropIfExists('catalogo_municipios');
         Schema::dropIfExists('catalogo_entidades');
         //Schema::dropIfExists('catalogo_clues');
-        Schema::dropIfExists('catalogo_marca');
+        Schema::table('catalogo_marcas', function($table) {
+            $table->dropForeign(['catalogo_vehiculo_id']);
+        });
+        
+        Schema::dropIfExists('catalogo_marcas');
         Schema::dropIfExists('catalogo_vehiculos');
-        /*Schema::dropIfExists('catalogo_tipo_camino');
-        Schema::dropIfExists('catalogo_tipo_accidente');
-        Schema::dropIfExists('catalogo_causas_accidentes');
-        Schema::dropIfExists('catalogo_causas_conductor');
-        Schema::dropIfExists('catalogo_causas_peaton');
-        Schema::dropIfExists('catalogo_causas_peaton');
-        Schema::dropIfExists('catalogo_causas_falla');
-        Schema::dropIfExists('catalogo_causas_condicion_camino');
-        Schema::dropIfExists('catalogo_causas_agentes_naturales');
-        Schema::dropIfExists('catalogo_usuario_vias');*/
 
     }
 }

@@ -236,14 +236,19 @@ export class RegistroLesionComponent implements OnInit {
   }
 
   showVehiculoDialog(objeto, indice = null){
-    let configDialog = {data:{}, width:'50%',maxWidth: null,maxHeight: null,height: null};
+    let configDialog = {data:{scSize:'',tipoVehiculo: this.catalogos['TipoVehiculo'], marcas: this.catalogos['Vehiculo']}, width:'50%',maxWidth: null,maxHeight: null,height: null};
     if(this.mediaSize == 'xs'){
       configDialog = {
         maxWidth: '100vw',
         maxHeight: '100vh',
         height: '100%',
         width: '100%',
-        data:{scSize:this.mediaSize}
+        data:{
+          scSize:this.mediaSize,
+          tipoVehiculo: this.catalogos['TipoVehiculo'], 
+          marcas: this.catalogos['Vehiculo']
+        }
+        
       };
     }
 
@@ -334,7 +339,7 @@ export class RegistroLesionComponent implements OnInit {
   {
     this.isLoading = true;
 
-    let carga_catalogos = {'Estados':0, 'Municipio':0};
+    let carga_catalogos = {'Estados':0, 'Municipio':0, 'TipoVehiculo':0, 'Vehiculo':0};
       /*{nombre:'estados',orden:'nombre'},
       {nombre:'seguros',orden:'descripcion'},
     ];*/
@@ -344,16 +349,8 @@ export class RegistroLesionComponent implements OnInit {
 
         this.catalogos = response.data;
 
-        console.log(this.catalogos);
-        /*this.filteredCatalogs['estados'] = this.principalForm.get('entidad_federativa_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'estados','nombre')));
-        this.filteredCatalogs['seguros'] = this.principalForm.get('seguro_id').valueChanges.pipe(startWith(''),map(value => this._filter(value,'seguros','descripcion')));
-
-      
-        if(obj)
-        {
-          this.principalForm.get('entidad_federativa_id').setValue(obj.entidad_federativa);
-          this.principalForm.get('seguro_id').setValue(obj.seguro);
-        }*/
+        //console.log(this.catalogos);
+    
         this.isLoading = false; 
       } 
     );

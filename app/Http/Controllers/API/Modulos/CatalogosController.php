@@ -15,6 +15,7 @@ use App\Models\Catalogos\Entidades;
 use App\Models\Catalogos\Localidades;
 use App\Models\Catalogos\Municipios;
 use App\Models\Catalogos\Vehiculos;
+use App\Models\Catalogos\TipoVehiculos;
 
 class CatalogosController extends Controller
 {
@@ -34,8 +35,10 @@ class CatalogosController extends Controller
                     $data['Municipio'] = ($parametros[$clave] != 0)? Municipios::find($parametros[$clave]):Municipios::all();
                 }else if($clave == 'TipoVehiculo')
                 {
-                    $data['TipoVehiculo'] = ($parametros[$clave] != 0)? Vehiculos::find($parametros[$clave]):Vehiculos::all();
-                    //$data['Municipio'] = $this->getMunicipio()['data'];
+                    $data['TipoVehiculo'] = ($parametros[$clave] != 0)? TipoVehiculos::find($parametros[$clave]):TipoVehiculos::all();
+                }else if($clave == 'Vehiculo')
+                {
+                    $data['Vehiculo'] = ($parametros[$clave] != 0)? Vehiculos::find($parametros[$clave]):Vehiculos::all();
                 }
             }
             
