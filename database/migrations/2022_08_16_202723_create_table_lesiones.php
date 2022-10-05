@@ -17,7 +17,7 @@ class CreateTableLesiones extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->smallInteger('entidad_federativa_id')->unsigned();
             $table->smallInteger('municipio_id')->unsigned();
-            $table->smallInteger('localidad_id')->unsigned();
+            $table->string('localidad');
             $table->smallInteger('zona_id')->unsigned();
             $table->date('fecha');
             $table->time('hora');
@@ -26,14 +26,19 @@ class CreateTableLesiones extends Migration
             $table->string('numero')->nullable();
 			$table->decimal('latitud', 8, 6);
 			$table->decimal('longitud', 8, 6);
+            
             $table->smallInteger('estatal_id')->unsigned();
-            $table->smallInteger('interseccion_id')->unsigned();
-            $table->string('punto_referencia');
-            $table->smallInteger('via_id')->unsigned();
-            $table->smallInteger('tipo_via_id')->unsigned();
+            $table->smallInteger('interseccion_id')->unsigned()->nullable();
+            $table->string('punto_referencia')->nullable();
+            $table->string('calle1')->nullable();
+            $table->string('calle2')->nullable();
+            $table->smallInteger('tipo_pavimentado')->unsigned()->nullable();
+            $table->smallInteger('tipo_camino')->unsigned()->nullable();
+            $table->smallInteger('via_id')->unsigned()->nullable();
+            $table->smallInteger('tipo_via_id')->unsigned()->nullable();
             $table->smallInteger('no_vehiculos')->default(0)->unsigned();
             
-            $table->string('otro_tipo_via');
+            $table->string('otro_tipo_via')->nullable();
             $table->string('otro_tipo_camino');
             $table->string('otro_causa_conductor');
             $table->string('otro_causa_peaton');
@@ -51,7 +56,7 @@ class CreateTableLesiones extends Migration
         Schema::table('lesiones', function($table) {
             $table->foreign('entidad_federativa_id')->references('id')->on('catalogo_entidades');
             $table->foreign('municipio_id')->references('id')->on('catalogo_municipios');
-            $table->foreign('localidad_id')->references('id')->on('catalogo_localidades');
+            //$table->foreign('localidad_id')->references('id')->on('catalogo_localidades');
         });
     }
 

@@ -11,7 +11,7 @@ const routes: Routes = [
 
   { path: 'listado-lesiones',       component:  ListaLesionesComponent,     canActivate: [AuthGuard] },
   { path: 'lesiones/registro',         component: RegistroLesionComponent,   canActivate: [AuthGuard] },
-  { path: 'lesiones/editar/:id',    component: RegistroLesionComponent,   canActivate: [AuthGuard] },
+  { path: 'lesiones/registro/:id/:lat/:long',    component: RegistroLesionComponent,   canActivate: [AuthGuard] },
   //{ path: 'qr-donante/:codigo',   component: InfoQrDonanteComponent,    canActivate: [GuessGuard] },
 ];
 

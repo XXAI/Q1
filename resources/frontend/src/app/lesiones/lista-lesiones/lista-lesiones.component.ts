@@ -11,18 +11,15 @@ import {Observable} from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout';
 import { ConfirmActionDialogComponent } from '../../utils/confirm-action-dialog/confirm-action-dialog.component';
 import { LesionesService } from '../lesiones.service';
-import { ReportWorker } from '../../web-workers/report-worker';
-import * as FileSaver from 'file-saver';
-
-
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 
 import { AuthService } from '../../auth/auth.service';
 import { formatDate } from '@angular/common';
+
+
+import { ReportWorker } from '../../web-workers/report-worker';
+import * as FileSaver from 'file-saver';
 
 
 
@@ -67,15 +64,7 @@ export class ListaLesionesComponent implements OnInit {
   pageSize: number = 20;
   selectedItemIndex: number = -1;
 
-  statusIcon:any = {
-    '1-0':'help', //activo
-    '1-1':'verified_user', //activo verificado 
-    '2':'remove_circle', //baja
-    '3':'warning', // No identificado
-    '4':'swap_horizontal_circle' //en transferencia
-  };
-
-  displayedColumns: string[] = ['#','folio', 'fecha', 'municipio', 'localidad', 'opciones'];
+  displayedColumns: string[] = ['#','fecha' ,'municipio', 'direccion',  'opciones'];
   dataSource: any = [];
   dataSourceFilters: any = [];
 
@@ -87,18 +76,6 @@ export class ListaLesionesComponent implements OnInit {
   filterCatalogs:any = {};
   filteredCatalogs:any = {};
   catalogos: any = {};
-
-  filterForm = this.fb.group({
-
-    'seguro'                  : [undefined],
-    'seguro_id'               : [undefined],
-    'entidad_federativa'      : [undefined],
-    'entidad_federativa_id'   : [undefined],
-    'edad'                    : [undefined],
-    'fecha_inicio'            : [undefined],
-    'fecha_fin'               : [undefined],
-
-  });
 
   fechaActual:any = '';
   maxDate:Date;
@@ -113,12 +90,12 @@ export class ListaLesionesComponent implements OnInit {
     public dialog: MatDialog,
     public mediaObserver: MediaObserver) { }
 
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
-  @ViewChild(MatTable, {static:false}) usersTable: MatTable<any>;
-  @ViewChild(MatExpansionPanel, {static:false}) advancedFilter: MatExpansionPanel;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable) usersTable: MatTable<any>;
+    @ViewChild(MatExpansionPanel) advancedFilter: MatExpansionPanel;
 
   ngOnInit() {
-
+    this.loadData();
   }
 
   getDisplayFn(label: string){
@@ -133,6 +110,7 @@ export class ListaLesionesComponent implements OnInit {
     this.selectedItemIndex = -1;
     this.paginator.pageIndex = 0;
     this.paginator.pageSize = this.pageSize;
+    this.loadData();  
   }
 
   cleanFilter(filter){
@@ -195,8 +173,93 @@ export class ListaLesionesComponent implements OnInit {
   }
 
   public loadData(event?:PageEvent){
+    this.isLoading = true;
+    let params:any;
+    if(!event){
+      params = { page: 1, per_page: this.pageSize }
+    }else{
+      params = {
+        page: event.pageIndex+1,
+        per_page: event.pageSize
+      };
+    }
 
+    if(event && !event.hasOwnProperty('selectedIndex')){
+      this.selectedItemIndex = -1;
+    }
+    
+    params.query = this.searchQuery;
+
+    //let filterFormValues = this.filterForm.value;
+    let countFilter = 0;
+
+    /*for(let i in filterFormValues){
+      if(filterFormValues[i]){
+        if(i == 'clues'){
+          params[i] = filterFormValues[i].clues;
+        }else if(i == 'cr'){
+          params[i] = filterFormValues[i].cr;
+        }else if(i == 'comisionado'){
+          params[i] = filterFormValues[i];
+        }else if(i == 'e4'){
+          params[i] = filterFormValues[i];
+        }else if(i == 'fiscales'){
+          params[i] = filterFormValues[i];
+        }else{ //profesion y rama (grupos)
+          params[i] = filterFormValues[i].id;
+        }
+        countFilter++;
+      }
+    }*/
+
+    if(countFilter > 0){
+      params.active_filter = true;
+    }
+
+    let dummyPaginator;
+    if(event){
+      this.sharedService.setDataToCurrentApp('paginator',event);
+    }else{
+      dummyPaginator = {
+        length: 0,
+        pageIndex: (this.paginator)?this.paginator.pageIndex:this.currentPage,
+        pageSize: (this.paginator)?this.paginator.pageSize:this.pageSize,
+        previousPageIndex: (this.paginator)?this.paginator.previousPage:((this.currentPage > 0)?this.currentPage-1:0)
+      };
+    }
+
+    this.sharedService.setDataToCurrentApp('searchQuery',this.searchQuery);
+    //this.sharedService.setDataToCurrentApp('filter',filterFormValues);
+
+
+    this.lesionesService.getLesionesList(params).subscribe(
+      response => {
+        console.log(response);
+        this.dataSource = [];
+        this.resultsLength = 0;
+        if(response.data.total > 0){
+          this.dataSource = response.data.data;
+          this.resultsLength = response.data.total;
+        }
+        this.isLoading = false; 
+      },
+      errorResponse =>{
+        let objError = errorResponse.error.error.data;
+        let claves = Object.keys(objError); 
+        this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+        this.isLoading = false;
+      } 
+    );
     return event;
+  }
+
+  verIncidente(indice)
+  {
+    
+  }
+  eliminarIncidente(indice)
+  {
+
   }
 
 }

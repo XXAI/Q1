@@ -1,81 +1,200 @@
-<section fxFlex="100" fxFlex.xs="100" [formGroup]="VictimaForm">
-        <div>VEHICULO INCIDENTE</div>
+<section fxFlex="100" fxFlex.xs="100">
+    <div>VEHICULO INCIDENTE</div>
 
-            <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-                <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
-                    <mat-label>Tipo</mat-label>
-                    <mat-select formControlName="tipo" #tipoIncidente required>
-                        <mat-option *ngFor="let item of tipo_victima" [value]="item.id">{{ item.descripcion}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoIncidente.value == 2">
-                    <mat-label>Tipo</mat-label>
-                    <mat-select formControlName="validacion" required>
-                        <mat-option *ngFor="let item of validacion" [value]="item.id">{{ item.descripcion}}</mat-option>
-                    </mat-select>
-                
-                </mat-form-field>
-                <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoIncidente.value == 2">
-                    <mat-label>Número</mat-label>
-                    <input matInput formControlName="no_acta_certificado" placeholder="No" autocomplete="disabled" required>
-                    <mat-error *ngIf="VictimaForm.get('no_acta_certificado').invalid && (VictimaForm.get('no_acta_certificado').dirty || VictimaForm.get('no_acta_certificado').touched)">
-                        <span *ngIf="VictimaForm.get('no_acta_certificado').errors.required">El Número es obligatorio</span>
-                    </mat-error>
-                </mat-form-field>
+    <mat-tab-group>
+        <div [formGroup]="VictimaForm">
+            <mat-tab label="DATOS GENERALES">
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>Tipo</mat-label>
+                        <mat-select formControlName="tipo_id" #tipoIncidente required>
+                            <mat-option *ngFor="let item of tipo_victima" [value]="item.id">{{ item.descripcion}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoIncidente.value == 2">
+                        <mat-label>Certificado ó Acta</mat-label>
+                        <mat-select formControlName="acta_certificacion_id" required>
+                            <mat-option *ngFor="let item of validacion" [value]="item.id">{{ item.descripcion}}</mat-option>
+                        </mat-select>
 
-            </div>
-            <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-                <mat-form-field fxFlex="30" fxFlex.xs="100" appearance="fill">
-                    <mat-label>Nombre</mat-label>
-                    <input matInput formControlName="nombre" placeholder="Nombre" autocomplete="disabled">
-                </mat-form-field>
+                    </mat-form-field>
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoIncidente.value == 2">
+                        <mat-label>Número</mat-label>
+                        <input matInput formControlName="no_acta_certificacion" placeholder="No" autocomplete="disabled">
+                        <mat-error *ngIf="VictimaForm.get('no_acta_certificacion').invalid && (VictimaForm.get('no_acta_certificacion').dirty || VictimaForm.get('no_acta_certificacion').touched)">
+                            <span *ngIf="VictimaForm.get('no_acta_certificacion').errors.required">El Campo es obligatorio</span>
+                        </mat-error>
+                    </mat-form-field>
 
-                <mat-form-field fxFlex="35" fxFlex.xs="100" appearance="fill">
-                    <mat-label>Apellido Paterno</mat-label>
-                    <input matInput formControlName="apellido_paterno" placeholder="Apellido Paterno" autocomplete="disabled">
-                    
-                </mat-form-field>
+                </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex="30" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Nombre</mat-label>
+                        <input matInput formControlName="nombre" placeholder="Nombre" autocomplete="disabled">
+                    </mat-form-field>
 
-                <mat-form-field fxFlex="35" fxFlex.xs="100" appearance="fill">
-                    <mat-label>Apellido Materno</mat-label>
-                    <input matInput formControlName="apellido_materno" placeholder="Apellido Materno" autocomplete="disabled">
-                    
-                </mat-form-field>
+                    <mat-form-field fxFlex="35" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Apellido Paterno</mat-label>
+                        <input matInput formControlName="apellido_paterno" placeholder="Apellido Paterno" autocomplete="disabled">
 
-            </div>
-            <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-                <mat-form-field fxFlex="20" fxFlex.xs="100" appearance="fill">
-                    <mat-label>Edad</mat-label>
-                    <input matInput type="number" formControlName="edad" placeholder="Edad">
-                   
-                </mat-form-field>
-                <mat-form-field fxFlex="50" fxFlex.xs="100" appearance="fill">
-                    <mat-label>Sexo</mat-label>
-                    <mat-select formControlName="sexo"  required>
-                        <mat-option *ngFor="let item of sexo" [value]="item.id">{{ item.descripcion}}</mat-option>
-                    </mat-select>
-                
-                </mat-form-field>
-                <mat-form-field fxFlex="30" fxFlex.xs="100" appearance="fill">
-                    <mat-label>Tipo de usuario</mat-label>
-                    <mat-select formControlName="tipo_usuario" #tipoIncidente required>
-                        <mat-option *ngFor="let item of tipo_usuario" [value]="item.id">{{ item.descripcion}}</mat-option>
-                    </mat-select>
-                    
-                </mat-form-field>
+                    </mat-form-field>
 
-            </div>
-            <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-                <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
-                    <mat-label>Unidad (Hospitalización)</mat-label>
-                    <input matInput formControlName="unidad" placeholder="Unidad" autocomplete="disabled" required>
-                    <mat-error *ngIf="VictimaForm.get('unidad').invalid && (VictimaForm.get('unidad').dirty || VictimaForm.get('unidad').touched)">
-                        <span *ngIf="VictimaForm.get('unidad').errors.required">El Nombre es obligatorio</span>
-                    </mat-error>
-                </mat-form-field>
+                    <mat-form-field fxFlex="35" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Apellido Materno</mat-label>
+                        <input matInput formControlName="apellido_materno" placeholder="Apellido Materno" autocomplete="disabled">
 
-            </div>
-            <button mat-raised-button (click)="cancelar()">Cancelar</button>
-            <button mat-raised-button color="primary" (click)="guardar()">GUARDAR</button>
-        
+                    </mat-form-field>
+
+                </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>Edad</mat-label>
+                        <input matInput type="number" formControlName="edad" placeholder="Edad">
+
+                    </mat-form-field>
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>Sexo</mat-label>
+                        <mat-select formControlName="sexo_id" required>
+                            <mat-option *ngFor="let item of sexo" [value]="item.id">{{ item.descripcion}}</mat-option>
+                        </mat-select>
+
+                    </mat-form-field>
+
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>Tipo de usuario</mat-label>
+                        <mat-select formControlName="tipo_usuario_id" #tipoUsuario required>
+                            <mat-option *ngFor="let item of tipo_usuario" [value]="item.id">{{ item.descripcion}}</mat-option>
+                        </mat-select>
+
+                    </mat-form-field>
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoUsuario.value ==5">
+                        <mat-label>¿Llevaba puesto el casco?</mat-label>
+                        <mat-select formControlName="casco">
+                            <mat-option [value]="1">SI</mat-option>
+                            <mat-option [value]="1">NO</mat-option>
+                        </mat-select>
+
+                    </mat-form-field>
+
+                </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>Unidad (Hospitalización)</mat-label>
+                        <input matInput formControlName="hospitalizado" placeholder="Unidad" autocomplete="disabled" required>
+                        <mat-error *ngIf="VictimaForm.get('hospitalizado').invalid && (VictimaForm.get('hospitalizado').dirty || VictimaForm.get('hospitalizado').touched)">
+                            <span *ngIf="VictimaForm.get('hospitalizado').errors.required">El Nombre es obligatorio</span>
+                        </mat-error>
+                    </mat-form-field>
+
+                </div>
+            </mat-tab>
+            <mat-tab label="UBICACIÓN" *ngIf="tipoIncidente.value == 1">
+                <section fxflex="none" fxLayout="column">
+                    <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                        <div fxFlex="100" fxFlex.xs="100" fxFlex.sm="100" fxFlex.xl="50">
+                            <mat-form-field fxFlex="100" fxFlex.xs="100" appearance="fill">
+                                <mat-label>Ubicación</mat-label>
+                                <input matInput formControlName="ubicacion" placeholder="Ubicacion" autocomplete="disabled">
+                            </mat-form-field>
+
+                        </div>
+                        <div fxFlex="100" fxFlex.xs="100" fxFlex.sm="100" fxFlex.xl="50">
+                            <img src="assets/registro/ubicacion.png" width="100%">
+                        </div>
+                    </div>
+
+                </section>
+
+            </mat-tab>
+        </div>
+        <mat-tab label="LESIONES" *ngIf="tipoIncidente.value == 2" style="overflow-x:hidden">
+            <section fxflex="none" fxLayout="column" [formGroup]="DefuncionForm" style="overflow-x:hidden">
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="5px" style="margin-top:10px;overflow-x:hidden">
+                    <div fxFlex="50" fxFlex.xs="50">
+                        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                            <div fxFlex="100" fxFlex.xs="100">
+                                <mat-form-field fxFlex appearance="fill">
+                                    <mat-label>TÉRMINOS DIRECCIONALES:</mat-label>
+                                    <mat-select formControlName="orientacion" #orienta required (selectionChange)="direccion(orienta.value)">
+                                        <mat-option [value]="1">FRONTAL</mat-option>
+                                        <mat-option [value]="2">TRASERA</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                            <div fxFlex="100" fxFlex.xs="100">
+                                <mat-form-field fxFlex appearance="fill">
+                                    <mat-label>PLANO ANATÓMICO:</mat-label>
+                                    <mat-select formControlName="plano" required #planos (selectionChange)="plano(planos.value)">
+                                        <mat-option [value]="1">SUPERIOR</mat-option>
+                                        <mat-option [value]="2">CENTRAL</mat-option>
+                                        <mat-option [value]="3">INFERIOR</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                            <div fxFlex="100" fxFlex.xs="100">
+                                <mat-form-field fxFlex appearance="fill">
+                                    <mat-label>PARTE:</mat-label>
+                                    <mat-select formControlName="parte" required>
+                                        <mat-option *ngFor="let item of partes" [value]="item.id">{{ item.descripcion }}</mat-option>
+
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                            <div fxFlex="100" fxFlex.xs="100">
+                                <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                                    <ul>
+                                        <li>
+                                            <mat-checkbox formControlName="op_1" #op_1>QUEMADURA</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="op_2" #op_2>FRACTURA / LUXACIÓN</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="op_3" #op_3>HERIDA / EXCORIACIÓN</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="op_4" #op_4>CONTUSIÓN / TRAUMATISMO</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="op_5" #op_5>AMPUTACIÓN</mat-checkbox>
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                            <button mat-mini-fab color="accent" (click)="agregarLesion()">
+                                <mat-icon>add</mat-icon>
+                              </button>
+                        </div>
+                    </div>
+                    <div fxFlex="50" fxFlex.xs="50">
+                        <img src="assets/registro/frente_superior.png" width="100%">
+
+                        <mat-chip-list #chipList aria-label="Fruit selection">
+                            <mat-chip *ngFor="let item of seleccionados; let i = index" (click)="editarLesion(i)" style="cursor: pointer;">
+                                {{ item.descripcion }}
+                                <button matChipRemove (click)="elimnaSeleccion(item.parte)">
+                                <mat-icon>cancel</mat-icon>
+                              </button>
+                            </mat-chip>
+                        </mat-chip-list>
+                    </div>
+                </div>
+            </section>
+        </mat-tab>
+    </mat-tab-group>
+    <hr>
+    <div fxLayout="row" fxLayoutAlign="end center">
+        <button mat-raised-button (click)="cancelar()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="guardar()">GUARDAR</button>
+    </div>
 </section>

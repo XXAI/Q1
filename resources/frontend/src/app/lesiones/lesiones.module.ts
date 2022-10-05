@@ -12,22 +12,26 @@ import { RegistroLesionComponent } from './registro-lesiones/registro-lesion.com
 import { ListaLesionesComponent } from './lista-lesiones/lista-lesiones.component';
 import { VehiculosDialogComponent } from './vehiculos-dialog/vehiculos-dialog.component';
 import { VictimasDialogComponent } from './victimas-dialog/victimas-dialog.component';
-
-
+import { ViewImagenComponent } from './view-imagen/view-imagen.component';
+import { AgmCoreModule  } from '@agm/core';
 
 @NgModule({
     declarations: [
         RegistroLesionComponent,
         ListaLesionesComponent,
         VehiculosDialogComponent,
-        VictimasDialogComponent
+        VictimasDialogComponent,
+        ViewImagenComponent
     ],
     imports: [
         CommonModule,
         SharedModule,
         MatNativeDateModule,
         MatDatepickerModule,
-        LesionesRoutingModule
+        LesionesRoutingModule,
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyDs6qDgnfMwaHCrOhA0tCvaUPgANTD0Urw'
+        })
     ],
     providers: [
         { provide: MAT_DATE_LOCALE, useValue: 'es-MX' },

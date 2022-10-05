@@ -188,9 +188,7 @@ table {
     flex: 1 1 auto;
 }
 
-th.mat-header-cell,
-td.mat-cell,
-td.mat-footer-cell {
+th.mat-header-cell {
     color: white;
 }
 

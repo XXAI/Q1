@@ -10,9 +10,10 @@ import { map } from 'rxjs/operators';
 export class LesionesService {
 
   url                                     = `${environment.base_url}/lesiones`;       
-  url_catalogos                           = `${environment.base_url}/catalogos`;       
+  url_catalogos                           = `${environment.base_url}/catalogos`;         
+  url_imagenes                            = `${environment.base_url}/imagenes`;         
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getCatalogos(payload):Observable<any> {
     return this.http.get<any>(this.url_catalogos,{params: payload}).pipe(
@@ -63,10 +64,28 @@ export class LesionesService {
     ));
   }
 
-  saveFormulario(payload)
+  saveFormulario(payload, id)
   {
-    return this.http.post<any>(this.url,payload).pipe(
+    return this.http.put<any>(this.url+"/"+id,payload).pipe(
       map( (response) => {
+        return response;
+      }
+    ));
+  }
+
+  cargarImagen(id)
+  {
+    return this.http.get<any>(this.url_imagenes+'/'+id,{}).pipe(
+      map( (response: any) => {
+        return response;
+      }
+    ));
+  }
+
+  eliminaImagen(id, nombre)
+  {
+    return this.http.delete<any>(this.url_imagenes+'/'+id,{params: {'nombre': nombre}}).pipe(
+      map( (response: any) => {
         return response;
       }
     ));
