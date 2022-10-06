@@ -116,8 +116,8 @@
                                 <mat-form-field fxFlex appearance="fill">
                                     <mat-label>TÉRMINOS DIRECCIONALES:</mat-label>
                                     <mat-select formControlName="orientacion" #orienta required (selectionChange)="direccion(orienta.value)">
-                                        <mat-option [value]="1">FRONTAL</mat-option>
-                                        <mat-option [value]="2">TRASERA</mat-option>
+                                        <mat-option [value]="1">ANTERIOR</mat-option>
+                                        <mat-option [value]="2">POSTERIOR</mat-option>
                                     </mat-select>
                                 </mat-form-field>
                             </div>
@@ -177,7 +177,21 @@
                         </div>
                     </div>
                     <div fxFlex="50" fxFlex.xs="50">
-                        <img src="assets/registro/frente_superior.png" width="100%">
+                        <div *ngIf="orienta.value==1 && planos.value ==1">
+                            <img src="assets/registro/frente_superior.jpg" width="100%">
+                        </div>
+                        <div *ngIf="orienta.value==1 && planos.value ==2">
+                            <img src="assets/registro/frente_centro.jpg" width="100%">
+                        </div>
+                        <div *ngIf="orienta.value==1 && planos.value ==3">
+                            <img src="assets/registro/frente_inferior.jpg" width="100%">
+                        </div>
+                        <div *ngIf="orienta.value==2 && planos.value ==1">
+                            <img src="assets/registro/atras_superior.jpg" width="100%">
+                        </div>
+                        <div *ngIf="orienta.value==2 && planos.value ==2">
+                            <img src="assets/registro/atras_central.jpg" width="100%">
+                        </div>
 
                         <mat-chip-list #chipList aria-label="Fruit selection">
                             <mat-chip *ngFor="let item of seleccionados; let i = index" (click)="editarLesion(i)" style="cursor: pointer;">

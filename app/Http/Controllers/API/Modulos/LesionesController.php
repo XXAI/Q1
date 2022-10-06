@@ -173,8 +173,8 @@ class LesionesController extends Controller
                 $obj->entidad_federativa_id = $parametros['entidad'];
                 $obj->municipio_id = $parametros['municipio'];
                 $obj->localidad = $parametros['localidad'];
-                $obj->colonia = $parametros['colonia'];
-                $obj->calle = $parametros['calle'];
+                $obj->colonia = strtoupper($parametros['colonia']);
+                $obj->calle = strtoupper($parametros['calle']);
                 $obj->numero = $parametros['no'];
                 $obj->latitud = $parametros['latitud'];
                 $obj->longitud = $parametros['longitud'];
@@ -215,15 +215,15 @@ class LesionesController extends Controller
                 $obj->zona_id = $parametros['zona'];
                 $obj->estatal_id = $parametros['carretera'];
                 $obj->interseccion_id = $parametros['interseccion'];
-                $obj->calle1 = $parametros['calle1'];
-                $obj->calle2 = $parametros['calle2'];
-                $obj->punto_referencia = $parametros['referencia'];
+                $obj->calle1 = strtoupper($parametros['calle1']);
+                $obj->calle2 = strtoupper($parametros['calle2']);
+                $obj->punto_referencia = strtoupper($parametros['referencia']);
                 $obj->tipo_camino = $parametros['tipo_camino'];
                 $obj->otro_tipo_camino = $parametros['otro_camino'];
                 $obj->via_id = $parametros['via'];
                 $obj->tipo_pavimentado = $parametros['tipo_pavimentado'];
                 $obj->tipo_via_id = $parametros['tipo_via'];
-                $obj->otro_tipo_via = $parametros['otro_tipo_via'];
+                $obj->otro_tipo_via = strtoupper($parametros['otro_tipo_via']);
 
                 $obj->save();
                 DB::commit();
