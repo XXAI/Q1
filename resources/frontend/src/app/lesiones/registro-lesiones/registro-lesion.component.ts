@@ -12,7 +12,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { VehiculosDialogComponent } from '../vehiculos-dialog/vehiculos-dialog.component';
 import { VictimasDialogComponent } from '../victimas-dialog/victimas-dialog.component';
 import { ViewImagenComponent } from '../view-imagen/view-imagen.component';
-
+import { Observable } from 'rxjs';
+import { debounceTime, finalize, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-registro-lesion',
@@ -38,7 +39,13 @@ export class RegistroLesionComponent implements OnInit {
   cantidadCamino:number = 0;
   cantidadAgentes:number = 0;
   ValidadorCausas:boolean = true;
+  localidadIsLoading: boolean = false;
   arregloFotos:any = [];
+
+  filteredLocalidad: Observable<any[]>;
+
+  cantidadLesionados:number = 0;
+  cantidadFallecidos:number = 0;
 
   editable:boolean =true;
 
@@ -57,6 +64,7 @@ export class RegistroLesionComponent implements OnInit {
   caminoForm:FormGroup;
   agentesForm:FormGroup;
   formFotos:FormGroup;
+  formArchivos:FormGroup;
 
   archivo: File = null;
   archivoSubido:boolean;
@@ -94,6 +102,8 @@ export class RegistroLesionComponent implements OnInit {
 
   async ngOnInit() {
     
+    
+
     this.principalForm = this.fb.group ({
 
       fecha:[''],
@@ -104,6 +114,7 @@ export class RegistroLesionComponent implements OnInit {
       colonia:['',Validators.required],
       calle:['',Validators.required],
       no:['', Validators.required],
+      cp:['', Validators.required],
       latitud:['',Validators.required],
       longitud:['',Validators.required],
     });
@@ -226,6 +237,9 @@ export class RegistroLesionComponent implements OnInit {
     this.formFotos = this.fb.group ({
       file:[''],
     });
+    this.formArchivos = this.fb.group ({
+      file:[''],
+    });
 
     await this.IniciarCatalogos();
     //this.cargarImages();
@@ -246,6 +260,7 @@ export class RegistroLesionComponent implements OnInit {
       }
       
     });
+
     
   }
 
@@ -461,9 +476,10 @@ export class RegistroLesionComponent implements OnInit {
         });
         
         this.datosVictima = vitima;
-        console.log(this.datosVictima);
+        //console.log(this.datosVictima);
         this.dataSourceVictima.connect().next(this.datosVictima);
         this.cargarImages();
+        this.contarVictimas();
         //this.isLoading = false; 
       },
       errorResponse =>{
@@ -473,6 +489,19 @@ export class RegistroLesionComponent implements OnInit {
         this.isLoading = false;
       } 
     );
+  }
+
+  contarVictimas()
+  {
+
+    this.datosVictima.forEach(element => {
+      if(element.tipo_id == 1)
+      {
+        this.cantidadLesionados++;
+      }else if(element.tipo_id == 2){
+        this.cantidadFallecidos++;
+      }  
+    });
   }
 
   showVehiculoDialog(objeto, indice = null){
@@ -550,30 +579,49 @@ export class RegistroLesionComponent implements OnInit {
 
     if(objeto != null)
     {
+      objeto.lesion_id = this.id;
       objeto.index = indice;
+      objeto.municipios = this.catalogos['Municipio'];
       configDialog.data = objeto;
-    }
-    const dialogRef = this.dialog.open(VictimasDialogComponent, configDialog);
 
-    dialogRef.afterClosed().subscribe(valid => {
-      if(valid)
-      {
-        
-        if(valid.activo){ 
-          if(valid.index == null)
-          {
-            this.datosVictima.push(valid);
-          }else{
-            this.datosVictima[valid.index] = valid;
-          }
+    }else{
+      let objeto = {vehiculos:'', municipios:'', lesion_id:0};
+      objeto.lesion_id = this.id;
+      objeto.municipios = this.catalogos['Municipio'];
+      configDialog.data = objeto;
+
+    }
+    
+    
+    if(this.datosVehiculo.length > 0)
+    {
+
+      const dialogRef = this.dialog.open(VictimasDialogComponent, configDialog);
+
+      dialogRef.afterClosed().subscribe(valid => {
+        if(valid)
+        {
           
-          this.dataSourceVictima.connect().next(this.datosVictima);
-          //this.changeDetectorRefs.detectChanges();
+          if(valid.activo){ 
+            if(valid.index == null)
+            {
+              this.datosVictima.push(valid);
+            }else{
+              this.datosVictima[valid.index] = valid;
+            }
+            
+            this.dataSourceVictima.connect().next(this.datosVictima);
+            //this.changeDetectorRefs.detectChanges();
+          }
         }
-      }
-      
-      console.log(valid);
-    });
+        
+        //console.log(valid);
+      });
+      this.contarVictimas();
+    }else{
+      this.sharedService.showSnackBar("Debe de registrar al menos un vehiculo en el incidente", null, 3000);
+    }
+    
   }
 
   eliminarVictima(id)
@@ -581,6 +629,7 @@ export class RegistroLesionComponent implements OnInit {
     let indice = this.datosVictima.findIndex(x=> x.id == id);
     this.datosVictima.splice(indice,1);
     this.dataSourceVictima.connect().next(this.datosVictima);
+    this.contarVictimas();
   }
 
   editarVictima(obj, indice)
@@ -600,6 +649,33 @@ export class RegistroLesionComponent implements OnInit {
       } 
     );
 
+    this.principalForm.get('localidad').valueChanges
+      .pipe(
+        debounceTime(300),
+        tap( () => {
+            this.localidadIsLoading = true; 
+        } ),
+        switchMap(value => {
+            if(!(typeof value === 'object')){
+              this.localidadIsLoading = false;
+              let municipio = this.principalForm.get('municipio').value;
+              console.log("entra");
+              console.log(value);
+              if( municipio!="")
+              {
+                
+                return this.lesionesService.buscarLocalidad({municipio_id:municipio, query:value }).pipe(finalize(() => this.localidadIsLoading = false ));
+              }else{
+                return [];
+              }
+               
+            }else{
+              this.localidadIsLoading = false; 
+              return [];
+            }
+          }
+        ),
+      ).subscribe(items => this.filteredLocalidad = items);
   }
 
   private _filter(value: any, catalog: string, valueField: string): string[] {
@@ -723,7 +799,7 @@ export class RegistroLesionComponent implements OnInit {
       let obj = { 'etapa' : etapa, victimas: []};
       obj.victimas = this.datosVictima;
       formulario = obj; 
-      console.log(this.datosVictima);
+      //console.log(this.datosVictima);
     }
     formulario.etapa = etapa;
 
@@ -778,6 +854,15 @@ export class RegistroLesionComponent implements OnInit {
       });
     }
 
+    displayLocalidadFn(item: any) {
+      if (item) { return item.descripcion; }
+    }
+
+    subirDocumento()
+    {
+      
+    }
+
     cargarImages()
     {
       this.lesionesService.cargarImagen(this.id).subscribe(
@@ -824,5 +909,10 @@ export class RegistroLesionComponent implements OnInit {
       });
     }
 
+    cargarBuscadores():void
+    {
+    console.log(this.principalForm);
+      /**/
+    }
     
 }

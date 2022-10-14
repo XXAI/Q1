@@ -1,5 +1,5 @@
 <section fxFlex="100" fxFlex.xs="100">
-    <div>VEHICULO INCIDENTE</div>
+    <div>VICTIMA INCIDENTE</div>
 
     <mat-tab-group>
         <div [formGroup]="VictimaForm">
@@ -28,6 +28,15 @@
 
                 </div>
                 <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>Anonimo</mat-label>
+                        <mat-select formControlName="anonimo" #anonimo>
+                            <mat-option [value]="1">SI</mat-option>
+                            <mat-option [value]="2">NO</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px" *ngIf="anonimo.value == 2">
                     <mat-form-field fxFlex="30" fxFlex.xs="100" appearance="fill">
                         <mat-label>Nombre</mat-label>
                         <input matInput formControlName="nombre" placeholder="Nombre" autocomplete="disabled">
@@ -47,12 +56,19 @@
 
                 </div>
                 <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                    <mat-form-field fxFlex="10" fxFlex.xs="100" appearance="fill">
                         <mat-label>Edad</mat-label>
-                        <input matInput type="number" formControlName="edad" placeholder="Edad">
+                        <input matInput min="0" max="100" type="number" formControlName="edad" #edadVictima placeholder="Edad">
 
                     </mat-form-field>
-                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="edadVictima.value <=11 && edadVictima.value !=''">
+                        <mat-label>Silla para infantes</mat-label>
+                        <mat-select formControlName="silla_id" required>
+                            <mat-option *ngFor="let item of silla" [value]="item.id">{{ item.descripcion}}</mat-option>
+                        </mat-select>
+
+                    </mat-form-field>
+                    <mat-form-field fxFlex="20" fxFlex.xs="100" appearance="fill">
                         <mat-label>Sexo</mat-label>
                         <mat-select formControlName="sexo_id" required>
                             <mat-option *ngFor="let item of sexo" [value]="item.id">{{ item.descripcion}}</mat-option>
@@ -79,23 +95,71 @@
                 </div>
                 <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
                     <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
-                        <mat-label>Unidad (Hospitalización)</mat-label>
-                        <input matInput formControlName="hospitalizado" placeholder="Unidad" autocomplete="disabled" required>
-                        <mat-error *ngIf="VictimaForm.get('hospitalizado').invalid && (VictimaForm.get('hospitalizado').dirty || VictimaForm.get('hospitalizado').touched)">
-                            <span *ngIf="VictimaForm.get('hospitalizado').errors.required">El Nombre es obligatorio</span>
-                        </mat-error>
+                        <mat-label>Pre Hospitalización</mat-label>
+                        <mat-select formControlName="pre_hospitalizacion" #preHospitalizacion>
+                            <mat-option [value]="1">SI</mat-option>
+                            <mat-option [value]="2">NO</mat-option>
+
+                        </mat-select>
+
                     </mat-form-field>
+                </div>
+
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px" *ngIf="preHospitalizacion.value == 1">
+                    <mat-form-field fxFlex="30" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Municipio (Hospital)</mat-label>
+                        <mat-select formControlName="municipio_hospitalizacion">
+                            <mat-option *ngFor="let item of listaMunicipios" [value]="item.id">{{ item.descripcion }}</mat-option>
+
+                        </mat-select>
+
+                    </mat-form-field>
+                    <mat-form-field fxFlex="70" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Unidad (Hospitalización)</mat-label>
+                        <input matInput placeholder="Unidad" [matAutocomplete]="localidadAutocomplete" formControlName='hospitalizado'>
+                        <mat-autocomplete #localidadAutocomplete="matAutocomplete" [displayWith]="displayMunicipioFn" [panelWidth]="'auto'">
+                            <mat-option *ngIf="municipioIsLoading" class="is-loading">
+                                <mat-spinner diameter="25"></mat-spinner>
+                            </mat-option>
+                            <ng-container *ngIf="!municipioIsLoading">
+                                <mat-option *ngFor="let item of filteredMunicipio" [value]="item">
+                                    [{{item.clues}}] ({{item.institucion}}) {{ item.descripcion }}
+                                </mat-option>
+                            </ng-container>
+                        </mat-autocomplete>
+
+                        <mat-error *ngIf="VictimaForm.get('hospitalizado').invalid && (VictimaForm.get('hospitalizado').dirty || VictimaForm.get('hospitalizado').touched)">
+                            <span *ngIf="VictimaForm.get('hospitalizado').errors.required">Campo obligatorio</span>
+                        </mat-error>
+
+                    </mat-form-field>
+
+
 
                 </div>
             </mat-tab>
-            <mat-tab label="UBICACIÓN" *ngIf="tipoIncidente.value == 1">
+            <mat-tab label="UBICACIÓN">
                 <section fxflex="none" fxLayout="column">
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                         <div fxFlex="100" fxFlex.xs="100" fxFlex.sm="100" fxFlex.xl="50">
-                            <mat-form-field fxFlex="100" fxFlex.xs="100" appearance="fill">
-                                <mat-label>Ubicación</mat-label>
-                                <input matInput formControlName="ubicacion" placeholder="Ubicacion" autocomplete="disabled">
-                            </mat-form-field>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                                <mat-form-field fxFlex appearance="fill">
+                                    <mat-label>VEHICULO:</mat-label>
+                                    <mat-select formControlName="vehiculo_id" required>
+                                        <mat-option *ngFor="let item of listaVehiculos" [value]="item.id">
+                                            {{ item.tipo.descripcion }} {{ item.marca.descripcion }} {{ item.no_placa }}
+                                        </mat-option>
+
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                                <mat-form-field fxFlex="100" fxFlex.xs="100" appearance="fill">
+                                    <mat-label>Ubicación</mat-label>
+                                    <input type="number" min="1" max="11" matInput formControlName="ubicacion" placeholder="Ubicacion" autocomplete="disabled">
+                                </mat-form-field>
+
+                            </div>
 
                         </div>
                         <div fxFlex="100" fxFlex.xs="100" fxFlex.sm="100" fxFlex.xl="50">
@@ -107,7 +171,7 @@
 
             </mat-tab>
         </div>
-        <mat-tab label="LESIONES" *ngIf="tipoIncidente.value == 2" style="overflow-x:hidden">
+        <mat-tab label="LESIONES" *ngIf="tipoIncidente.value == 1" style="overflow-x:hidden">
             <section fxflex="none" fxLayout="column" [formGroup]="DefuncionForm" style="overflow-x:hidden">
                 <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="5px" style="margin-top:10px;overflow-x:hidden">
                     <div fxFlex="50" fxFlex.xs="50">

@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { SharedService } from 'src/app/shared/shared.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { debounceTime, finalize, switchMap, tap } from 'rxjs/operators';
+import { LesionesService } from '../lesiones.service';
 
 export interface VictimaClass {
   index?: number;
@@ -19,15 +22,9 @@ export interface VictimaClass {
   casco?: any;
   ubicacion?: any;
   lesiones?:any
-  /*orientacion?:any, 
-  plano?:any, 
-  parte?:any, 
-  op_1?:any,
-  op_2?:any,
-  op_3?:any,
-  op_4?:any,
-  op_5?:any,
-  op_6?:any*/
+  vehiculos?:any
+  municipios?:any
+  lesion_id?:any
 }
 
 @Component({
@@ -42,6 +39,11 @@ export class VictimasDialogComponent implements OnInit {
   sexo:any = [{id:1, descripcion:"MASCULINO"},{id:2, descripcion:"FEMENINO"}];
   tipo_usuario:any = [{id:1, descripcion:"CONDUCTOR"},{id:2, descripcion:"PASAJERO"},{id:3, descripcion:"PEATÓN"},{id:4, descripcion:"CICLISTA"},{id:5, descripcion:"MOTOCICLISTA"}];
   
+  listaVehiculos:any = [];
+  listaMunicipios:any = [];
+  silla:any = [{id:1, descripcion:"SI"}, {id:2, descripcion:"NO"}];
+  localidad:any = [];
+  municipioIsLoading:boolean = false;
   ubicacion:any = [
     { id:1, posicion:1, parte:1, descripcion:'CABEZA' },
     { id:2, posicion:1, parte:1, descripcion:'CARA' },
@@ -68,6 +70,8 @@ export class VictimasDialogComponent implements OnInit {
   partes:any = [{}];
   seleccionados:any = [];
   resultado:any = { index : null};
+
+  filteredMunicipio: Observable<any[]>;
   
   constructor(
     private sharedService: SharedService, 
@@ -75,6 +79,7 @@ export class VictimasDialogComponent implements OnInit {
     private fb: FormBuilder,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<VictimasDialogComponent>,
+    private lesionesService: LesionesService,
   ) { }
 
   public DefuncionForm = this.fb.group({
@@ -92,28 +97,40 @@ export class VictimasDialogComponent implements OnInit {
     'tipo_id':[1], 
     'acta_certificacion_id':[], 
     'no_acta_certificacion':[], 
+    'anonimo':[], 
     'nombre':[], 
     'apellido_paterno':[], 
     'apellido_materno':[], 
+    'pre_hospitalizacion':[], 
     //'ignora_nombre':[], 
     'edad':[], 
+    'silla_id':[], 
     'sexo_id':[], 
     'tipo_usuario_id':[], 
+    'municipio_hospitalizacion':[], 
     'hospitalizado':[], 
     'casco':[], 
     'ubicacion':[], 
+    'vehiculo_id':[], 
   });
 
   ngOnInit() {
+    this.listaVehiculos = this.data.vehiculos;
+    this.listaMunicipios = this.data.municipios;
     if(this.data.index != null)
     {
       this.VictimaForm.patchValue(this.data);
+      
       this.cargarLesiones(this.data.lesiones);
     }else{
       this.resultado.index = 0;
     }
 
     this.cargarCatalogo(1,1);
+  }
+
+  displayMunicipioFn(item: any) {
+    if (item) { return item.descripcion; }
   }
 
   public cargarLesiones(datos)
@@ -150,8 +167,7 @@ export class VictimasDialogComponent implements OnInit {
     }
 
     this.resultado.lesiones = this.seleccionados;
-    console.log(this.resultado);
-    //this.dialogRef.close(this.resultado);
+    this.dialogRef.close(this.resultado);
     
   }
 
@@ -240,8 +256,40 @@ export class VictimasDialogComponent implements OnInit {
      }
      contador++;
     }
+
+    this.lesionesService.getVehiculos({lesion_id:this.data.lesion_id}).subscribe(
+      response => {
+        console.log(response)
+        this.listaVehiculos = response;
+      } 
+    );
+
+    this.VictimaForm.get('hospitalizado').valueChanges
+      .pipe(
+        debounceTime(300),
+        tap( () => {
+            this.municipioIsLoading = true; 
+        } ),
+        switchMap(value => {
+            if(!(typeof value === 'object')){
+              this.municipioIsLoading = false;
+              let municipio = this.VictimaForm.get('municipio_hospitalizacion').value;
+              console.log("entra");
+              console.log(value);
+              if( municipio!="")
+              {
+                
+                return this.lesionesService.buscarUnidad({municipio_id:municipio, query:value }).pipe(finalize(() => this.municipioIsLoading = false ));
+              }else{
+                return [];
+              }
+               
+            }else{
+              this.municipioIsLoading = false; 
+              return [];
+            }
+          }
+        ),
+      ).subscribe(items => this.filteredMunicipio = items);
   }
-
-  
-
 }

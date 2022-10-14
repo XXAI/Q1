@@ -39,19 +39,6 @@ class CreateCatalogosTable extends Migration
             $table->foreign('catalogo_municipios_id')->references('id')->on('catalogo_municipios')->onUpdate('cascade');
         });
 
-        /*Schema::create('catalogo_clues', function (Blueprint $table) {
-
-            $table->string('id', 12)->primary()->comment('CLave Unica de Establecimientos de Salud')->index();
-            $table->string('descripcion', 120)->comment('Nombre de la unidad de salud')->index();
-			$table->string('tipologia', 70);
-            $table->string('nivelAtencion', 50);     
-            $table->decimal('latitud', 8,6);     
-            $table->decimal('longitud', 8,6);     
-            $table->timestamps();
-            $table->softDeletes();       
-            
-        });
-*/
         Schema::create('catalogo_vehiculos', function (Blueprint $table) {
             $table->smallIncrements('id')->unsigned();
             $table->string('descripcion', 100);
@@ -70,66 +57,7 @@ class CreateCatalogosTable extends Migration
             $table->foreign('catalogo_vehiculo_id')->references('id')->on('catalogo_vehiculos')->onUpdate('cascade');
         });
   
-        /*Schema::create('catalogo_tipo_camino', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_tipo_accidente', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_causas_accidentes', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_causas_conductor', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_causas_peaton', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_causas_falla', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-        Schema::create('catalogo_causas_condicion_camino', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-        Schema::create('catalogo_causas_agentes_naturales', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_usuario_vias', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });*/
+       
     }
 
     /**

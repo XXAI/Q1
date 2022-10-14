@@ -3,12 +3,18 @@
     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
         <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
             <mat-label>Tipo Vehiculo</mat-label>
-            <mat-select formControlName="catalogo_tipo_vehiculo_id" required #tipoVehiculo (selectionChange)="cargarMarcas(tipoVehiculo.value)">
+            <mat-select formControlName="catalogo_tipo_vehiculo_id" #tipo_vehiculo required #tipoVehiculo>
                 <mat-option *ngFor="let item of tipo_vehiculos" [value]="item.id">{{ item.descripcion }}</mat-option>
             </mat-select>
             <mat-error *ngIf="VehiculoForm.get('catalogo_tipo_vehiculo_id').invalid && (VehiculoForm.get('catalogo_tipo_vehiculo_id').dirty || VehiculoForm.get('catalogo_tipo_vehiculo_id').touched)">
                 <span *ngIf="VehiculoForm.get('catalogo_tipo_vehiculo_id').errors.required">El Tipo de Vehiculo es obligatorio</span>
             </mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipo_vehiculo.value == 15">
+            <mat-label>Otro tipo</mat-label>
+            <input matInput formControlName="otro_tipo_vehiculo" placeholder="Otro tipo de Vehiculo" required autocomplete="off">
+
+
         </mat-form-field>
     </div>
     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
@@ -31,6 +37,28 @@
         </mat-form-field>
     </div>
     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+        <mat-form-field fxFlex="50" fxFlex.xs="100" appearance="fill">
+            <mat-label>Uso del Vehiculo</mat-label>
+            <mat-select formControlName="uso_vehiculo" required>
+                <mat-option *ngFor="let item of uso_vehiculo" [value]="item.id">{{ item.descripcion }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="VehiculoForm.get('uso_vehiculo').invalid && (VehiculoForm.get('uso_vehiculo').dirty || VehiculoForm.get('uso_vehiculo').touched)">
+                <span *ngIf="VehiculoForm.get('uso_vehiculo').errors.required">El uso es obligatorio</span>
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex="50" fxFlex.xs="100" appearance="fill">
+            <mat-label>¿Puesta a disposición?</mat-label>
+            <mat-select formControlName="puesto_disposicion" required>
+                <mat-option *ngFor="let item of disposicion" [value]="item.id">{{ item.descripcion }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="VehiculoForm.get('puesto_disposicion').invalid && (VehiculoForm.get('puesto_disposicion').dirty || VehiculoForm.get('puesto_disposicion').touched)">
+                <span *ngIf="VehiculoForm.get('puesto_disposicion').errors.required">El campo puesta a disposiciòn es obligatorio</span>
+            </mat-error>
+
+
+        </mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
         <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
             <mat-label>¿Tiene Placas?</mat-label>
             <mat-select formControlName="con_placas" #placa required>
@@ -44,7 +72,7 @@
         <div *ngIf="placa.value == 1" fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
             <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                 <mat-label>No Placa</mat-label>
-                <input matInput formControlName="no_placa" placeholder="Modelo" required autocomplete="off">
+                <input matInput formControlName="no_placa" placeholder="No de Placa" required autocomplete="off">
                 <mat-error *ngIf="VehiculoForm.get('no_placa').invalid && (VehiculoForm.get('no_placa').dirty || VehiculoForm.get('no_placa').touched)">
                     <span *ngIf="VehiculoForm.get('no_placa').errors.required">El No de placa es obligatorio</span>
                 </mat-error>
@@ -56,16 +84,14 @@
                     <mat-option *ngFor="let item of tipo_placas" [value]="item.id">{{ item.descripcion }}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <div>
-                <mat-form-field fxFlex fxFlex.xs="100" *ngIf="tipoPlaca.value == 1" appearance="fill">
-                    <mat-label>Estado</mat-label>
-                    <mat-select formControlName="entidad_placas" required>
-                        <mat-option *ngFor="let item of data.entidades" [value]="item.id">{{ item.descripcion }}</mat-option>
-                        <!--mat-option [value]="1">CHIAPAS</mat-option-->
-                    </mat-select>
-                </mat-form-field>
+            <mat-form-field fxFlex fxFlex.xs="100" *ngIf="tipoPlaca.value == 1" appearance="fill">
+                <mat-label>Estado</mat-label>
+                <mat-select formControlName="entidad_placas" required>
+                    <mat-option *ngFor="let item of data.entidades" [value]="item.id">{{ item.descripcion }}</mat-option>
+                    <!--mat-option [value]="1">CHIAPAS</mat-option-->
+                </mat-select>
+            </mat-form-field>
 
-            </div>
         </div>
 
 

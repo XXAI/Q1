@@ -16,6 +16,7 @@ use App\Models\Catalogos\Localidades;
 use App\Models\Catalogos\Municipios;
 use App\Models\Catalogos\Vehiculos;
 use App\Models\Catalogos\TipoVehiculos;
+use App\Models\Catalogos\Clues;
 
 class CatalogosController extends Controller
 {
@@ -48,6 +49,43 @@ class CatalogosController extends Controller
         }
     }
 
+    public function getCatalogoLocalidad(Request $request){
+        try{
+            $parametros = $request->all();
+            $data = Localidades::where("catalogo_municipios_id",$parametros['municipio_id'])->orderBy("descripcion");
+            if(isset($parametros['query']) && $parametros['query']){
+                $data = $data->where(function($query)use($parametros){
+                    return $query->where('descripcion','LIKE','%'.$parametros['query'].'%');
+                });
+            }
+
+            $data = $data->get();
+
+            return response()->json($data,HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    
+    public function getCatalogoClues(Request $request){
+        try{
+            $parametros = $request->all();
+            $data = clues::where("catalogo_municipios_id",$parametros['municipio_id'])->orderBy("descripcion");
+            if(isset($parametros['query']) && $parametros['query']){
+                $data = $data->where(function($query)use($parametros){
+                    return $query->where('descripcion','LIKE','%'.$parametros['query'].'%');
+                });
+            }
+
+            $data = $data->get();
+
+            return response()->json($data,HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    /*
     /*public function getEntidades(){
         try{
             

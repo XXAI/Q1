@@ -17,7 +17,10 @@ class CreateTablasRelacion extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->smallInteger('lesiones_id')->unsigned();
             $table->smallInteger('catalogo_tipo_vehiculo_id')->unsigned();
+            $table->string('otro_tipo_vehiculo', 200);
             $table->smallInteger('marca_id')->unsigned();
+            $table->smallInteger('uso_vehiculo')->unsigned();
+            $table->smallInteger('puesto_disposicion')->unsigned();
             $table->smallInteger('placa_pais')->unsigned()->nullable();
             $table->smallInteger('no_ocupantes')->unsigned();
             $table->string('color',50);
@@ -140,6 +143,15 @@ class CreateTablasRelacion extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        Schema::create('catalogo_clues', function (Blueprint $table) {
+            $table->smallInteger('clues')->unsigned();
+            $table->smallInteger('catalogo_municipios_id')->unsigned();
+            $table->string('institucion',150);
+            $table->string('descripcion',150);
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -149,6 +161,7 @@ class CreateTablasRelacion extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('catalogo_clues');
         Schema::dropIfExists('rel_vehiculos');
         Schema::dropIfExists('rel_tipo_accidente');
         Schema::dropIfExists('rel_causa_pasajero');

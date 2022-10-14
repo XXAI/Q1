@@ -35,7 +35,7 @@ class LesionesController extends Controller
             //$accessData = $this->getUserAccessData();
             $parametros = $request->all();
             
-            $object = Lesiones::with('municipio');
+            $object = Lesiones::with("municipio","localidad");
             
             //Filtros, busquedas, ordenamiento
             if(isset($parametros['query']) && $parametros['query']){
@@ -81,6 +81,18 @@ class LesionesController extends Controller
             $return_data = Lesiones::with("tipoAccidente", "vehiculo.tipo", "vehiculo.marca", "vehiculo.estado", "causaAccidente", 
                                             "causaConductor", "causaConductorDetalle", "causaPeaton", "causaPasajero", "fallaVehiculo", 
                                             "condicionCamino", "agentes", "victima.LesionParte.lesionVictima")->find($id);
+
+            return response()->json($return_data,HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    
+    public function getVehiculos(Request $request)
+    {
+        try{
+            $parametros = $request->all();
+            $return_data = RelVehiculos::with("tipo","marca")->where("lesiones_id", $parametros['lesion_id'])->get();
 
             return response()->json($return_data,HttpResponse::HTTP_OK);
         }catch(\Exception $e){
@@ -151,6 +163,7 @@ class LesionesController extends Controller
                 'colonia' => 'required',
                 'calle' => 'required',
                 'no' => 'required',
+                'cp' => 'required',
                 'latitud' => 'required',
                 'longitud' => 'required'
             ];
@@ -168,16 +181,26 @@ class LesionesController extends Controller
                 {
                     $obj = Lesiones::find($edicion);
                 }
-                $obj->fecha = $parametros['fecha'];
-                $obj->hora = $parametros['hora'];
-                $obj->entidad_federativa_id = $parametros['entidad'];
-                $obj->municipio_id = $parametros['municipio'];
-                $obj->localidad = $parametros['localidad'];
-                $obj->colonia = strtoupper($parametros['colonia']);
-                $obj->calle = strtoupper($parametros['calle']);
-                $obj->numero = $parametros['no'];
-                $obj->latitud = $parametros['latitud'];
-                $obj->longitud = $parametros['longitud'];
+
+                /*Cambiar tildes */
+                $parametros['colonia'] = $this->Tildes($parametros['colonia']);
+                $parametros['calle'] = $this->Tildes($parametros['calle']);
+                $parametros['no'] = $this->Tildes($parametros['no']);          
+                /* */
+
+                $loggedUser = auth()->userOrFail();
+                $obj->fecha                     = $parametros['fecha'];
+                $obj->hora                      = $parametros['hora'];
+                $obj->entidad_federativa_id     = $parametros['entidad'];
+                $obj->municipio_id              = $parametros['municipio'];
+                $obj->localidad_id              = $parametros['localidad']['id'];
+                $obj->colonia                   = strtoupper($parametros['colonia']);
+                $obj->calle                     = strtoupper($parametros['calle']);
+                $obj->numero                    = strtoupper($parametros['no']);
+                $obj->cp                        = $parametros['cp'];
+                $obj->latitud                   = $parametros['latitud'];
+                $obj->longitud                  = $parametros['longitud'];
+                $obj->user_id                   = $loggedUser->id;
 
                 $obj->save();
                 DB::commit();
@@ -190,6 +213,17 @@ class LesionesController extends Controller
             DB::rollback();
             return ['estatus'=>false, "data"=>$e->getMessage()];
         }
+    }
+
+    public function Tildes($palabra)
+    {
+        $palabra = strtoupper($palabra);
+        $palabra = str_replace("Á", "A", $palabra);
+        $palabra = str_replace("É", "E", $palabra);
+        $palabra = str_replace("Í", "I", $palabra);
+        $palabra = str_replace("Ó", "O", $palabra);
+        $palabra = str_replace("Ú", "U", $palabra);
+        return $palabra;
     }
 
     public function GuardarZona($parametros, $edicion = 0)
@@ -212,6 +246,14 @@ class LesionesController extends Controller
                 DB::beginTransaction();
                 $obj = Lesiones::find($edicion);
                
+                /*Cambiar tildes */
+                $parametros['calle1'] = $this->Tildes($parametros['calle1']);
+                $parametros['calle2'] = $this->Tildes($parametros['calle2']);
+                $parametros['referencia'] = $this->Tildes($parametros['referencia']);          
+                $parametros['otro_camino'] = $this->Tildes($parametros['otro_camino']);          
+                $parametros['otro_tipo_via'] = $this->Tildes($parametros['otro_tipo_via']);          
+                /* */
+
                 $obj->zona_id = $parametros['zona'];
                 $obj->estatal_id = $parametros['carretera'];
                 $obj->interseccion_id = $parametros['interseccion'];
@@ -379,6 +421,10 @@ class LesionesController extends Controller
                                     }
                                     if($entero == 13)
                                     {
+                                        /*Cambiar tildes */
+                                        $parametros['conductor']['otro'] = $this->Tildes($parametros['conductor']['otro']);
+                                              
+                                        /* */
                                         $obj->otro_causa_conductor = $parametros['conductor']['otro'];
                                     }
                                 }
@@ -431,6 +477,10 @@ class LesionesController extends Controller
                                    
                                     if($entero == 6)
                                     {
+                                         /*Cambiar tildes */
+                                         $parametros['falla']['descripcion_otro'] = $this->Tildes($parametros['falla']['descripcion_otro']);
+                                              
+                                         /* */
                                         $obj->otro_falla_accidente = $parametros['falla']['descripcion_otro'];
                                     }
                                 }
@@ -455,6 +505,10 @@ class LesionesController extends Controller
                                    
                                     if($entero == 6)
                                     {
+                                          /*Cambiar tildes */
+                                          $parametros['camino']['descripcion_otro'] = $this->Tildes($parametros['camino']['descripcion_otro']);
+                                              
+                                          /* */
                                         $obj->otro_tipo_camino = $parametros['camino']['descripcion_otro'];
                                     }
                                 }
@@ -478,6 +532,10 @@ class LesionesController extends Controller
                                     
                                     if($entero == 6)
                                     {
+                                        /*Cambiar tildes */
+                                        $parametros['agentes']['descripcion_otro'] = $this->Tildes($parametros['agentes']['descripcion_otro']);
+                                              
+                                        /* */
                                         $obj->otro_falla_accidente = $parametros['agentes']['descripcion_otro'];
                                     }
                                 }

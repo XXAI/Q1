@@ -29,6 +29,8 @@ export class VehiculosDialogComponent implements OnInit {
 
   tipo_vehiculos:any = [];
   tipo_placas:any = [{id:1, descripcion:"NACIONAL"},{id:2, descripcion:"INTERNACIONAL"}];
+  uso_vehiculo:any = [{id:1, descripcion:"PARTICULAR"},{id:2, descripcion:"TRANSPORTE PÚBLICO"},{id:3, descripcion:"CARGA"}];
+  disposicion:any = [{id:1, descripcion:"SI"},{id:2, descripcion:"NO"}];
   vehiculos:any = [];
   estados:any = [{id:1, descripcion:"CHIAPAS"}];
   resultado:any = { index : null};
@@ -43,8 +45,11 @@ export class VehiculosDialogComponent implements OnInit {
 
   public VehiculoForm = this.fb.group({
     'catalogo_tipo_vehiculo_id':['',Validators.required], 
+    'otro_tipo_vehiculo':[''], 
     'marca_id':['',Validators.required], 
     'modelo':['',Validators.required], 
+    'uso_vehiculo':['',Validators.required], 
+    'puesto_disposicion':['',Validators.required], 
     'con_placas':['',Validators.required], 
     'placa_pais':[], 
     'no_placa':[], 
@@ -59,27 +64,27 @@ export class VehiculosDialogComponent implements OnInit {
     if(this.data.index != null)
     {
       this.cargarDatos();
-      
-
     }else{
+      this.cargarMarcas();
       this.resultado.index = 0;
     }
   }
 
   public async cargarDatos()
   {
-    await this.cargarMarcas(this.data.catalogo_tipo_vehiculo_id);
+    await this.cargarMarcas();
     this.VehiculoForm.patchValue(this.data);
   }
 
-  public cargarMarcas(tipo:number)
+  public cargarMarcas()
   {
     this.vehiculos = [{id:'',descripcion:"TIPO DE VEHICULO"}];
     this.data.marcas.forEach(element => {
-      if(element.catalogo_vehiculo_id == tipo)
+      this.vehiculos.push(element);
+      /*if(element.catalogo_vehiculo_id == tipo)
       {
         this.vehiculos.push(element);
-      }
+      }*/
       
     });
   }

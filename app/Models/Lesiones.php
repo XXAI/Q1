@@ -14,6 +14,10 @@ class Lesiones extends Model
     public function municipio(){
         return $this->belongsTo('App\Models\Catalogos\Municipios', 'municipio_id', 'id');
     }
+    
+    public function localidad(){
+        return $this->belongsTo('App\Models\Catalogos\Localidades', 'localidad_id', 'id');
+    }
 
     public function tipoAccidente(){
         return $this->hasMany('App\Models\RelTipoAccidente');

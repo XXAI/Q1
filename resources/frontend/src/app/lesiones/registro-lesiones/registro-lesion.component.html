@@ -39,14 +39,26 @@
                                     <mat-option *ngFor="let item of catalogos['Municipio']" [value]="item.id">{{ item.descripcion }}</mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field fxFlex appearance="fill">
+                            <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                                 <mat-label>LOCALIDAD</mat-label>
-                                <input matInput formControlName="localidad" placeholder="LOCALIDAD" required autocomplete="off">
-                                <mat-error *ngIf=" principalForm.get('localidad').invalid && ( principalForm.get('localidad').dirty ||  principalForm.get('localidad').touched)">
-                                    <span *ngIf=" principalForm.get('localidad').hasError('pattern')">La LOCALIDAD es un campo obligatorio</span>
+                                <input matInput placeholder="localidad" [matAutocomplete]="localidadAutocomplete" formControlName='localidad'>
+                                <mat-autocomplete #localidadAutocomplete="matAutocomplete" [displayWith]="displayLocalidadFn" [panelWidth]="'auto'">
+                                    <mat-option *ngIf="localidadIsLoading" class="is-loading">
+                                        <mat-spinner diameter="25"></mat-spinner>
+                                    </mat-option>
+                                    <ng-container *ngIf="!localidadIsLoading">
+                                        <mat-option *ngFor="let item of filteredLocalidad" [value]="item">
+                                            [{{item.id}}] {{ item.descripcion }}
+                                        </mat-option>
+                                    </ng-container>
+                                </mat-autocomplete>
+
+                                <mat-error *ngIf="principalForm.get('localidad').invalid && (principalForm.get('localidad').dirty || principalForm.get('localidad').touched)">
+                                    <span *ngIf="principalForm.get('localidad').errors.required">Campo obligatorio</span>
                                 </mat-error>
 
                             </mat-form-field>
+
 
                         </div>
 
@@ -70,6 +82,13 @@
                                 <input matInput formControlName="no" placeholder="No" required autocomplete="off">
                                 <mat-error *ngIf=" principalForm.get('no').invalid && ( principalForm.get('no').dirty ||  principalForm.get('no').touched)">
                                     <span *ngIf=" principalForm.get('no').errors.required">El No es un campo obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill" fxFlex="8">
+                                <mat-label>C.P.</mat-label>
+                                <input matInput formControlName="cp" placeholder="C.P." required autocomplete="off">
+                                <mat-error *ngIf=" principalForm.get('cp').invalid && ( principalForm.get('cp').dirty ||  principalForm.get('cp').touched)">
+                                    <span *ngIf=" principalForm.get('cp').errors.required">El CP es un campo obligatorio</span>
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field appearance="fill" fxFlex="10">
@@ -266,6 +285,13 @@
                         <br>
                         <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                             <button mat-raised-button color="primary" (click)="showVehiculoDialog(null)"><mat-icon>add_circle</mat-icon>AGREGAR VEHICULO</button>
+                        </div>
+
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
+                                No. DE VEHÍCULOS {{ datosVehiculo.length }}
+                            </div>
+
                         </div>
                         <div class="data-container ">
                             <div class="data-table-container">
@@ -683,6 +709,15 @@
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                         <button mat-raised-button color="primary" (click)="showVictimaDialog(null)"><mat-icon>add_circle</mat-icon>AGREGAR VICTIMA</button>
                     </div>
+                    <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                        <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
+                            No. DE LESIONADOS {{ datosVehiculo.length }}
+                        </div>
+                        <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
+                            No. DE FALLECIMIENTOS {{ datosVehiculo.length }}
+                        </div>
+
+                    </div>
                     <div class="data-container ">
                         <div class="data-table-container">
                             <table #dataTable mat-table [dataSource]="dataSourceVictima" class="data-table" matSort>
@@ -784,6 +819,18 @@
 
                         </div>
                     </div>
+                </mat-tab>
+                <mat-tab label="DOCUMENTOS" [disabled]="editable" [formGroup]="formArchivos">
+                    <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="5px" style="margin-top:10px">
+                        <div fxFlex="50" fxFlex.xs="100">
+                            <input type="file" formControlName="file" class="form-control" accept="image/jpeg" multiple (change)="fileChange($event)">
+                        </div>
+                        <div fxFlex="50" fxFlex.xs="100">
+                            <button type="button" mat-raised-button color="primary" (click)="subirDocumento();">SUBIR DOCUMENTOS</button>
+                        </div>
+                    </div>
+                    <hr>
+
                 </mat-tab>
             </mat-tab-group>
 
