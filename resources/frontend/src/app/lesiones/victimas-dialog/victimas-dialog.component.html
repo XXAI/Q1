@@ -3,6 +3,7 @@
 
     <mat-tab-group>
         <div [formGroup]="VictimaForm">
+
             <mat-tab label="DATOS GENERALES">
                 <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
                     <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
@@ -13,7 +14,7 @@
                     </mat-form-field>
                     <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoIncidente.value == 2">
                         <mat-label>Certificado ó Acta</mat-label>
-                        <mat-select formControlName="acta_certificacion_id" required>
+                        <mat-select formControlName="acta_certificacion_id">
                             <mat-option *ngFor="let item of validacion" [value]="item.id">{{ item.descripcion}}</mat-option>
                         </mat-select>
 
@@ -21,15 +22,13 @@
                     <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoIncidente.value == 2">
                         <mat-label>Número</mat-label>
                         <input matInput formControlName="no_acta_certificacion" placeholder="No" autocomplete="disabled">
-                        <mat-error *ngIf="VictimaForm.get('no_acta_certificacion').invalid && (VictimaForm.get('no_acta_certificacion').dirty || VictimaForm.get('no_acta_certificacion').touched)">
-                            <span *ngIf="VictimaForm.get('no_acta_certificacion').errors.required">El Campo es obligatorio</span>
-                        </mat-error>
+
                     </mat-form-field>
 
                 </div>
                 <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
                     <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
-                        <mat-label>Anonimo</mat-label>
+                        <mat-label>Se Ignora</mat-label>
                         <mat-select formControlName="anonimo" #anonimo>
                             <mat-option [value]="1">SI</mat-option>
                             <mat-option [value]="2">NO</mat-option>
@@ -63,22 +62,31 @@
                     </mat-form-field>
                     <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="edadVictima.value <=11 && edadVictima.value !=''">
                         <mat-label>Silla para infantes</mat-label>
-                        <mat-select formControlName="silla_id" required>
+                        <mat-select formControlName="silla_id">
                             <mat-option *ngFor="let item of silla" [value]="item.id">{{ item.descripcion}}</mat-option>
                         </mat-select>
 
                     </mat-form-field>
                     <mat-form-field fxFlex="20" fxFlex.xs="100" appearance="fill">
                         <mat-label>Sexo</mat-label>
-                        <mat-select formControlName="sexo_id" required>
+                        <mat-select formControlName="sexo_id" #sexoForm>
                             <mat-option *ngFor="let item of sexo" [value]="item.id">{{ item.descripcion}}</mat-option>
+                        </mat-select>
+
+                    </mat-form-field>
+
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="sexoForm.value == 2">
+                        <mat-label>Embarazada</mat-label>
+                        <mat-select formControlName="embarazada">
+                            <mat-option [value]="1">SI</mat-option>
+                            <mat-option [value]="2">NO</mat-option>
                         </mat-select>
 
                     </mat-form-field>
 
                     <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                         <mat-label>Tipo de usuario</mat-label>
-                        <mat-select formControlName="tipo_usuario_id" #tipoUsuario required>
+                        <mat-select formControlName="tipo_usuario_id" #tipoUsuario>
                             <mat-option *ngFor="let item of tipo_usuario" [value]="item.id">{{ item.descripcion}}</mat-option>
                         </mat-select>
 
@@ -94,7 +102,7 @@
 
                 </div>
                 <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                    <mat-form-field fxFlex fxFlex.xs="50" appearance="fill">
                         <mat-label>Pre Hospitalización</mat-label>
                         <mat-select formControlName="pre_hospitalizacion" #preHospitalizacion>
                             <mat-option [value]="1">SI</mat-option>
@@ -103,12 +111,21 @@
                         </mat-select>
 
                     </mat-form-field>
+                    <mat-form-field fxFlex fxFlex.xs="50" appearance="fill">
+                        <mat-label>Hospitalización</mat-label>
+                        <mat-select formControlName="hospitalizacion" #Hospitalizacion>
+                            <mat-option [value]="1">SI</mat-option>
+                            <mat-option [value]="2">NO</mat-option>
+
+                        </mat-select>
+
+                    </mat-form-field>
                 </div>
 
-                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px" *ngIf="preHospitalizacion.value == 1">
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px" *ngIf="Hospitalizacion.value == 1">
                     <mat-form-field fxFlex="30" fxFlex.xs="100" appearance="fill">
                         <mat-label>Municipio (Hospital)</mat-label>
-                        <mat-select formControlName="municipio_hospitalizacion">
+                        <mat-select formControlName="municipio_hospitalizacion" #unidadMedica (selectionChange)="unidadMunicipio(unidadMedica.value)">
                             <mat-option *ngFor="let item of listaMunicipios" [value]="item.id">{{ item.descripcion }}</mat-option>
 
                         </mat-select>
@@ -116,36 +133,98 @@
                     </mat-form-field>
                     <mat-form-field fxFlex="70" fxFlex.xs="100" appearance="fill">
                         <mat-label>Unidad (Hospitalización)</mat-label>
-                        <input matInput placeholder="Unidad" [matAutocomplete]="localidadAutocomplete" formControlName='hospitalizado'>
-                        <mat-autocomplete #localidadAutocomplete="matAutocomplete" [displayWith]="displayMunicipioFn" [panelWidth]="'auto'">
-                            <mat-option *ngIf="municipioIsLoading" class="is-loading">
-                                <mat-spinner diameter="25"></mat-spinner>
-                            </mat-option>
-                            <ng-container *ngIf="!municipioIsLoading">
-                                <mat-option *ngFor="let item of filteredMunicipio" [value]="item">
-                                    [{{item.clues}}] ({{item.institucion}}) {{ item.descripcion }}
-                                </mat-option>
-                            </ng-container>
-                        </mat-autocomplete>
-
-                        <mat-error *ngIf="VictimaForm.get('hospitalizado').invalid && (VictimaForm.get('hospitalizado').dirty || VictimaForm.get('hospitalizado').touched)">
-                            <span *ngIf="VictimaForm.get('hospitalizado').errors.required">Campo obligatorio</span>
-                        </mat-error>
-
+                        <mat-select formControlName="clues">
+                            <mat-option *ngFor="let item of listaUnidades" [value]="item.clues">{{ item.clues }} - {{ item.descripcion }} ({{ item.clave_institucion }})</mat-option>
+                        </mat-select>
                     </mat-form-field>
-
-
-
                 </div>
             </mat-tab>
+            <mat-tab label="PREHOSPITALARIO" *ngIf="preHospitalizacion.value == 1">
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex="40" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Número de Ambulancia</mat-label>
+                        <input matInput formControlName="no_ambulancia" placeholder="No de Ambulancia">
+
+                    </mat-form-field>
+                    <mat-form-field fxFlex="60" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Prestador de Servicio</mat-label>
+                        <mat-select formControlName="prestador_servicio" #datoPrestadorServicio>
+                            <mat-option *ngFor="let item of prestadorServicio" [value]="item.id">{{ item.descripcion }}</mat-option>
+
+                        </mat-select>
+
+                    </mat-form-field>
+                </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px" *ngIf="datoPrestadorServicio.value == 10">
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>Otro Prestador de Servicio</mat-label>
+                        <input matInput formControlName="otro_prestador" placeholder="Prestador">
+
+                    </mat-form-field>
+                </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex="40" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Nivel de Conciencia</mat-label>
+                        <mat-select formControlName="nivel_conciencia">
+                            <mat-option *ngFor="let item of nivelConciencia" [value]="item.id">{{ item.descripcion }}</mat-option>
+
+                        </mat-select>
+
+                    </mat-form-field>
+                    <mat-form-field fxFlex="20" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Presencia de pulso</mat-label>
+                        <mat-select formControlName="pulso">
+                            <mat-option [value]="1">SI</mat-option>
+                            <mat-option [value]="2">NO</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="40" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Color de Piel</mat-label>
+                        <mat-select formControlName="color_piel">
+                            <mat-option [value]="1">NORMAL</mat-option>
+                            <mat-option [value]="2">PÁLIDA</mat-option>
+                            <mat-option [value]="3">CIANÓTICA (AZUL, MORADA O NEGRUZCA)</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex="50" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Prioridad del Traslado</mat-label>
+                        <mat-select formControlName="prioridad_traslado">
+                            <mat-option [value]="1">ROJO</mat-option>
+                            <mat-option [value]="2">AMARILLA</mat-option>
+                            <mat-option [value]="2">VERDE</mat-option>
+                            <mat-option [value]="2">NEGRO</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="50" fxFlex.xs="100" appearance="fill">
+                        <mat-label>Negativa al Traslado</mat-label>
+                        <mat-select formControlName="negativa_traslado" #traslado>
+                            <mat-option [value]="1">SI</mat-option>
+                            <mat-option [value]="2">NO</mat-option>
+
+                        </mat-select>
+
+                    </mat-form-field>
+                </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px" *ngIf="traslado.value == 1">
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>Especifique Negativa</mat-label>
+                        <input matInput formControlName="especifique_negativa" placeholder="Especifique negativa">
+
+                    </mat-form-field>
+                </div>
+            </mat-tab>
+
             <mat-tab label="UBICACIÓN">
                 <section fxflex="none" fxLayout="column">
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-                        <div fxFlex="100" fxFlex.xs="100" fxFlex.sm="100" fxFlex.xl="50">
+                        <div fxFlex="50">
                             <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                                 <mat-form-field fxFlex appearance="fill">
                                     <mat-label>VEHICULO:</mat-label>
-                                    <mat-select formControlName="vehiculo_id" required>
+                                    <mat-select formControlName="vehiculo_id">
                                         <mat-option *ngFor="let item of listaVehiculos" [value]="item.id">
                                             {{ item.tipo.descripcion }} {{ item.marca.descripcion }} {{ item.no_placa }}
                                         </mat-option>
@@ -153,6 +232,7 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
+
                             <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                                 <mat-form-field fxFlex="100" fxFlex.xs="100" appearance="fill">
                                     <mat-label>Ubicación</mat-label>
@@ -160,11 +240,19 @@
                                 </mat-form-field>
 
                             </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                                <div fxFlex="100">
+                                    <img src="assets/registro/ubicacion_tabla.png" width="100%">
+                                </div>
+                            </div>
+                        </div>
+                        <div fxFlex="50">
+                            <div fxFlex="100">
+                                <img src="assets/registro/ubicacion_auto.png" width="50%" style="margin-left: 25%;">
+                            </div>
+                        </div>
 
-                        </div>
-                        <div fxFlex="100" fxFlex.xs="100" fxFlex.sm="100" fxFlex.xl="50">
-                            <img src="assets/registro/ubicacion.png" width="100%">
-                        </div>
+
                     </div>
 
                 </section>
@@ -235,26 +323,27 @@
                             </div>
                         </div>
                         <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-                            <button mat-mini-fab color="accent" (click)="agregarLesion()">
-                                <mat-icon>add</mat-icon>
+                            <button mat-raised-button color="accent" (click)="agregarLesion()">
+                                <mat-icon>add</mat-icon> AGREGAR
                               </button>
+
                         </div>
                     </div>
                     <div fxFlex="50" fxFlex.xs="50">
                         <div *ngIf="orienta.value==1 && planos.value ==1">
-                            <img src="assets/registro/frente_superior.jpg" width="100%">
+                            <img src="assets/registro/frente_superior.png" width="100%">
                         </div>
                         <div *ngIf="orienta.value==1 && planos.value ==2">
-                            <img src="assets/registro/frente_centro.jpg" width="100%">
+                            <img src="assets/registro/frente_centro.png" width="100%">
                         </div>
                         <div *ngIf="orienta.value==1 && planos.value ==3">
-                            <img src="assets/registro/frente_inferior.jpg" width="100%">
+                            <img src="assets/registro/frente_inferior.png" width="100%">
                         </div>
                         <div *ngIf="orienta.value==2 && planos.value ==1">
-                            <img src="assets/registro/atras_superior.jpg" width="100%">
+                            <img src="assets/registro/atras_superior.png" width="100%">
                         </div>
                         <div *ngIf="orienta.value==2 && planos.value ==2">
-                            <img src="assets/registro/atras_central.jpg" width="100%">
+                            <img src="assets/registro/atras_central.png" width="100%">
                         </div>
 
                         <mat-chip-list #chipList aria-label="Fruit selection">
@@ -273,6 +362,6 @@
     <hr>
     <div fxLayout="row" fxLayoutAlign="end center">
         <button mat-raised-button (click)="cancelar()">Cancelar</button>
-        <button mat-raised-button color="primary" (click)="guardar()">GUARDAR</button>
+        <button mat-raised-button color="primary" (click)="guardar()" [disabled]="!VictimaForm.valid">GUARDAR</button>
     </div>
 </section>

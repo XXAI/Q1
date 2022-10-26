@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { SharedService } from 'src/app/shared/shared.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -18,7 +18,8 @@ export interface VictimaClass {
   edad?: number;
   sexo_id?: number;
   tipo_usuario?: number;
-  hospitalizado?: any;
+  municipio_hospitalizacion?: any;
+  hospitalizacion?: any;
   casco?: any;
   ubicacion?: any;
   lesiones?:any
@@ -67,6 +68,27 @@ export class VictimasDialogComponent implements OnInit {
     { id:20, posicion:2, parte:2, descripcion:'COLUMNA LUMBO-SACRA' },
   ]
 
+  prestadorServicio:any = [
+    {id:1 , descripcion:"SSA"},
+    {id:2 , descripcion:"CRUZ ROJA"},
+    {id:3 , descripcion:"PROTECCIÓN CIVIL"},
+    {id:4 , descripcion:"SEDENA"},
+    {id:5 , descripcion:"IMSS"},
+    {id:6 , descripcion:"ISSSTE"},
+    {id:7 , descripcion:"ISSSTECH"},
+    {id:8 , descripcion:"ERUM"},
+    {id:9 , descripcion:"BOMBEROS"},
+    {id:10 , descripcion:"OTRO"},
+  ]
+  nivelConciencia:any = [
+    {id:1 , descripcion:"CONCIENTE"},
+    {id:2 , descripcion:"RESPUESTA A ESTÍMULOS VERBALES"},
+    {id:3 , descripcion:"RESPUESTA A ESTÍMULO DOLOROSO"},
+    {id:4 , descripcion:"INCONCIENTE"}
+  ]
+
+  listaUnidades:any;
+
   partes:any = [{}];
   seleccionados:any = [];
   resultado:any = { index : null};
@@ -94,50 +116,74 @@ export class VictimasDialogComponent implements OnInit {
     'op_6':[]
   });
   public VictimaForm = this.fb.group({
-    'tipo_id':[1], 
+    'tipo_id':[1,[Validators.required]], 
     'acta_certificacion_id':[], 
     'no_acta_certificacion':[], 
-    'anonimo':[], 
+    'anonimo':['',[Validators.required]], 
     'nombre':[], 
     'apellido_paterno':[], 
     'apellido_materno':[], 
-    'pre_hospitalizacion':[], 
-    //'ignora_nombre':[], 
+    'pre_hospitalizacion':['',[Validators.required]],
     'edad':[], 
     'silla_id':[], 
     'sexo_id':[], 
-    'tipo_usuario_id':[], 
+    'embarazada':[], 
+    'no_ambulancia':[], 
+    'prestador_servicio':[''], 
+    'otro_prestador':[], 
+    'nivel_conciencia':[], 
+    'pulso':[], 
+    'color_piel':[], 
+    'prioridad_traslado':[], 
+    'negativa_traslado':[], 
+    'especifique_negativa':[], 
+    'tipo_usuario_id':['',[Validators.required]], 
+    'hospitalizacion':['',[Validators.required]], 
     'municipio_hospitalizacion':[], 
-    'hospitalizado':[], 
+    'clues':[], 
     'casco':[], 
-    'ubicacion':[], 
+    'ubicacion':['',[Validators.required]], 
     'vehiculo_id':[], 
   });
 
-  ngOnInit() {
+  async ngOnInit() {
     this.listaVehiculos = this.data.vehiculos;
     this.listaMunicipios = this.data.municipios;
+    this.cargarCatalogos();
     if(this.data.index != null)
     {
-      this.VictimaForm.patchValue(this.data);
       
+      if(this.data.hospitalizacion == 1)
+      {
+        await this.unidadMunicipio(this.data.municipio_hospitalizacion);
+      }
+      this.VictimaForm.patchValue(this.data);
       this.cargarLesiones(this.data.lesiones);
     }else{
       this.resultado.index = 0;
     }
-
-    this.cargarCatalogo(1,1);
   }
 
-  displayMunicipioFn(item: any) {
-    if (item) { return item.descripcion; }
+
+  async cargarCatalogos()
+  {
+    await this.cargarCatalogo(1,1);
+    //
   }
+
+
 
   public cargarLesiones(datos)
   {
+    
+    //console.log(datos);
+    let contador = 0;
     datos.forEach(element => {
-      this.agregarLesion(element);
+      datos[contador].descripcion = this.ubicacion.find(x=>x.id == element.parte).descripcion
+      //this.agregarLesion(element);
+      contador++;
     });
+    this.seleccionados = datos;
   }
 
   cancelar(): void {
@@ -160,6 +206,11 @@ export class VictimasDialogComponent implements OnInit {
     this.resultado.dataTipovictima = this.tipo_victima.find(x=>x.id == this.resultado.tipo_id).descripcion;
     this.resultado.dataTipousuario = this.tipo_usuario.find(x=>x.id == this.resultado.tipo_usuario_id).descripcion;
     this.resultado.dataSexo = this.sexo.find(x=>x.id == this.resultado.sexo_id).descripcion;
+    if(this.resultado.hospitalizacion == 1)
+    {
+      this.resultado.clues_hospitalizacion = this.listaUnidades.find(x=>x.clues == this.resultado.clues);
+    }
+
     this.resultado.dataValidacion = "";
     if(this.resultado.acta_certificacion_id == 2)
     {
@@ -179,28 +230,71 @@ export class VictimasDialogComponent implements OnInit {
       datos = this.DefuncionForm.value;
     }else{
       datos = formulario;
+      this.cargarLesionesServer(datos);
     }
-    
+
     datos.descripcion = this.ubicacion.find(x=>x.id == datos.parte).descripcion;
     let cantidad = 0;
     let indice = 0;
     let bandera  = 0;
-    while(this.seleccionados.length > cantidad)
-    {
-      if(this.seleccionados[cantidad].parte == datos.parte){
-        bandera++;
-        indice = cantidad;
-      }
-      cantidad++;
-    }
-    if(bandera>0)
-    {
-      this.seleccionados[indice] = datos;
-    }else
-    {
-      this.seleccionados.push(datos);
-    }
+    let or = this.DefuncionForm.controls['orientacion'].value;
+    let pl = this.DefuncionForm.controls['plano'].value;
     
+    let op1 = this.DefuncionForm.controls['op_1'].value;
+    let op2 = this.DefuncionForm.controls['op_2'].value;
+    let op3 = this.DefuncionForm.controls['op_3'].value;
+    let op4 = this.DefuncionForm.controls['op_4'].value;
+    let op5 = this.DefuncionForm.controls['op_5'].value;
+    let op6 = this.DefuncionForm.controls['op_6'].value;
+    
+
+    let bandera_seleccion:boolean = false;
+    if(op1 == true || op2 == true || op3 == true || op4 == true || op5 == true || op6 == true)
+    {
+      bandera_seleccion = true;  
+     }
+
+     if(bandera_seleccion == true)
+     {
+      if(or == 2 && pl==3)
+      {
+        this.sharedService.showSnackBar("No existe la seleccionables", null, 3000);
+      }else{
+        while(this.seleccionados.length > cantidad)
+        {
+          if(this.seleccionados[cantidad].parte == datos.parte){
+            bandera++;
+            indice = cantidad;
+          }
+          cantidad++;
+        }
+        if(bandera>0)
+        {
+          this.seleccionados[indice] = datos;
+        }else
+        {
+          this.seleccionados.push(datos);
+        }  
+      }
+     }else
+     {
+      this.sharedService.showSnackBar("Seleccionar lesión", null, 3000);
+     }
+    
+  }
+
+  cargarLesionesServer(datos)
+  {
+
+  }
+
+  public unidadMunicipio(valor)
+  {
+    this.lesionesService.buscarUnidad({municipio_id:valor}).subscribe(
+      response => {
+        this.listaUnidades = response;
+      } 
+    );
   }
 
   public elimnaSeleccion(valor)
@@ -263,33 +357,5 @@ export class VictimasDialogComponent implements OnInit {
         this.listaVehiculos = response;
       } 
     );
-
-    this.VictimaForm.get('hospitalizado').valueChanges
-      .pipe(
-        debounceTime(300),
-        tap( () => {
-            this.municipioIsLoading = true; 
-        } ),
-        switchMap(value => {
-            if(!(typeof value === 'object')){
-              this.municipioIsLoading = false;
-              let municipio = this.VictimaForm.get('municipio_hospitalizacion').value;
-              console.log("entra");
-              console.log(value);
-              if( municipio!="")
-              {
-                
-                return this.lesionesService.buscarUnidad({municipio_id:municipio, query:value }).pipe(finalize(() => this.municipioIsLoading = false ));
-              }else{
-                return [];
-              }
-               
-            }else{
-              this.municipioIsLoading = false; 
-              return [];
-            }
-          }
-        ),
-      ).subscribe(items => this.filteredMunicipio = items);
   }
 }

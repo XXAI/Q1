@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
 
@@ -29,6 +30,7 @@ import { AgmCoreModule  } from '@agm/core';
         MatNativeDateModule,
         MatDatepickerModule,
         LesionesRoutingModule,
+        NgxMaterialTimepickerModule,
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyDs6qDgnfMwaHCrOhA0tCvaUPgANTD0Urw'
         })

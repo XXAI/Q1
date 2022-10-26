@@ -72,9 +72,11 @@ export class RegistroLesionComponent implements OnInit {
   progreso: number = 0; 
   errorArchivo:boolean;
   Fotos:any = [];
+  Documentos:any = [];
   
   datosVehiculo:any = [];
   datosVictima:any = [];
+  datosDocumentos:any = [];
   mediaSize: string;
 
   latitud: number = 16.204130;
@@ -85,8 +87,10 @@ export class RegistroLesionComponent implements OnInit {
   
   displayedColumns: string[] = ['tipo','marca','placas','ocupantes', 'actions'];
   displayColumns: string[] = ['tipo','nombre','usuario','hospitalizacion', 'actions'];
+  ColumnsDocuments: string[] = ['nombre', 'actions'];
   dataSourceVehiculos:any = new MatTableDataSource(this.datosVehiculo);
   dataSourceVictima:any = new MatTableDataSource(this.datosVictima);
+  dataSourceDocumentos:any = new MatTableDataSource(this.datosDocumentos);
 
   panelOpenState = false;
   constructor(
@@ -101,9 +105,6 @@ export class RegistroLesionComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    
-    
-
     this.principalForm = this.fb.group ({
 
       fecha:[''],
@@ -337,7 +338,7 @@ export class RegistroLesionComponent implements OnInit {
             estado =  e.estado.descripcion;
           }
           
-          arregloVehiculo.push({dataTipovehiculo: e.tipo.descripcion, dataVehiculo:e.marca.descripcion, modelo:e.modelo, con_placas:e.con_placas, no_placa: e.no_placa, placa_pais:e.placa_pais, dataEstado:estado,no_ocupantes:e.no_ocupantes, color:e.color, catalogo_tipo_vehiculo_id:e.catalogo_tipo_vehiculo_id, marca_id:e.marca_id, entidad_placas: e.entidad_placas});
+          arregloVehiculo.push({dataTipovehiculo: e.tipo.descripcion, dataVehiculo:e.marca.descripcion, modelo:e.modelo, con_placas:e.con_placas, no_placa: e.no_placa, placa_pais:e.placa_pais, dataEstado:estado,no_ocupantes:e.no_ocupantes, color:e.color, catalogo_tipo_vehiculo_id:e.catalogo_tipo_vehiculo_id, marca_id:e.marca_id, entidad_placas: e.entidad_placas, uso_vehiculo:e.uso_vehiculo, puesto_disposicion:e.puesto_disposicion});
         });
         this.datosVehiculo = arregloVehiculo;
         this.dataSourceVehiculos.connect().next(this.datosVehiculo);
@@ -479,6 +480,7 @@ export class RegistroLesionComponent implements OnInit {
         //console.log(this.datosVictima);
         this.dataSourceVictima.connect().next(this.datosVictima);
         this.cargarImages();
+        this.cargarDocumentos();
         this.contarVictimas();
         //this.isLoading = false; 
       },
@@ -505,7 +507,6 @@ export class RegistroLesionComponent implements OnInit {
   }
 
   showVehiculoDialog(objeto, indice = null){
-    console.log(this.catalogos);
     let configDialog = {data:{scSize:'',tipoVehiculo: this.catalogos['TipoVehiculo'], marcas: this.catalogos['Vehiculo'], entidades: this.catalogos['Entidades']}, width:'50%',maxWidth: null,maxHeight: null,height: null};
     if(this.mediaSize == 'xs'){
       configDialog = {
@@ -529,25 +530,29 @@ export class RegistroLesionComponent implements OnInit {
       configDialog.data = objeto;
       configDialog.data.tipoVehiculo = this.catalogos['TipoVehiculo'];
       configDialog.data.marcas =  this.catalogos['Vehiculo'];
-      configDialog.data.entidades = this.catalogos['Entidades']
+      configDialog.data.entidades = this.catalogos['Entidades'];
+      console.log("---- Entra ----");
+      console.log(configDialog);
     }
     const dialogRef = this.dialog.open(VehiculosDialogComponent, configDialog);
 
     dialogRef.afterClosed().subscribe(valid => {
-      if(valid.activo){ 
-        if(valid.index == null)
-        {
-          this.datosVehiculo.push(valid);
-        }else{
-          this.datosVehiculo[valid.index] = valid;
+      if(valid){
+        if(valid.activo){ 
+          if(valid.index == null)
+          {
+            this.datosVehiculo.push(valid);
+          }else{
+            this.datosVehiculo[valid.index] = valid;
+          }
+          
+          this.dataSourceVehiculos.connect().next(this.datosVehiculo);
+          if(this.datosVehiculo.length > 0)
+          {
+            this.tipoAccidenteFlag = false;
+          }
+          //console.log(this.datosVehiculo);
         }
-        
-        this.dataSourceVehiculos.connect().next(this.datosVehiculo);
-        if(this.datosVehiculo.length > 0)
-        {
-          this.tipoAccidenteFlag = false;
-        }
-        //console.log(this.datosVehiculo);
       }
     });
   }
@@ -565,7 +570,7 @@ export class RegistroLesionComponent implements OnInit {
   }
   
   showVictimaDialog(objeto, indice = null){
-    //console.log(objeto);
+    console.log(objeto);
     let configDialog = {data:{}, width:'50%',maxWidth: null,maxHeight: null,height: null};
     if(this.mediaSize == 'xs'){
       configDialog = {
@@ -829,8 +834,17 @@ export class RegistroLesionComponent implements OnInit {
     let tamano = fileList.length;
     if (tamano > 0) {
       for (let index = 0; index < tamano; index++) {
-        //console.log(fileList[index]);
         this.Fotos.push(<File>fileList[index]);
+      }
+    }
+  }
+  
+  fileChangeDocument(event) {
+		let fileList: FileList = event.target.files;
+    let tamano = fileList.length;
+    if (tamano > 0) {
+      for (let index = 0; index < tamano; index++) {
+        this.Documentos.push(<File>fileList[index]);
       }
     }
   }
@@ -860,17 +874,46 @@ export class RegistroLesionComponent implements OnInit {
 
     subirDocumento()
     {
+      this.archivoSubido = false;
+      this.isLoading = true;
+      let data = {id:this.id};
       
+      this.importarService.uploadDocumento(data, this.Documentos).subscribe(
+        response => {
+          this.sharedService.showSnackBar("Ha subido correctamente las imagenes", null, 3000);
+          this.isLoading = false;
+          //console.log(response);
+          
+          this.cargarDocumentos();
+        }, errorResponse => {
+          console.log(errorResponse.error);
+          this.sharedService.showSnackBar(errorResponse.error, null, 3000);
+          this.isLoading = false;
+        });
     }
 
     cargarImages()
     {
       this.lesionesService.cargarImagen(this.id).subscribe(
         response => {
-          console.log("---- imagenes");
-          console.log(response);
           this.arregloFotos = response.data;
           this.isLoading = false; 
+        },
+        errorResponse =>{
+          let objError = errorResponse.error.error.data;
+          let claves = Object.keys(objError); 
+          this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+          this.isLoading = false;
+        } 
+      );
+    }
+    cargarDocumentos()
+    {
+      this.lesionesService.cargarDocumentos(this.id).subscribe(
+        response => {
+          this.datosDocumentos = response.data;
+          this.isLoading = false; 
+          this.dataSourceDocumentos.connect().next(this.datosDocumentos);
         },
         errorResponse =>{
           let objError = errorResponse.error.error.data;
@@ -886,6 +929,22 @@ export class RegistroLesionComponent implements OnInit {
       this.lesionesService.eliminaImagen(this.id, nombre).subscribe(
         response => {
          this.cargarImages();
+          this.isLoading = false; 
+        },
+        errorResponse =>{
+          let objError = errorResponse.error.error.data;
+          let claves = Object.keys(objError); 
+          this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+          this.isLoading = false;
+        } 
+      );
+    }
+    
+    eliminarDocumento(id:number)
+    {
+      this.lesionesService.eliminaDocumento(this.id, id).subscribe(
+        response => {
+         this.cargarDocumentos();
           this.isLoading = false; 
         },
         errorResponse =>{

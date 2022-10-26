@@ -15,6 +15,7 @@ export class LesionesService {
   url_catalogo_unidad                     = `${environment.base_url}/catalogo-unidad`;         
   url_vehiculos                           = `${environment.base_url}/lista-vehiculos`;         
   url_imagenes                            = `${environment.base_url}/imagenes`;         
+  url_documentos                          = `${environment.base_url}/documentos`;         
 
   constructor(private http: HttpClient) {}
 
@@ -108,10 +109,28 @@ export class LesionesService {
       }
     ));
   }
+  
+  cargarDocumentos(id)
+  {
+    return this.http.get<any>(this.url_documentos+'/'+id,{}).pipe(
+      map( (response: any) => {
+        return response;
+      }
+    ));
+  }
 
   eliminaImagen(id, nombre)
   {
     return this.http.delete<any>(this.url_imagenes+'/'+id,{params: {'nombre': nombre}}).pipe(
+      map( (response: any) => {
+        return response;
+      }
+    ));
+  }
+  
+  eliminaDocumento(id, nombre)
+  {
+    return this.http.delete<any>(this.url_documentos+'/'+id,{params: {'identificador': id}}).pipe(
       map( (response: any) => {
         return response;
       }

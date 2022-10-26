@@ -27,7 +27,7 @@ class CreateTablasRelacion extends Migration
             $table->string('modelo',50);
             $table->smallInteger('con_placas')->unsigned();
             $table->smallInteger('entidad_placas')->unsigned()->nullable();
-            $table->smallInteger('no_placa')->unsigned()->nullable();
+            $table->string('no_placa',10)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -81,14 +81,32 @@ class CreateTablasRelacion extends Migration
             $table->smallInteger('tipo_id')->unsigned();
             $table->smallInteger('acta_certificacion_id')->unsigned()->nullable();
             $table->string('no_acta_certificacion',50)->nullable();
+            $table->smallInteger('anonimo')->nullable();
             $table->string('nombre', 50)->nullable();
             $table->string('apellido_paterno', 50)->nullable();
             $table->string('apellido_materno', 50)->nullable();
             $table->smallInteger('edad')->unsigned()->nullable();
+            $table->smallInteger('silla_id')->unsigned()->nullable();
             $table->smallInteger('sexo_id')->unsigned();
+            $table->smallInteger('embarazada')->unsigned()->nullable();
+            $table->smallInteger('pre_hospitalizacion')->unsigned()->nullable();
+            $table->string('no_ambulancia',20)->nullable();
+            $table->smallInteger('prestador_servicio')->unsigned()->nullable();
+            $table->smallInteger('otro_prestador')->unsigned()->nullable();
+            $table->smallInteger('nivel_conciencia')->unsigned()->nullable();
+            $table->smallInteger('pulso')->unsigned()->nullable();
+            $table->smallInteger('color_piel')->unsigned()->nullable();
+            $table->smallInteger('prioridad_traslado')->unsigned()->nullable();
+            $table->smallInteger('negativa_traslado')->unsigned()->nullable();
+            $table->string('especifique_negativa',250)->nullable();
+            $table->smallInteger('hospitalizacion')->unsigned()->nullable();
+            $table->smallInteger('municipio_hospitalizacion')->unsigned()->nullable();
+            $table->string('clues',30)->nullable();
             $table->smallInteger('tipo_usuario_id')->unsigned();
-            $table->string('hospitalizado',200);
+            
             $table->smallInteger('casco')->unsigned()->nullable();
+            $table->smallInteger('ubicacion')->unsigned()->nullable();
+            $table->smallInteger('vehiculo_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
 
@@ -143,15 +161,16 @@ class CreateTablasRelacion extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-
-        Schema::create('catalogo_clues', function (Blueprint $table) {
-            $table->smallInteger('clues')->unsigned();
-            $table->smallInteger('catalogo_municipios_id')->unsigned();
-            $table->string('institucion',150);
-            $table->string('descripcion',150);
+        
+        Schema::create('rel_documentos', function (Blueprint $table) {
+            $table->bigIncrements('id')->unsigned();
+            $table->smallInteger('lesiones_id')->unsigned();
+            $table->string('nombre',25);
             $table->softDeletes();
             $table->timestamps();
         });
+
+       
     }
 
     /**
@@ -161,7 +180,6 @@ class CreateTablasRelacion extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('catalogo_clues');
         Schema::dropIfExists('rel_vehiculos');
         Schema::dropIfExists('rel_tipo_accidente');
         Schema::dropIfExists('rel_causa_pasajero');
@@ -176,5 +194,6 @@ class CreateTablasRelacion extends Migration
         Schema::dropIfExists('rel_agente_natural');
         Schema::dropIfExists('rel_condicion_camino');
         Schema::dropIfExists('rel_fotografias');
+        Schema::dropIfExists('rel_documentos');
     }
 }

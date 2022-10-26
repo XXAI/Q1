@@ -70,7 +70,7 @@ class CatalogosController extends Controller
     public function getCatalogoClues(Request $request){
         try{
             $parametros = $request->all();
-            $data = clues::where("catalogo_municipios_id",$parametros['municipio_id'])->orderBy("descripcion");
+            $data = clues::where("catalogo_municipio_id",$parametros['municipio_id'])->orderBy("descripcion");
             if(isset($parametros['query']) && $parametros['query']){
                 $data = $data->where(function($query)use($parametros){
                     return $query->where('descripcion','LIKE','%'.$parametros['query'].'%');

@@ -22,10 +22,12 @@
                             </mat-form-field>
                             <mat-form-field fxFlex appearance="fill">
                                 <mat-label>HORA</mat-label>
-                                <input matInput formControlName="hora" placeholder="HH:MM" required autocomplete="off">
+                                <input [ngxTimepicker]="picker" matInput formControlName="hora" placeholder="HH:MM">
+                                <ngx-material-timepicker #picker></ngx-material-timepicker>
+                                <!--<input matInput formControlName="hora" placeholder="HH:MM" required autocomplete="off">
                                 <mat-error *ngIf=" principalForm.get('hora').invalid && ( principalForm.get('hora').dirty ||  principalForm.get('hora').touched)">
                                     <span *ngIf=" principalForm.get('hora').hasError('pattern')">La HORA es un campo obligatorio</span>
-                                </mat-error>
+                                </mat-error>-->
                             </mat-form-field>
                             <mat-form-field fxFlex appearance="fill">
                                 <mat-label>ENTIDAD</mat-label>
@@ -317,6 +319,9 @@
                                                 <div *ngIf="row.placa_pais == 1">
                                                     {{ row.dataEstado}}
                                                 </div>
+                                            </div>
+                                            <div *ngIf="row.con_placas != 1">
+                                                SIN PLACAS
                                             </div>
                                         </td>
                                     </ng-container>
@@ -711,10 +716,10 @@
                     </div>
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                         <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
-                            No. DE LESIONADOS {{ datosVehiculo.length }}
+                            No. DE LESIONADOS {{ cantidadLesionados }}
                         </div>
                         <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
-                            No. DE FALLECIMIENTOS {{ datosVehiculo.length }}
+                            No. DE FALLECIMIENTOS {{ cantidadFallecidos }}
                         </div>
 
                     </div>
@@ -734,7 +739,7 @@
                                 <ng-container matColumnDef="nombre">
                                     <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Nombre </th>
                                     <td mat-cell *matCellDef="let row" fxHide.xs="true">
-                                        <div *ngIf="row.ignora_nombre != null">
+                                        <div *ngIf="row.anonimo == 1">
                                             SE IGNORA
                                         </div>
                                         <div *ngIf="row.ignora_nombre == null">
@@ -752,7 +757,12 @@
                                 <ng-container matColumnDef="hospitalizacion">
                                     <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Hospitalizacion </th>
                                     <td mat-cell *matCellDef="let row" fxHide.xs="true">
-                                        {{row.hospitalizado}}
+                                        <div *ngIf="row.hospitalizacion == 1">
+                                            {{ row.clues_hospitalizacion.clues }} {{ row.clues_hospitalizacion.descripcion }} - {{ row.clues_hospitalizacion.clave_institucion }}
+                                        </div>
+                                        <div *ngIf="row.hospitalizacion == 2">
+                                            NO HOSPITALIZADO
+                                        </div>
 
                                     </td>
                                 </ng-container>
@@ -823,14 +833,45 @@
                 <mat-tab label="DOCUMENTOS" [disabled]="editable" [formGroup]="formArchivos">
                     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="5px" style="margin-top:10px">
                         <div fxFlex="50" fxFlex.xs="100">
-                            <input type="file" formControlName="file" class="form-control" accept="image/jpeg" multiple (change)="fileChange($event)">
+                            <input type="file" formControlName="file" class="form-control" accept="application/pdf" multiple (change)="fileChangeDocument($event)">
                         </div>
                         <div fxFlex="50" fxFlex.xs="100">
                             <button type="button" mat-raised-button color="primary" (click)="subirDocumento();">SUBIR DOCUMENTOS</button>
                         </div>
                     </div>
                     <hr>
+                    <table #dataTable mat-table [dataSource]="dataSourceDocumentos" class="data-table" matSort>
+                        <ng-container matColumnDef="nombre">
+                            <th mat-header-cell *matHeaderCellDef> Tipo </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ row.nombre }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef>ACCIONES</th>
+                            <td mat-cell *matCellDef="let row; let i = index">
+                                <button mat-button [matMenuTriggerFor]="menu">
+                                    <mat-icon>more_vert</mat-icon>
+                                </button>
 
+                                <mat-menu #menu="matMenu">
+                                    <button mat-menu-item (click)="eliminarDocumento(row.id)"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
+                                </mat-menu>
+
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="noResultsFound">
+                            <td mat-footer-cell *matFooterCellDef [attr.colspan]="ColumnsDocuments.length">
+                                No se encontraron registros
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="ColumnsDocuments; sticky: true"></tr>
+                        <tr mat-row [ngClass]="{'selected-item': i==selectedItemIndex}" *matRowDef="let row; let i = index; columns: ColumnsDocuments;"></tr>
+
+                        <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(datosDocumentos!=null && datosDocumentos.length==0)}"></tr>
+                    </table>
                 </mat-tab>
             </mat-tab-group>
 

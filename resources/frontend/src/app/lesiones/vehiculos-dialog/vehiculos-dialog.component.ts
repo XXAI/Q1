@@ -10,6 +10,8 @@ export interface VehiculoClass {
   marca_id?: number;
   modelo?: number;
   con_placas?: number;
+  uso_vehiculo?: number;
+  puesto_disposicion?: number;
   placa_pais?: number;
   no_placa?: number;
   entidad_placas?: number;
