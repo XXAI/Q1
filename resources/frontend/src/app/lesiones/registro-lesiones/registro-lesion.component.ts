@@ -12,7 +12,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { VehiculosDialogComponent } from '../vehiculos-dialog/vehiculos-dialog.component';
 import { VictimasDialogComponent } from '../victimas-dialog/victimas-dialog.component';
 import { ViewImagenComponent } from '../view-imagen/view-imagen.component';
-
+import { Observable } from 'rxjs';
+import { debounceTime, finalize, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-registro-lesion',
@@ -38,7 +39,13 @@ export class RegistroLesionComponent implements OnInit {
   cantidadCamino:number = 0;
   cantidadAgentes:number = 0;
   ValidadorCausas:boolean = true;
+  localidadIsLoading: boolean = false;
   arregloFotos:any = [];
+
+  filteredLocalidad: Observable<any[]>;
+
+  cantidadLesionados:number = 0;
+  cantidadFallecidos:number = 0;
 
   editable:boolean =true;
 
@@ -57,6 +64,7 @@ export class RegistroLesionComponent implements OnInit {
   caminoForm:FormGroup;
   agentesForm:FormGroup;
   formFotos:FormGroup;
+  formArchivos:FormGroup;
 
   archivo: File = null;
   archivoSubido:boolean;
@@ -64,9 +72,11 @@ export class RegistroLesionComponent implements OnInit {
   progreso: number = 0; 
   errorArchivo:boolean;
   Fotos:any = [];
+  Documentos:any = [];
   
   datosVehiculo:any = [];
   datosVictima:any = [];
+  datosDocumentos:any = [];
   mediaSize: string;
 
   latitud: number = 16.204130;
@@ -77,8 +87,10 @@ export class RegistroLesionComponent implements OnInit {
   
   displayedColumns: string[] = ['tipo','marca','placas','ocupantes', 'actions'];
   displayColumns: string[] = ['tipo','nombre','usuario','hospitalizacion', 'actions'];
+  ColumnsDocuments: string[] = ['nombre', 'actions'];
   dataSourceVehiculos:any = new MatTableDataSource(this.datosVehiculo);
   dataSourceVictima:any = new MatTableDataSource(this.datosVictima);
+  dataSourceDocumentos:any = new MatTableDataSource(this.datosDocumentos);
 
   panelOpenState = false;
   constructor(
@@ -93,7 +105,6 @@ export class RegistroLesionComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    
     this.principalForm = this.fb.group ({
 
       fecha:[''],
@@ -104,6 +115,7 @@ export class RegistroLesionComponent implements OnInit {
       colonia:['',Validators.required],
       calle:['',Validators.required],
       no:['', Validators.required],
+      cp:['', Validators.required],
       latitud:['',Validators.required],
       longitud:['',Validators.required],
     });
@@ -226,6 +238,9 @@ export class RegistroLesionComponent implements OnInit {
     this.formFotos = this.fb.group ({
       file:[''],
     });
+    this.formArchivos = this.fb.group ({
+      file:[''],
+    });
 
     await this.IniciarCatalogos();
     //this.cargarImages();
@@ -246,6 +261,7 @@ export class RegistroLesionComponent implements OnInit {
       }
       
     });
+
     
   }
 
@@ -322,7 +338,7 @@ export class RegistroLesionComponent implements OnInit {
             estado =  e.estado.descripcion;
           }
           
-          arregloVehiculo.push({dataTipovehiculo: e.tipo.descripcion, dataVehiculo:e.marca.descripcion, modelo:e.modelo, con_placas:e.con_placas, no_placa: e.no_placa, placa_pais:e.placa_pais, dataEstado:estado,no_ocupantes:e.no_ocupantes, color:e.color, catalogo_tipo_vehiculo_id:e.catalogo_tipo_vehiculo_id, marca_id:e.marca_id, entidad_placas: e.entidad_placas});
+          arregloVehiculo.push({dataTipovehiculo: e.tipo.descripcion, dataVehiculo:e.marca.descripcion, modelo:e.modelo, con_placas:e.con_placas, no_placa: e.no_placa, placa_pais:e.placa_pais, dataEstado:estado,no_ocupantes:e.no_ocupantes, color:e.color, catalogo_tipo_vehiculo_id:e.catalogo_tipo_vehiculo_id, marca_id:e.marca_id, entidad_placas: e.entidad_placas, uso_vehiculo:e.uso_vehiculo, puesto_disposicion:e.puesto_disposicion});
         });
         this.datosVehiculo = arregloVehiculo;
         this.dataSourceVehiculos.connect().next(this.datosVehiculo);
@@ -461,9 +477,11 @@ export class RegistroLesionComponent implements OnInit {
         });
         
         this.datosVictima = vitima;
-        console.log(this.datosVictima);
+        //console.log(this.datosVictima);
         this.dataSourceVictima.connect().next(this.datosVictima);
         this.cargarImages();
+        this.cargarDocumentos();
+        this.contarVictimas();
         //this.isLoading = false; 
       },
       errorResponse =>{
@@ -475,8 +493,20 @@ export class RegistroLesionComponent implements OnInit {
     );
   }
 
+  contarVictimas()
+  {
+
+    this.datosVictima.forEach(element => {
+      if(element.tipo_id == 1)
+      {
+        this.cantidadLesionados++;
+      }else if(element.tipo_id == 2){
+        this.cantidadFallecidos++;
+      }  
+    });
+  }
+
   showVehiculoDialog(objeto, indice = null){
-    console.log(this.catalogos);
     let configDialog = {data:{scSize:'',tipoVehiculo: this.catalogos['TipoVehiculo'], marcas: this.catalogos['Vehiculo'], entidades: this.catalogos['Entidades']}, width:'50%',maxWidth: null,maxHeight: null,height: null};
     if(this.mediaSize == 'xs'){
       configDialog = {
@@ -500,25 +530,29 @@ export class RegistroLesionComponent implements OnInit {
       configDialog.data = objeto;
       configDialog.data.tipoVehiculo = this.catalogos['TipoVehiculo'];
       configDialog.data.marcas =  this.catalogos['Vehiculo'];
-      configDialog.data.entidades = this.catalogos['Entidades']
+      configDialog.data.entidades = this.catalogos['Entidades'];
+      console.log("---- Entra ----");
+      console.log(configDialog);
     }
     const dialogRef = this.dialog.open(VehiculosDialogComponent, configDialog);
 
     dialogRef.afterClosed().subscribe(valid => {
-      if(valid.activo){ 
-        if(valid.index == null)
-        {
-          this.datosVehiculo.push(valid);
-        }else{
-          this.datosVehiculo[valid.index] = valid;
+      if(valid){
+        if(valid.activo){ 
+          if(valid.index == null)
+          {
+            this.datosVehiculo.push(valid);
+          }else{
+            this.datosVehiculo[valid.index] = valid;
+          }
+          
+          this.dataSourceVehiculos.connect().next(this.datosVehiculo);
+          if(this.datosVehiculo.length > 0)
+          {
+            this.tipoAccidenteFlag = false;
+          }
+          //console.log(this.datosVehiculo);
         }
-        
-        this.dataSourceVehiculos.connect().next(this.datosVehiculo);
-        if(this.datosVehiculo.length > 0)
-        {
-          this.tipoAccidenteFlag = false;
-        }
-        //console.log(this.datosVehiculo);
       }
     });
   }
@@ -536,7 +570,7 @@ export class RegistroLesionComponent implements OnInit {
   }
   
   showVictimaDialog(objeto, indice = null){
-    //console.log(objeto);
+    console.log(objeto);
     let configDialog = {data:{}, width:'50%',maxWidth: null,maxHeight: null,height: null};
     if(this.mediaSize == 'xs'){
       configDialog = {
@@ -550,30 +584,49 @@ export class RegistroLesionComponent implements OnInit {
 
     if(objeto != null)
     {
+      objeto.lesion_id = this.id;
       objeto.index = indice;
+      objeto.municipios = this.catalogos['Municipio'];
       configDialog.data = objeto;
-    }
-    const dialogRef = this.dialog.open(VictimasDialogComponent, configDialog);
 
-    dialogRef.afterClosed().subscribe(valid => {
-      if(valid)
-      {
-        
-        if(valid.activo){ 
-          if(valid.index == null)
-          {
-            this.datosVictima.push(valid);
-          }else{
-            this.datosVictima[valid.index] = valid;
-          }
+    }else{
+      let objeto = {vehiculos:'', municipios:'', lesion_id:0};
+      objeto.lesion_id = this.id;
+      objeto.municipios = this.catalogos['Municipio'];
+      configDialog.data = objeto;
+
+    }
+    
+    
+    if(this.datosVehiculo.length > 0)
+    {
+
+      const dialogRef = this.dialog.open(VictimasDialogComponent, configDialog);
+
+      dialogRef.afterClosed().subscribe(valid => {
+        if(valid)
+        {
           
-          this.dataSourceVictima.connect().next(this.datosVictima);
-          //this.changeDetectorRefs.detectChanges();
+          if(valid.activo){ 
+            if(valid.index == null)
+            {
+              this.datosVictima.push(valid);
+            }else{
+              this.datosVictima[valid.index] = valid;
+            }
+            
+            this.dataSourceVictima.connect().next(this.datosVictima);
+            //this.changeDetectorRefs.detectChanges();
+          }
         }
-      }
-      
-      console.log(valid);
-    });
+        
+        //console.log(valid);
+      });
+      this.contarVictimas();
+    }else{
+      this.sharedService.showSnackBar("Debe de registrar al menos un vehiculo en el incidente", null, 3000);
+    }
+    
   }
 
   eliminarVictima(id)
@@ -581,6 +634,7 @@ export class RegistroLesionComponent implements OnInit {
     let indice = this.datosVictima.findIndex(x=> x.id == id);
     this.datosVictima.splice(indice,1);
     this.dataSourceVictima.connect().next(this.datosVictima);
+    this.contarVictimas();
   }
 
   editarVictima(obj, indice)
@@ -600,6 +654,33 @@ export class RegistroLesionComponent implements OnInit {
       } 
     );
 
+    this.principalForm.get('localidad').valueChanges
+      .pipe(
+        debounceTime(300),
+        tap( () => {
+            this.localidadIsLoading = true; 
+        } ),
+        switchMap(value => {
+            if(!(typeof value === 'object')){
+              this.localidadIsLoading = false;
+              let municipio = this.principalForm.get('municipio').value;
+              console.log("entra");
+              console.log(value);
+              if( municipio!="")
+              {
+                
+                return this.lesionesService.buscarLocalidad({municipio_id:municipio, query:value }).pipe(finalize(() => this.localidadIsLoading = false ));
+              }else{
+                return [];
+              }
+               
+            }else{
+              this.localidadIsLoading = false; 
+              return [];
+            }
+          }
+        ),
+      ).subscribe(items => this.filteredLocalidad = items);
   }
 
   private _filter(value: any, catalog: string, valueField: string): string[] {
@@ -723,7 +804,7 @@ export class RegistroLesionComponent implements OnInit {
       let obj = { 'etapa' : etapa, victimas: []};
       obj.victimas = this.datosVictima;
       formulario = obj; 
-      console.log(this.datosVictima);
+      //console.log(this.datosVictima);
     }
     formulario.etapa = etapa;
 
@@ -753,8 +834,17 @@ export class RegistroLesionComponent implements OnInit {
     let tamano = fileList.length;
     if (tamano > 0) {
       for (let index = 0; index < tamano; index++) {
-        //console.log(fileList[index]);
         this.Fotos.push(<File>fileList[index]);
+      }
+    }
+  }
+  
+  fileChangeDocument(event) {
+		let fileList: FileList = event.target.files;
+    let tamano = fileList.length;
+    if (tamano > 0) {
+      for (let index = 0; index < tamano; index++) {
+        this.Documentos.push(<File>fileList[index]);
       }
     }
   }
@@ -778,14 +868,52 @@ export class RegistroLesionComponent implements OnInit {
       });
     }
 
+    displayLocalidadFn(item: any) {
+      if (item) { return item.descripcion; }
+    }
+
+    subirDocumento()
+    {
+      this.archivoSubido = false;
+      this.isLoading = true;
+      let data = {id:this.id};
+      
+      this.importarService.uploadDocumento(data, this.Documentos).subscribe(
+        response => {
+          this.sharedService.showSnackBar("Ha subido correctamente las imagenes", null, 3000);
+          this.isLoading = false;
+          //console.log(response);
+          
+          this.cargarDocumentos();
+        }, errorResponse => {
+          console.log(errorResponse.error);
+          this.sharedService.showSnackBar(errorResponse.error, null, 3000);
+          this.isLoading = false;
+        });
+    }
+
     cargarImages()
     {
       this.lesionesService.cargarImagen(this.id).subscribe(
         response => {
-          console.log("---- imagenes");
-          console.log(response);
           this.arregloFotos = response.data;
           this.isLoading = false; 
+        },
+        errorResponse =>{
+          let objError = errorResponse.error.error.data;
+          let claves = Object.keys(objError); 
+          this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+          this.isLoading = false;
+        } 
+      );
+    }
+    cargarDocumentos()
+    {
+      this.lesionesService.cargarDocumentos(this.id).subscribe(
+        response => {
+          this.datosDocumentos = response.data;
+          this.isLoading = false; 
+          this.dataSourceDocumentos.connect().next(this.datosDocumentos);
         },
         errorResponse =>{
           let objError = errorResponse.error.error.data;
@@ -811,6 +939,22 @@ export class RegistroLesionComponent implements OnInit {
         } 
       );
     }
+    
+    eliminarDocumento(id:number)
+    {
+      this.lesionesService.eliminaDocumento(this.id, id).subscribe(
+        response => {
+         this.cargarDocumentos();
+          this.isLoading = false; 
+        },
+        errorResponse =>{
+          let objError = errorResponse.error.error.data;
+          let claves = Object.keys(objError); 
+          this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+          this.isLoading = false;
+        } 
+      );
+    }
 
     ver(imagen)
     {
@@ -824,5 +968,10 @@ export class RegistroLesionComponent implements OnInit {
       });
     }
 
+    cargarBuscadores():void
+    {
+    console.log(this.principalForm);
+      /**/
+    }
     
 }

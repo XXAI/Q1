@@ -35,9 +35,15 @@ Route::group(['middleware'=>'auth'],function($router){
     //Modulos del Sistema
     Route::apiResource('lesiones',              'API\Modulos\LesionesController');
     Route::get('catalogos',                     'API\Modulos\CatalogosController@getCatalogos');
+    Route::get('catalogo-localidad',            'API\Modulos\CatalogosController@getCatalogoLocalidad');
+    Route::get('catalogo-unidad',               'API\Modulos\CatalogosController@getCatalogoClues');
+    Route::get('lista-vehiculos',               'API\Modulos\LesionesController@getVehiculos');
     Route::get('imagenes/{id}',                 'API\Modulos\LesionesController@getImagenes');
+    Route::get('documentos/{id}',                 'API\Modulos\LesionesController@getDocumentos');
     Route::delete('imagenes/{id}',              'API\Modulos\LesionesController@delImagenes');
+    Route::delete('documentos/{id}',              'API\Modulos\LesionesController@delDocumentos');
     Route::post('subir-fotos',                  'API\Modulos\LesionesController@fotografias');
+    Route::post('subir-documentos',                  'API\Modulos\LesionesController@documentos');
    
     /**
      *  Modulo de Reportes

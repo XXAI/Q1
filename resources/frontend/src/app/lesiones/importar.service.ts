@@ -11,6 +11,7 @@ export class ImportarService {
 
   private httpImport: HttpClient;
   url_fotos                               = `${environment.base_url}/subir-fotos`;    
+  url_documentos                          = `${environment.base_url}/subir-documentos`;    
 
   constructor( handler: HttpBackend) {
     this.httpImport = new HttpClient(handler);
@@ -32,6 +33,23 @@ export class ImportarService {
     headers.append('Content-Type','application/x-www-form-urlencoded;charset=UTF-8');
     headers.append('Access-Control-Allow-Origin','*');
     return this.httpImport.post(this.url_fotos, formData, { headers:headers});
+    return ;
+  }
+  
+  uploadDocumento(data:any,files:any): Observable<any>{
+    const formData: FormData = new FormData();
+    for (let index = 0; index < files.length; index++) {
+      formData.append('archivo_'+index, <File>files[index], files[index].name);
+    }
+    formData.append('id', data.id);
+    
+    let token = localStorage.getItem('token');
+    let headers = new HttpHeaders().set(
+      "Authorization",'Bearer '+localStorage.getItem("token"),
+    );
+    headers.append('Content-Type','application/x-www-form-urlencoded;charset=UTF-8');
+    headers.append('Access-Control-Allow-Origin','*');
+    return this.httpImport.post(this.url_documentos, formData, { headers:headers});
     return ;
   }
 }

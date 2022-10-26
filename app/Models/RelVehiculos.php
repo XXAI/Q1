@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RelVehiculos extends Model
 {
     use SoftDeletes;
-    protected $fillable = ["catalogo_tipo_vehiculo_id", "marca_id", "placa_pais", "no_ocupantes", "color", "con_placas", "entidad_placas", "no_placa", "lesiones_id" ];
+    protected $fillable = ["catalogo_tipo_vehiculo_id", "marca_id", "placa_pais", "no_ocupantes", "color", "con_placas", "entidad_placas", "no_placa", "lesiones_id", "uso_vehiculo", "puesto_disposicion", "modelo" ];
     protected $table = "rel_vehiculos";
 
     public function tipo(){

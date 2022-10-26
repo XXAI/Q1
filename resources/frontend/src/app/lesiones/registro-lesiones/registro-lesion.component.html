@@ -41,14 +41,26 @@
                                     <mat-option *ngFor="let item of catalogos['Municipio']" [value]="item.id">{{ item.descripcion }}</mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field fxFlex appearance="fill">
+                            <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                                 <mat-label>LOCALIDAD</mat-label>
-                                <input matInput formControlName="localidad" placeholder="LOCALIDAD" required autocomplete="off">
-                                <mat-error *ngIf=" principalForm.get('localidad').invalid && ( principalForm.get('localidad').dirty ||  principalForm.get('localidad').touched)">
-                                    <span *ngIf=" principalForm.get('localidad').hasError('pattern')">La LOCALIDAD es un campo obligatorio</span>
+                                <input matInput placeholder="localidad" [matAutocomplete]="localidadAutocomplete" formControlName='localidad'>
+                                <mat-autocomplete #localidadAutocomplete="matAutocomplete" [displayWith]="displayLocalidadFn" [panelWidth]="'auto'">
+                                    <mat-option *ngIf="localidadIsLoading" class="is-loading">
+                                        <mat-spinner diameter="25"></mat-spinner>
+                                    </mat-option>
+                                    <ng-container *ngIf="!localidadIsLoading">
+                                        <mat-option *ngFor="let item of filteredLocalidad" [value]="item">
+                                            [{{item.id}}] {{ item.descripcion }}
+                                        </mat-option>
+                                    </ng-container>
+                                </mat-autocomplete>
+
+                                <mat-error *ngIf="principalForm.get('localidad').invalid && (principalForm.get('localidad').dirty || principalForm.get('localidad').touched)">
+                                    <span *ngIf="principalForm.get('localidad').errors.required">Campo obligatorio</span>
                                 </mat-error>
 
                             </mat-form-field>
+
 
                         </div>
 
@@ -72,6 +84,13 @@
                                 <input matInput formControlName="no" placeholder="No" required autocomplete="off">
                                 <mat-error *ngIf=" principalForm.get('no').invalid && ( principalForm.get('no').dirty ||  principalForm.get('no').touched)">
                                     <span *ngIf=" principalForm.get('no').errors.required">El No es un campo obligatorio</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="fill" fxFlex="8">
+                                <mat-label>C.P.</mat-label>
+                                <input matInput formControlName="cp" placeholder="C.P." required autocomplete="off">
+                                <mat-error *ngIf=" principalForm.get('cp').invalid && ( principalForm.get('cp').dirty ||  principalForm.get('cp').touched)">
+                                    <span *ngIf=" principalForm.get('cp').errors.required">El CP es un campo obligatorio</span>
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field appearance="fill" fxFlex="10">
@@ -269,6 +288,13 @@
                         <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                             <button mat-raised-button color="primary" (click)="showVehiculoDialog(null)"><mat-icon>add_circle</mat-icon>AGREGAR VEHICULO</button>
                         </div>
+
+                        <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                            <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
+                                No. DE VEHÍCULOS {{ datosVehiculo.length }}
+                            </div>
+
+                        </div>
                         <div class="data-container ">
                             <div class="data-table-container">
                                 <table #dataTable mat-table [dataSource]="dataSourceVehiculos" class="data-table" matSort>
@@ -293,6 +319,9 @@
                                                 <div *ngIf="row.placa_pais == 1">
                                                     {{ row.dataEstado}}
                                                 </div>
+                                            </div>
+                                            <div *ngIf="row.con_placas != 1">
+                                                SIN PLACAS
                                             </div>
                                         </td>
                                     </ng-container>
@@ -685,6 +714,15 @@
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                         <button mat-raised-button color="primary" (click)="showVictimaDialog(null)"><mat-icon>add_circle</mat-icon>AGREGAR VICTIMA</button>
                     </div>
+                    <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
+                        <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
+                            No. DE LESIONADOS {{ cantidadLesionados }}
+                        </div>
+                        <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
+                            No. DE FALLECIMIENTOS {{ cantidadFallecidos }}
+                        </div>
+
+                    </div>
                     <div class="data-container ">
                         <div class="data-table-container">
                             <table #dataTable mat-table [dataSource]="dataSourceVictima" class="data-table" matSort>
@@ -701,7 +739,7 @@
                                 <ng-container matColumnDef="nombre">
                                     <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Nombre </th>
                                     <td mat-cell *matCellDef="let row" fxHide.xs="true">
-                                        <div *ngIf="row.ignora_nombre != null">
+                                        <div *ngIf="row.anonimo == 1">
                                             SE IGNORA
                                         </div>
                                         <div *ngIf="row.ignora_nombre == null">
@@ -719,7 +757,12 @@
                                 <ng-container matColumnDef="hospitalizacion">
                                     <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Hospitalizacion </th>
                                     <td mat-cell *matCellDef="let row" fxHide.xs="true">
-                                        {{row.hospitalizado}}
+                                        <div *ngIf="row.hospitalizacion == 1">
+                                            {{ row.clues_hospitalizacion.clues }} {{ row.clues_hospitalizacion.descripcion }} - {{ row.clues_hospitalizacion.clave_institucion }}
+                                        </div>
+                                        <div *ngIf="row.hospitalizacion == 2">
+                                            NO HOSPITALIZADO
+                                        </div>
 
                                     </td>
                                 </ng-container>
@@ -786,6 +829,49 @@
 
                         </div>
                     </div>
+                </mat-tab>
+                <mat-tab label="DOCUMENTOS" [disabled]="editable" [formGroup]="formArchivos">
+                    <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="5px" style="margin-top:10px">
+                        <div fxFlex="50" fxFlex.xs="100">
+                            <input type="file" formControlName="file" class="form-control" accept="application/pdf" multiple (change)="fileChangeDocument($event)">
+                        </div>
+                        <div fxFlex="50" fxFlex.xs="100">
+                            <button type="button" mat-raised-button color="primary" (click)="subirDocumento();">SUBIR DOCUMENTOS</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <table #dataTable mat-table [dataSource]="dataSourceDocumentos" class="data-table" matSort>
+                        <ng-container matColumnDef="nombre">
+                            <th mat-header-cell *matHeaderCellDef> Tipo </th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ row.nombre }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="actions">
+                            <th mat-header-cell *matHeaderCellDef>ACCIONES</th>
+                            <td mat-cell *matCellDef="let row; let i = index">
+                                <button mat-button [matMenuTriggerFor]="menu">
+                                    <mat-icon>more_vert</mat-icon>
+                                </button>
+
+                                <mat-menu #menu="matMenu">
+                                    <button mat-menu-item (click)="eliminarDocumento(row.id)"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
+                                </mat-menu>
+
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="noResultsFound">
+                            <td mat-footer-cell *matFooterCellDef [attr.colspan]="ColumnsDocuments.length">
+                                No se encontraron registros
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="ColumnsDocuments; sticky: true"></tr>
+                        <tr mat-row [ngClass]="{'selected-item': i==selectedItemIndex}" *matRowDef="let row; let i = index; columns: ColumnsDocuments;"></tr>
+
+                        <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(datosDocumentos!=null && datosDocumentos.length==0)}"></tr>
+                    </table>
                 </mat-tab>
             </mat-tab-group>
 

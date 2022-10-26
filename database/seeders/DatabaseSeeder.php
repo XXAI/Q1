@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             'catalogo_localidades',
             'catalogo_vehiculos',
             'catalogo_marcas',
+            'catalogo_clues',
         ];
 
         DB::beginTransaction();

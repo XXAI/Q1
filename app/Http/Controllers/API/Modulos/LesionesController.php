@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\Modulos;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
-use Illuminate\Facades\Storage;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\Controller;
 use \Validator,\Hash, \Response, \DB, \File, \Store;
@@ -23,6 +23,7 @@ use App\Models\RelFallaVehiculo;
 use App\Models\RelAgente;
 use App\Models\RelCausaPasajero;
 use App\Models\RelFotografias;
+use App\Models\RelDocumentos;
 use App\Models\RelLesionParte;
 use App\Models\RelLesionParteTipo;
 use Image;
@@ -35,7 +36,7 @@ class LesionesController extends Controller
             //$accessData = $this->getUserAccessData();
             $parametros = $request->all();
             
-            $object = Lesiones::with('municipio');
+            $object = Lesiones::with("municipio","localidad");
             
             //Filtros, busquedas, ordenamiento
             if(isset($parametros['query']) && $parametros['query']){
@@ -80,7 +81,19 @@ class LesionesController extends Controller
         try{
             $return_data = Lesiones::with("tipoAccidente", "vehiculo.tipo", "vehiculo.marca", "vehiculo.estado", "causaAccidente", 
                                             "causaConductor", "causaConductorDetalle", "causaPeaton", "causaPasajero", "fallaVehiculo", 
-                                            "condicionCamino", "agentes", "victima.LesionParte.lesionVictima")->find($id);
+                                            "condicionCamino", "agentes", "victima.LesionParte.lesionVictima","victima.CluesHospitalizacion")->find($id);
+
+            return response()->json($return_data,HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    
+    public function getVehiculos(Request $request)
+    {
+        try{
+            $parametros = $request->all();
+            $return_data = RelVehiculos::with("tipo","marca")->where("lesiones_id", $parametros['lesion_id'])->get();
 
             return response()->json($return_data,HttpResponse::HTTP_OK);
         }catch(\Exception $e){
@@ -151,6 +164,7 @@ class LesionesController extends Controller
                 'colonia' => 'required',
                 'calle' => 'required',
                 'no' => 'required',
+                'cp' => 'required',
                 'latitud' => 'required',
                 'longitud' => 'required'
             ];
@@ -168,16 +182,26 @@ class LesionesController extends Controller
                 {
                     $obj = Lesiones::find($edicion);
                 }
-                $obj->fecha = $parametros['fecha'];
-                $obj->hora = $parametros['hora'];
-                $obj->entidad_federativa_id = $parametros['entidad'];
-                $obj->municipio_id = $parametros['municipio'];
-                $obj->localidad = $parametros['localidad'];
-                $obj->colonia = strtoupper($parametros['colonia']);
-                $obj->calle = strtoupper($parametros['calle']);
-                $obj->numero = $parametros['no'];
-                $obj->latitud = $parametros['latitud'];
-                $obj->longitud = $parametros['longitud'];
+
+                /*Cambiar tildes */
+                $parametros['colonia'] = $this->Tildes($parametros['colonia']);
+                $parametros['calle'] = $this->Tildes($parametros['calle']);
+                $parametros['no'] = $this->Tildes($parametros['no']);          
+                /* */
+
+                $loggedUser = auth()->userOrFail();
+                $obj->fecha                     = $parametros['fecha'];
+                $obj->hora                      = $parametros['hora'];
+                $obj->entidad_federativa_id     = $parametros['entidad'];
+                $obj->municipio_id              = $parametros['municipio'];
+                $obj->localidad_id              = $parametros['localidad']['id'];
+                $obj->colonia                   = strtoupper($parametros['colonia']);
+                $obj->calle                     = strtoupper($parametros['calle']);
+                $obj->numero                    = strtoupper($parametros['no']);
+                $obj->cp                        = $parametros['cp'];
+                $obj->latitud                   = $parametros['latitud'];
+                $obj->longitud                  = $parametros['longitud'];
+                $obj->user_id                   = $loggedUser->id;
 
                 $obj->save();
                 DB::commit();
@@ -192,6 +216,17 @@ class LesionesController extends Controller
         }
     }
 
+    public function Tildes($palabra)
+    {
+        $palabra = strtoupper($palabra);
+        $palabra = str_replace("Á", "A", $palabra);
+        $palabra = str_replace("É", "E", $palabra);
+        $palabra = str_replace("Í", "I", $palabra);
+        $palabra = str_replace("Ó", "O", $palabra);
+        $palabra = str_replace("Ú", "U", $palabra);
+        return $palabra;
+    }
+
     public function GuardarZona($parametros, $edicion = 0)
     {
         try{
@@ -201,8 +236,8 @@ class LesionesController extends Controller
             
             $reglas = [
                 'zona'=>'required',
-                'calle1' => 'required',
-                'calle2' => 'required',
+                //'calle1' => 'required',
+                //'calle2' => 'required',
                 'via' => 'required'
             ];
             $respuesta = 0;
@@ -212,6 +247,14 @@ class LesionesController extends Controller
                 DB::beginTransaction();
                 $obj = Lesiones::find($edicion);
                
+                /*Cambiar tildes */
+                $parametros['calle1'] = $this->Tildes($parametros['calle1']);
+                $parametros['calle2'] = $this->Tildes($parametros['calle2']);
+                $parametros['referencia'] = $this->Tildes($parametros['referencia']);          
+                $parametros['otro_camino'] = $this->Tildes($parametros['otro_camino']);          
+                $parametros['otro_tipo_via'] = $this->Tildes($parametros['otro_tipo_via']);          
+                /* */
+
                 $obj->zona_id = $parametros['zona'];
                 $obj->estatal_id = $parametros['carretera'];
                 $obj->interseccion_id = $parametros['interseccion'];
@@ -293,12 +336,18 @@ class LesionesController extends Controller
                 $value['lesiones_id'] = $edicion;
                 $registro =$value;
                 $registro['lesiones_id']=$obj->id;
+                if($value['hospitalizacion'] == 2)
+                {
+                    $registro['municipio_hospitalizacion'] = null;
+                    $registro['clues'] = null;
+                }
                 $lesiones = RelVictimasLesionados::create($registro);
                 //Lesiones Nuevo
                 
                 foreach ($value['lesiones'] as $key2 => $value2) {
                     //$resultado[] =  new RelVictimasLesionados($value);
-                    $value2['rel_victima_lesionado_id'] = $lesiones->id;
+                    $value2['rel_victimas_lesionados_id'] = $lesiones->id;
+                    
                     $obj_lesion = RelLesionParte::create($value2);
                     
                     $arreglo_lesion = [];
@@ -379,6 +428,10 @@ class LesionesController extends Controller
                                     }
                                     if($entero == 13)
                                     {
+                                        /*Cambiar tildes */
+                                        $parametros['conductor']['otro'] = $this->Tildes($parametros['conductor']['otro']);
+                                              
+                                        /* */
                                         $obj->otro_causa_conductor = $parametros['conductor']['otro'];
                                     }
                                 }
@@ -431,6 +484,10 @@ class LesionesController extends Controller
                                    
                                     if($entero == 6)
                                     {
+                                         /*Cambiar tildes */
+                                         $parametros['falla']['descripcion_otro'] = $this->Tildes($parametros['falla']['descripcion_otro']);
+                                              
+                                         /* */
                                         $obj->otro_falla_accidente = $parametros['falla']['descripcion_otro'];
                                     }
                                 }
@@ -455,6 +512,10 @@ class LesionesController extends Controller
                                    
                                     if($entero == 6)
                                     {
+                                          /*Cambiar tildes */
+                                          $parametros['camino']['descripcion_otro'] = $this->Tildes($parametros['camino']['descripcion_otro']);
+                                              
+                                          /* */
                                         $obj->otro_tipo_camino = $parametros['camino']['descripcion_otro'];
                                     }
                                 }
@@ -478,6 +539,10 @@ class LesionesController extends Controller
                                     
                                     if($entero == 6)
                                     {
+                                        /*Cambiar tildes */
+                                        $parametros['agentes']['descripcion_otro'] = $this->Tildes($parametros['agentes']['descripcion_otro']);
+                                              
+                                        /* */
                                         $obj->otro_falla_accidente = $parametros['agentes']['descripcion_otro'];
                                     }
                                 }
@@ -544,6 +609,31 @@ class LesionesController extends Controller
         }
     }
 
+    public function getDocumentos($id)
+    {
+        try{
+            $obj = RelDocumentos::where("lesiones_id",$id)->get();
+            return response()->json(['data'=>$obj], HttpResponse::HTTP_OK);
+         }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+    
+    public function delDocumentos($id, Request $request)
+    {
+        try{
+            $parametros = $request->all();
+            $obj = RelDocumentos::find($parametros['identificador']);
+
+            unlink(storage_path("app\\public\\documentos\\".$id."\\".$obj->nombre));
+            $obj = $obj->forceDelete();
+            
+            return response()->json(['data'=>"correcto"], HttpResponse::HTTP_OK);
+         }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
     public function fotografias(Request $request)
     {
         try{
@@ -576,6 +666,39 @@ class LesionesController extends Controller
                 return response()->json(['error'=>"Se subio correctamente las imagenes"], HttpResponse::HTTP_OK);
             }else{
                 return response()->json(['error'=>"No se encuentra ninguna imagen"], HttpResponse::HTTP_CONFLICT);
+            
+            }
+            
+        }catch(\Exception $e){
+
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
+
+    public function documentos(Request $request)
+    {
+        try{
+            ini_set('memory_limit', '-1');
+            $parametros = $request->all();
+            
+            $x= 0;
+            while($request->hasFile('archivo_'.$x))
+            {
+                $nombre = \Str::random(10);
+                $obj = new RelDocumentos();
+                $obj->nombre = $nombre.".pdf";
+                $obj->lesiones_id = $parametros["id"];
+                $obj->save();
+
+                $request->file('archivo_'.$x)->storeAs("public\\documentos\\".$parametros["id"],$nombre.'.pdf');
+                $x++;
+            }
+
+            if($x > 0)
+            {
+                return response()->json(['error'=>"Se subio correctamente los documentos"], HttpResponse::HTTP_OK);
+            }else{
+                return response()->json(['error'=>"No se encuentra ninguna documentos"], HttpResponse::HTTP_CONFLICT);
             
             }
             

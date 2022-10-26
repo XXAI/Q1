@@ -22,6 +22,7 @@ class CreateCatalogosTable extends Migration
 
         Schema::create('catalogo_municipios', function (Blueprint $table) {
             $table->smallIncrements('id')->unsigned();
+            $table->string('clave', 3);
             $table->string('descripcion', 100);
 			$table->timestamps();
 			$table->softDeletes();
@@ -39,19 +40,6 @@ class CreateCatalogosTable extends Migration
             $table->foreign('catalogo_municipios_id')->references('id')->on('catalogo_municipios')->onUpdate('cascade');
         });
 
-        /*Schema::create('catalogo_clues', function (Blueprint $table) {
-
-            $table->string('id', 12)->primary()->comment('CLave Unica de Establecimientos de Salud')->index();
-            $table->string('descripcion', 120)->comment('Nombre de la unidad de salud')->index();
-			$table->string('tipologia', 70);
-            $table->string('nivelAtencion', 50);     
-            $table->decimal('latitud', 8,6);     
-            $table->decimal('longitud', 8,6);     
-            $table->timestamps();
-            $table->softDeletes();       
-            
-        });
-*/
         Schema::create('catalogo_vehiculos', function (Blueprint $table) {
             $table->smallIncrements('id')->unsigned();
             $table->string('descripcion', 100);
@@ -66,70 +54,23 @@ class CreateCatalogosTable extends Migration
 			$table->softDeletes();
         });
 
+        Schema::create('catalogo_clues', function (Blueprint $table) {
+            $table->string('clues',12)->primary();
+            $table->smallInteger('catalogo_municipio_id')->unsigned();
+            $table->string('clave_institucion', 200);
+            $table->string('descripcion', 200);
+            $table->decimal('latitud', 8,6);
+            $table->decimal('longitud', 8,6);
+			$table->timestamps();
+			$table->softDeletes();
+        });
+
         Schema::table('catalogo_marcas', function($table) {
             $table->foreign('catalogo_vehiculo_id')->references('id')->on('catalogo_vehiculos')->onUpdate('cascade');
         });
+        
   
-        /*Schema::create('catalogo_tipo_camino', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_tipo_accidente', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_causas_accidentes', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_causas_conductor', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_causas_peaton', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_causas_falla', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-        Schema::create('catalogo_causas_condicion_camino', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-        Schema::create('catalogo_causas_agentes_naturales', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });
-
-        Schema::create('catalogo_usuario_vias', function (Blueprint $table) {
-            $table->smallIncrements('id')->unsigned();
-            $table->string('descripcion', 100);
-			$table->timestamps();
-			$table->softDeletes();
-        });*/
+       
     }
 
     /**
@@ -142,13 +83,11 @@ class CreateCatalogosTable extends Migration
         Schema::dropIfExists('catalogo_localidades');
         Schema::dropIfExists('catalogo_municipios');
         Schema::dropIfExists('catalogo_entidades');
-        //Schema::dropIfExists('catalogo_clues');
-        Schema::table('catalogo_marcas', function($table) {
-            $table->dropForeign(['catalogo_vehiculo_id']);
-        });
+        
         
         Schema::dropIfExists('catalogo_marcas');
         Schema::dropIfExists('catalogo_vehiculos');
+        Schema::dropIfExists('catalogo_clues');
 
     }
 }

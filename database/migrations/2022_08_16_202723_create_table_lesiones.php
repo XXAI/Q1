@@ -17,13 +17,14 @@ class CreateTableLesiones extends Migration
             $table->bigIncrements('id')->unsigned();
             $table->smallInteger('entidad_federativa_id')->unsigned();
             $table->smallInteger('municipio_id')->unsigned();
-            $table->string('localidad');
+            $table->smallInteger('localidad_id')->unsigned();
             $table->smallInteger('zona_id')->unsigned();
             $table->date('fecha');
             $table->time('hora');
             $table->string('colonia')->nullable();
             $table->string('calle')->nullable();
             $table->string('numero')->nullable();
+            $table->smallInteger('cp')->nullable();
 			$table->decimal('latitud', 8, 6);
 			$table->decimal('longitud', 8, 6);
             
@@ -46,6 +47,7 @@ class CreateTableLesiones extends Migration
             $table->string('otro_condicion');
             $table->string('otro_agente_camino');
             $table->string('otro_tipo_accidente');
+            $table->bigInteger('user_id');
 
             
             
