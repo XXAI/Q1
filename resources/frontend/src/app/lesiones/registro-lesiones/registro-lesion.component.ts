@@ -355,16 +355,16 @@ export class RegistroLesionComponent implements OnInit {
           {
             case 1:
               let co = response.causa_conductor;
-              let a1 = {};
+              let a1 = { sexo:0,aliento_alcoholico:0,cinturon_seguridad:0,edad:0};
               this.cantidadAccidente = co.length;
               co.forEach(element => {
                 a1['tipo_'+element.rel_causa_conductor_id] = 1;
               });
               let co1 = response.causa_conductor_detalle[0];
-              a1['sexo'] = co1.sexo_id;
-              a1['aliento_alcoholico']= co1.alcoholico;
-              a1['cinturon_seguridad']=co1.cinturon;
-              a1['edad']=co1.edad;
+              a1.sexo = co1.sexo_id;
+              a1.aliento_alcoholico= co1.alcoholico;
+              a1.cinturon_seguridad=co1.cinturon;
+              a1.edad=co1.edad;
               this.tipoConductorForm.patchValue(a1);
               break;
               case 2:
