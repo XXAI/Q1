@@ -15,8 +15,8 @@ use App\Models\RelTipoAccidente;
 use App\Models\RelVehiculos;
 use App\Models\RelVictimasLesionados;
 use App\Models\RelCausaAccidente;
-use App\Models\RelCausaconductor;
-use App\Models\RelCausaconductorDetalles;
+use App\Models\RelCausaConductor;
+use App\Models\RelCausaConductorDetalles;
 use App\Models\RelCausaPeaton;
 use App\Models\RelCondicionCamino;
 use App\Models\RelFallaVehiculo;
@@ -413,8 +413,8 @@ class LesionesController extends Controller
                 RelCausaAccidente::create(["rel_causa_accidente_id" => $value, "lesiones_id"=>$edicion]);
                 switch ($value) {
                     case 1:
-                        RelCausaconductor::where("lesiones_id",$edicion)->forceDelete();
-                        RelCausaconductorDetalles::where("lesiones_id",$edicion)->forceDelete();
+                        RelCausaConductor::where("lesiones_id",$edicion)->forceDelete();
+                        RelCausaConductorDetalles::where("lesiones_id",$edicion)->forceDelete();
                         $conductor = Array();
                         foreach ($parametros['conductor'] as $key => $value) {
                             if($value == true)
@@ -424,7 +424,7 @@ class LesionesController extends Controller
                                     $entero = (int)str_replace("tipo_", "", $key);
                                     if(is_numeric($entero))
                                     {
-                                        $conductor[] =  new RelCausaconductor(['rel_causa_conductor_id' => $entero]);
+                                        $conductor[] =  new RelCausaConductor(['rel_causa_conductor_id' => $entero]);
                                     }
                                     if($entero == 13)
                                     {
@@ -440,7 +440,7 @@ class LesionesController extends Controller
                         $obj->causaConductor()->saveMany($conductor);
                         $data = $parametros['conductor'];
                         $registro = ["sexo_id" => $data['sexo'], "alcoholico" => $data["aliento_alcoholico"], "cinturon" => $data['cinturon_seguridad'], "edad" => $data['edad'], "lesiones_id" => $edicion ];
-                        RelCausaconductorDetalles::create($registro);
+                        RelCausaConductorDetalles::create($registro);
                     break;
                     case 2:
                         RelCausaPeaton::where("lesiones_id",$edicion)->forceDelete();
