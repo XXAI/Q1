@@ -41,9 +41,9 @@ class LesionesController extends Controller
             //Filtros, busquedas, ordenamiento
             if(isset($parametros['query']) && $parametros['query']){
                 $object = $object->where(function($query)use($parametros){
-                    return $query->where('folio','LIKE','%'.$parametros['query'].'%');
-                                /*->orWhere('descripcion','LIKE','%'.$parametros['query'].'%')
-                                ->orWhere('direccion','LIKE','%'.$parametros['query'].'%');*/
+                    return $query->where('id','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('colonia','LIKE','%'.$parametros['query'].'%')
+                                ->orWhere('calle','LIKE','%'.$parametros['query'].'%');
                 });
             }
 
