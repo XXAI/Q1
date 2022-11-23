@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  base_url: 'https://onl.saludchiapas.gob.mx/api',
+  base_url: '/api',
   images_url: '/images/'
 };
