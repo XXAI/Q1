@@ -10,7 +10,7 @@
                 <span *ngIf="VehiculoForm.get('catalogo_tipo_vehiculo_id').errors.required">El Tipo de Vehiculo es obligatorio</span>
             </mat-error>
         </mat-form-field>
-        <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipo_vehiculo.value == 15">
+        <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipo_vehiculo.value == 13">
             <mat-label>Otro tipo</mat-label>
             <input matInput formControlName="otro_tipo_vehiculo" placeholder="Otro tipo de Vehiculo" required autocomplete="off">
 

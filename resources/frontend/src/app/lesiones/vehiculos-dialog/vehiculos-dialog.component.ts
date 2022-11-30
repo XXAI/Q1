@@ -80,7 +80,7 @@ export class VehiculosDialogComponent implements OnInit {
 
   public cargarMarcas()
   {
-    this.vehiculos = [{id:'',descripcion:"TIPO DE VEHICULO"}];
+    this.vehiculos = [{id:'',descripcion:"MARCA DE VEHÍCULO"}];
     this.data.marcas.forEach(element => {
       this.vehiculos.push(element);
       /*if(element.catalogo_vehiculo_id == tipo)

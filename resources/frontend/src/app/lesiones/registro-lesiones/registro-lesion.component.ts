@@ -329,7 +329,6 @@ export class RegistroLesionComponent implements OnInit {
         this.tipoAccidenteForm.patchValue(tipo);
         
         let arregloVehiculo = [];
-        console.log("-------------------");
         response.vehiculo.forEach(e => {
           console.log(e);
           let estado = "";
@@ -490,6 +489,7 @@ export class RegistroLesionComponent implements OnInit {
         //this.isLoading = false; 
       },
       errorResponse =>{
+        this.contarVictimas();
         let objError = errorResponse.error.error.data;
         let claves = Object.keys(objError); 
         this.sharedService.showSnackBar("Existe un problema al cargar los datos", null, 3000);
@@ -500,7 +500,8 @@ export class RegistroLesionComponent implements OnInit {
 
   contarVictimas()
   {
-
+    console.log("----entro--");
+    console.log(this.datosVictima);
     this.datosVictima.forEach(element => {
       if(element.tipo_id == 1)
       {
@@ -599,19 +600,14 @@ export class RegistroLesionComponent implements OnInit {
       objeto.lesion_id = this.id;
       objeto.municipios = this.catalogos['Municipio'];
       configDialog.data = objeto;
-
     }
-    
     
     if(this.datosVehiculo.length > 0)
     {
-
       const dialogRef = this.dialog.open(VictimasDialogComponent, configDialog);
-
       dialogRef.afterClosed().subscribe(valid => {
         if(valid)
         {
-          
           if(valid.activo){ 
             if(valid.index == null)
             {
@@ -625,9 +621,9 @@ export class RegistroLesionComponent implements OnInit {
           }
         }
         
-        //console.log(valid);
+        this.contarVictimas();
       });
-      this.contarVictimas();
+      
     }else{
       this.sharedService.showSnackBar("Debe de registrar al menos un vehiculo en el incidente", null, 3000);
     }
