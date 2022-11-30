@@ -69,32 +69,30 @@
                 <span *ngIf="VehiculoForm.get('con_placas').errors.required">Campo es obligatorio</span>
             </mat-error>
         </mat-form-field>
-        <div *ngIf="placa.value == 1" fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
-            <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
-                <mat-label>No Placa</mat-label>
-                <input matInput formControlName="no_placa" placeholder="No de Placa" required autocomplete="off">
-                <mat-error *ngIf="VehiculoForm.get('no_placa').invalid && (VehiculoForm.get('no_placa').dirty || VehiculoForm.get('no_placa').touched)">
-                    <span *ngIf="VehiculoForm.get('no_placa').errors.required">El No de placa es obligatorio</span>
-                </mat-error>
+        
+        <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="placa.value == 1">
+            <mat-label>No Placa</mat-label>
+            <input matInput formControlName="no_placa" placeholder="No de Placa" required autocomplete="off">
+            <mat-error *ngIf="VehiculoForm.get('no_placa').invalid && (VehiculoForm.get('no_placa').dirty || VehiculoForm.get('no_placa').touched)">
+                <span *ngIf="VehiculoForm.get('no_placa').errors.required">El No de placa es obligatorio</span>
+            </mat-error>
 
-            </mat-form-field>
-            <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
-                <mat-label>Tipo</mat-label>
-                <mat-select formControlName="placa_pais" #tipoPlaca required>
-                    <mat-option *ngFor="let item of tipo_placas" [value]="item.id">{{ item.descripcion }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field fxFlex fxFlex.xs="100" *ngIf="tipoPlaca.value == 1" appearance="fill">
-                <mat-label>Estado</mat-label>
-                <mat-select formControlName="entidad_placas" required>
-                    <mat-option *ngFor="let item of data.entidades" [value]="item.id">{{ item.descripcion }}</mat-option>
-                    <!--mat-option [value]="1">CHIAPAS</mat-option-->
-                </mat-select>
-            </mat-form-field>
-
-        </div>
-
-
+        </mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px" *ngIf="placa.value == 1">
+        <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="placa_pais" #tipoPlaca required>
+                <mat-option *ngFor="let item of tipo_placas" [value]="item.id">{{ item.descripcion }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field fxFlex fxFlex.xs="100" appearance="fill" *ngIf="tipoPlaca.value == 1">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="entidad_placas" required>
+                <mat-option *ngFor="let item of data.entidades" [value]="item.id">{{ item.descripcion }}</mat-option>
+                <!--mat-option [value]="1">CHIAPAS</mat-option-->
+            </mat-select>
+        </mat-form-field>
     </div>
     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
         <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
