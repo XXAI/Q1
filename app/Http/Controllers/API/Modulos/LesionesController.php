@@ -600,7 +600,7 @@ class LesionesController extends Controller
             $obj = RelFotografias::where("lesiones_id",$id)->where("nombre_imagen", $parametros['nombre'])->forceDelete();
             
             //return response()->json(['data'=>$parametros], HttpResponse::HTTP_OK);
-            unlink(storage_path("app\\public\\fotos\\".$id."\\".$parametros['nombre'].".jpg"));
+            unlink(storage_path("app//public//fotos//".$id."//".$parametros['nombre'].".jpg"));
             //return response()->json(['data'=>"correcto"], HttpResponse::HTTP_OK);
             return response()->json(['data'=>$obj], HttpResponse::HTTP_OK);
          }catch(\Exception $e){
@@ -624,7 +624,7 @@ class LesionesController extends Controller
             $parametros = $request->all();
             $obj = RelDocumentos::find($parametros['identificador']);
 
-            unlink(storage_path("app\\public\\documentos\\".$id."\\".$obj->nombre));
+            unlink(storage_path("app//public//documentos//".$id."//".$obj->nombre));
             $obj = $obj->forceDelete();
             
             return response()->json(['data'=>"correcto"], HttpResponse::HTTP_OK);
