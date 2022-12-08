@@ -15,6 +15,7 @@ import { VehiculosDialogComponent } from './vehiculos-dialog/vehiculos-dialog.co
 import { VictimasDialogComponent } from './victimas-dialog/victimas-dialog.component';
 import { ViewImagenComponent } from './view-imagen/view-imagen.component';
 import { AgmCoreModule  } from '@agm/core';
+import { ViewDocumentComponent } from './view-document/view-document.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { AgmCoreModule  } from '@agm/core';
         ListaLesionesComponent,
         VehiculosDialogComponent,
         VictimasDialogComponent,
-        ViewImagenComponent
+        ViewImagenComponent,
+        ViewDocumentComponent
     ],
     imports: [
         CommonModule,
@@ -32,6 +34,7 @@ import { AgmCoreModule  } from '@agm/core';
         MatDatepickerModule,
         LesionesRoutingModule,
         NgxMaterialTimepickerModule,
+        
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyDs6qDgnfMwaHCrOhA0tCvaUPgANTD0Urw'
         })

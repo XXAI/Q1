@@ -601,9 +601,8 @@ class LesionesController extends Controller
             
             //return response()->json(['data'=>$parametros], HttpResponse::HTTP_OK);
             unlink(storage_path("app\\public\\fotos\\".$id."\\".$parametros['nombre'].".jpg"));
-            
-            
-            return response()->json(['data'=>"correcto"], HttpResponse::HTTP_OK);
+            //return response()->json(['data'=>"correcto"], HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$obj], HttpResponse::HTTP_OK);
          }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
@@ -652,6 +651,11 @@ class LesionesController extends Controller
                 $image = $request->file('archivo_'.$x);
                 
                 $filePath = storage_path("app\\public\\fotos\\".$parametros["id"]);
+                if(!is_dir($filePath))
+                {
+                    mkdir($filePath, 0777, true);
+                }
+
                 $img = Image::make($image->path());
                 $img->resize(null, 600, function ($const) {
                     $const->aspectRatio();
@@ -708,4 +712,17 @@ class LesionesController extends Controller
         }
     }
 
+    
+    public function downloadDocumentos(Request $request, $id)
+    {
+        ini_set('memory_limit', '-1');
+        try{  
+        $obj = RelDocumentos::find($id);
+        return \Storage::download("public//documentos//".$obj->lesiones_id."//".$obj->nombre);
+        
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
 }

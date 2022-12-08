@@ -12,6 +12,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { VehiculosDialogComponent } from '../vehiculos-dialog/vehiculos-dialog.component';
 import { VictimasDialogComponent } from '../victimas-dialog/victimas-dialog.component';
 import { ViewImagenComponent } from '../view-imagen/view-imagen.component';
+import { ViewDocumentComponent } from '../view-document/view-document.component';
 import { Observable } from 'rxjs';
 import { debounceTime, finalize, switchMap, tap } from 'rxjs/operators';
 
@@ -860,7 +861,8 @@ export class RegistroLesionComponent implements OnInit {
         this.sharedService.showSnackBar("Ha subido correctamente las imagenes", null, 3000);
         this.isLoading = false;
         //console.log(response);
-        
+        this.formFotos.reset();
+        this.Fotos = [];
         this.cargarImages();
       }, errorResponse => {
         console.log(errorResponse.error);
@@ -884,7 +886,7 @@ export class RegistroLesionComponent implements OnInit {
           this.sharedService.showSnackBar("Ha subido correctamente las imagenes", null, 3000);
           this.isLoading = false;
           //console.log(response);
-          
+          this.Documentos = [];
           this.cargarDocumentos();
         }, errorResponse => {
           console.log(errorResponse.error);
@@ -954,6 +956,21 @@ export class RegistroLesionComponent implements OnInit {
           this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
           this.isLoading = false;
         } 
+      );
+    }
+    verDocumento(id)
+    {
+      console.log(id);
+
+      this.lesionesService.getDocument(id).subscribe(
+        response => {
+          const file = new Blob([response], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          window.open(fileURL);
+        },
+        responsError =>{
+          this.sharedService.showSnackBar('Error al intentar descargar el expediente', null, 4000);
+        }
       );
     }
 

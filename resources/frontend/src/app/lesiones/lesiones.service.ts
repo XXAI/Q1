@@ -15,7 +15,8 @@ export class LesionesService {
   url_catalogo_unidad                     = `${environment.base_url}/catalogo-unidad`;         
   url_vehiculos                           = `${environment.base_url}/lista-vehiculos`;         
   url_imagenes                            = `${environment.base_url}/imagenes`;         
-  url_documentos                          = `${environment.base_url}/documentos`;         
+  url_documentos                          = `${environment.base_url}/documentos`;    
+  url_document                            = `${environment.base_url}/document-download`;     
 
   constructor(private http: HttpClient) {}
 
@@ -135,6 +136,16 @@ export class LesionesService {
         return response;
       }
     ));
+  }
+
+  getDocument(id):Observable<any> {
+    
+    return this.http.get<any>(this.url_document+"/"+id, {params:{}, responseType: 'blob' as 'json'}).pipe(
+      map( response => {
+        return response;
+      })
+    );
+    
   }
 
 }

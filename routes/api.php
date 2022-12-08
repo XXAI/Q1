@@ -39,11 +39,12 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::get('catalogo-unidad',               'API\Modulos\CatalogosController@getCatalogoClues');
     Route::get('lista-vehiculos',               'API\Modulos\LesionesController@getVehiculos');
     Route::get('imagenes/{id}',                 'API\Modulos\LesionesController@getImagenes');
-    Route::get('documentos/{id}',                 'API\Modulos\LesionesController@getDocumentos');
+    Route::get('documentos/{id}',               'API\Modulos\LesionesController@getDocumentos');
     Route::delete('imagenes/{id}',              'API\Modulos\LesionesController@delImagenes');
-    Route::delete('documentos/{id}',              'API\Modulos\LesionesController@delDocumentos');
+    Route::delete('documentos/{id}',            'API\Modulos\LesionesController@delDocumentos');
     Route::post('subir-fotos',                  'API\Modulos\LesionesController@fotografias');
-    Route::post('subir-documentos',                  'API\Modulos\LesionesController@documentos');
+    Route::post('subir-documentos',             'API\Modulos\LesionesController@documentos');
+    Route::get('document-download/{id}',        'API\Modulos\LesionesController@downloadDocumentos');
    
     /**
      *  Modulo de Reportes
