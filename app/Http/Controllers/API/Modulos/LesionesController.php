@@ -650,7 +650,7 @@ class LesionesController extends Controller
 
                 $image = $request->file('archivo_'.$x);
                 
-                $filePath = storage_path("app\\public\\fotos\\".$parametros["id"]);
+                $filePath = storage_path("app//public//fotos//".$parametros["id"]);
                 if(!is_dir($filePath))
                 {
                     mkdir($filePath, 0777, true);
@@ -659,7 +659,7 @@ class LesionesController extends Controller
                 $img = Image::make($image->path());
                 $img->resize(null, 600, function ($const) {
                     $const->aspectRatio();
-                })->save($filePath.'\\'.$nombre.".jpg");
+                })->save($filePath.'//'.$nombre.".jpg");
 
                 //$request->file('archivo_'.$x)->storeAs("public/fotos/".$parametros["id"], $nombre.".jpg");
                 $x++;
