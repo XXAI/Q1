@@ -945,7 +945,7 @@ export class RegistroLesionComponent implements OnInit {
     
     eliminarDocumento(id:number)
     {
-      this.lesionesService.eliminaDocumento(this.id, id).subscribe(
+      this.lesionesService.eliminaDocumento(id, this.id).subscribe(
         response => {
          this.cargarDocumentos();
           this.isLoading = false; 

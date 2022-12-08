@@ -622,9 +622,9 @@ class LesionesController extends Controller
     {
         try{
             $parametros = $request->all();
-            $obj = RelDocumentos::find($parametros['identificador']);
+            $obj = RelDocumentos::find($id);
 
-            unlink(storage_path("app//public//documentos//".$id."//".$obj->nombre));
+            unlink(storage_path("app//public//documentos//".$parametros['identificador']."//".$obj->nombre));
             $obj = $obj->forceDelete();
             
             return response()->json(['data'=>"correcto"], HttpResponse::HTTP_OK);

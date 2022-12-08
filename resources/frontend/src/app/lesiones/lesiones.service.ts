@@ -131,7 +131,7 @@ export class LesionesService {
   
   eliminaDocumento(id, nombre)
   {
-    return this.http.delete<any>(this.url_documentos+'/'+id,{params: {'identificador': id}}).pipe(
+    return this.http.delete<any>(this.url_documentos+'/'+id,{params: {'identificador': nombre}}).pipe(
       map( (response: any) => {
         return response;
       }
