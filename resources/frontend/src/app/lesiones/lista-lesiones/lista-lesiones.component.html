@@ -28,7 +28,7 @@
                             <button mat-raised-button [matMenuTriggerFor]="menuPrincipal" color="primary" style="padding: 5pt; margin-right: 5pt;">
                                 <mat-icon>menu</mat-icon> 
                             </button>
-                            <mat-menu #menu="menuPrincipal">
+                            <mat-menu #menuPrincipal="matMenu">
                                 <button mat-menu-item (click)="reporte()"><mat-icon color="primary">print</mat-icon>REPORTE</button>
                             </mat-menu>
                             <button mat-raised-button color="primary" style="padding: 5pt;" routerLink="/lesiones/registro">

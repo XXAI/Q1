@@ -253,6 +253,23 @@ export class ListaLesionesComponent implements OnInit {
     return event;
   }
 
+  reporte()
+  {
+    let params = { export_excel : true };
+    this.lesionesService.getLesionesList(params).subscribe(
+      response => {
+        //console.log(response);
+        FileSaver.saveAs(response,'reporte_general');
+      },
+      errorResponse =>{
+        let objError = errorResponse.error.error.data;
+        let claves = Object.keys(objError); 
+        this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+        this.isLoading = false;
+      } 
+    );
+
+  }
   verIncidente(indice)
   {
     

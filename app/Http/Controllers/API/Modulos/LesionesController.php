@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\Controller;
 use \Validator,\Hash, \Response, \DB, \File, \Store;
+use App\Exports\DevReportExport;
 
 use App\Http\Requests;
 use App\Models\Lesiones;
@@ -54,15 +55,119 @@ class LesionesController extends Controller
                                                 });
             }*/
             
-            $object = $object->orderBy('updated_at','desc');
+            if(isset($parametros['export_excel']))
+            {
 
-            if(isset($parametros['page'])){
-                $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
-                $object = $object->paginate($resultadosPorPagina);
+                ini_set('memory_limit', '-1');
+                            
+                $obj = Lesiones::join("catalogo_entidades as b", "lesiones.entidad_federativa_id", "b.id")
+                                    ->join("catalogo_municipios as c", "lesiones.municipio_id", "c.id")
+                                    ->join("catalogo_localidades as d", "lesiones.localidad_id", "d.id")
+                        ->select(
+                        "lesiones.id",
+                        "lesiones.fecha",
+                        "lesiones.hora",
+                        "b.descripcion AS entidad",
+                        "c.descripcion AS municipio",
+                        "d.descripcion AS localidad",
+                        "lesiones.colonia",
+                        "lesiones.calle",
+                        "lesiones.numero",
+                        "lesiones.cp",
+                        "lesiones.latitud",
+                        "lesiones.longitud",
+                        DB::RAW("IF(lesiones.zona_id = 1, 'ZONA URBANA', 'ZONA SUBURBANA') AS zona"),
+                        DB::RAW("IF(lesiones.estatal_id = 1, 'SI', 'NO') AS carretera_estatal"),
+                        DB::RAW("IF(lesiones.interseccion_id = 1, 'SI', 'NO') AS interseccion"),
+                        "lesiones.calle1 AS entre_calle",
+                        "lesiones.calle2 AS y_calle",
+                        "lesiones.punto_referencia",
+                        DB::RAW("IF(lesiones.via_id = 1, 'PAVIMENTADA', 'NO PAVIMENTADA') AS via"),
+                        DB::RAW("IF(lesiones.via_id = 1, IF(lesiones.tipo_pavimentado=1, 'ASFALTO','CONCRETO'), IF(lesiones.tipo_via_id = 1, 'TERRACERÍA', IF(lesiones.tipo_via_id = 2, 'EMPEDRADO', 'OTRO'))) AS tipo_via"),
+                        "lesiones.otro_tipo_via",
+                        DB::RAW("IF(lesiones.tipo_camino IS NULL ,'',IF(lesiones.tipo_camino = 1,'CAMINO RURAL', IF(lesiones.tipo_camino = 2, 'CARRETERA ESTATAL', 'OTRO'))) AS tipo_camino"),
+                        "lesiones.otro_tipo_camino")
+                        ->get();
 
-            } else {
-                $object = $object->get();
+                        
+                
+                $columnas = array_keys(collect($obj[0])->toArray());
+
+                //Calculo de accidentes
+                $obj_tipo_accidente = RelTipoAccidente::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+                                        ->groupBy("lesiones_id")
+                                        ->orderByRaw("count(*) DESC")
+                                        ->select(DB::RAW("count(*) as cantidad"))
+                                        ->first();
+                for ($i=1; $i <= $obj_tipo_accidente['cantidad']; $i++) { 
+                    $columnas[] = "tipo_accidente_".$i;
+                }
+                //
+                //Calculo Vehiculos
+                $obj_vehiculos = RelVehiculos::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+                                        ->groupBy("lesiones_id")
+                                        ->orderByRaw("count(*) DESC")
+                                        ->select(DB::RAW("count(*) as cantidad"))
+                                        ->first();
+                for ($i=1; $i <= $obj_vehiculos['cantidad']; $i++) { 
+                    $columnas[] = "tipo_accidente_".$i;
+                }
+                //                        
+                $columnas[] = "otro_tipo_accidente";
+                $arreglo_accidente = ['','Colisión con vehículo automotor',
+                                        'Atropellamiento',
+                                        'Colisión con animal',
+                                        'Colisión con objeto fijo',
+                                        'Volcadura',
+                                        'Caída de pasaje',
+                                        'Salida de camino',
+                                        'Incendio',
+                                        'Colisión con ferrocarril',
+                                        'Colisión con motocicleta',
+                                        'Colisión con ciclista',
+                                        'Otro'];                        
+                foreach ($obj as $key => $value) {
+                    $aux_tipo = RelTipoAccidente::where("lesiones_id", $value['id'])->select("rel_tipo_accidente_id")->get();
+                    $bandera_otro = 0;
+                    for ($i=1; $i <= $obj_tipo_accidente['cantidad']; $i++) { 
+                        $obj[$key]['tipo_accidente_'.$i] = "";
+                        if(isset($aux_tipo[($i - 1)]))
+                        {
+                            //return $key;
+                            $obj[$key]['tipo_accidente_'.$i] = $arreglo_accidente[$aux_tipo[($i - 1)]['rel_tipo_accidente_id']];
+                            if($aux_tipo[($i - 1)]['rel_tipo_accidente_id'] == 12)
+                            {
+                                $bandera_otro = 1;
+                            }
+                        }
+                    }
+                    $obj[$key]['otro_tipo_accidente'] = '';
+                    if($bandera_otro == 1)
+                    {
+                        $aux_otro = Lesiones::where("id",$value['id'])->first();
+                        if(isset($aux_otro['otro_tipo_accidente']))
+                        {
+                            $obj[$key]['otro_tipo_accidente'] = $aux_otro['otro_tipo_accidente'];
+                        }   
+                    }
+                    
+                }
+                //Fin tipo Accidente
+                //return $obj;
+                $filename = 'reporte-general';
+                return (new DevReportExport($obj,$columnas))->download($filename.'.xlsx');
+            }else{
+                $object = $object->orderBy('updated_at','desc');
+
+                if(isset($parametros['page'])){
+                    $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
+                    $object = $object->paginate($resultadosPorPagina);
+
+                } else {
+                    $object = $object->get();
+                }
             }
+            
 
             return response()->json(['data'=>$object],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
