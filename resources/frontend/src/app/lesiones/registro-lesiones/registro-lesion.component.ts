@@ -150,7 +150,7 @@ export class RegistroLesionComponent implements OnInit {
       tipoAccidente_10:[''],
       tipoAccidente_11:[''],
       tipoAccidente_12:[''],
-      otro_accidente: ['']
+      otro_tipo_accidente: ['']
     });
     this.causasForm = this.fb.group ({
       causas_1:[''],
@@ -307,7 +307,8 @@ export class RegistroLesionComponent implements OnInit {
         console.log(response);
         //Empezamos a construir los arreglos :)
         let p = response;
-        let principal = {fecha: p.fecha, hora: p.hora, municipio: p.municipio_id, localidad: p.localidad, colonia: p.colonia, calle: p.calle, no:p.numero, latitud:p.latitud, longitud:p.longitud};
+        console.log(p.hora.substr(0,5));
+        let principal = {fecha: p.fecha, hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad, colonia: p.colonia, calle: p.calle, no:p.numero, latitud:p.latitud, longitud:p.longitud};
         
         this.principalForm.patchValue(principal);
 
@@ -331,14 +332,18 @@ export class RegistroLesionComponent implements OnInit {
         
         let arregloVehiculo = [];
         response.vehiculo.forEach(e => {
-          console.log(e);
+          
           let estado = "";
           if(e.estado != null)
           {
             estado =  e.estado.descripcion;
           }
-          
-          arregloVehiculo.push({dataTipovehiculo: e.tipo.descripcion, dataVehiculo:e.marca.descripcion, modelo:e.modelo, con_placas:e.con_placas, no_placa: e.no_placa, placa_pais:e.placa_pais, dataEstado:estado,no_ocupantes:e.no_ocupantes, color:e.color, catalogo_tipo_vehiculo_id:e.catalogo_tipo_vehiculo_id, marca_id:e.marca_id, entidad_placas: e.entidad_placas, uso_vehiculo:e.uso_vehiculo, puesto_disposicion:e.puesto_disposicion});
+          let marca = e.otra_marca;
+          if(e.marca_id != 999)
+          {
+            marca = e.marca.descripcion;
+          }
+          arregloVehiculo.push({dataTipovehiculo: e.tipo.descripcion, dataVehiculo:marca, otra_marca: e.otra_marca, modelo:e.modelo, con_placas:e.con_placas, no_placa: e.no_placa, placa_pais:e.placa_pais, dataEstado:estado,no_ocupantes:e.no_ocupantes, color:e.color, catalogo_tipo_vehiculo_id:e.catalogo_tipo_vehiculo_id, marca_id:e.marca_id, entidad_placas: e.entidad_placas, uso_vehiculo:e.uso_vehiculo, tipo_uso_vehiculo_id:e.tipo_uso_vehiculo_id, puesto_disposicion:e.puesto_disposicion, otro_tipo_vehiculo: e.otro_tipo_vehiculo});
         });
         this.datosVehiculo = arregloVehiculo;
         this.dataSourceVehiculos.connect().next(this.datosVehiculo);
@@ -423,7 +428,6 @@ export class RegistroLesionComponent implements OnInit {
 
         this.causasForm.patchValue(causa);
         let vitima = [];
-        console.log(response.victima);
         response.victima.forEach(el => {
           let tipo_victima:any = [{id:1, descripcion:"LESIÓN"},{id:2, descripcion:"DEFUNSIÓN"}];
           let validacion:any = [{id:1, descripcion:"ACTA"},{id:2, descripcion:"CERTIFICADO"}];
@@ -499,10 +503,12 @@ export class RegistroLesionComponent implements OnInit {
     );
   }
 
+  
   contarVictimas()
   {
-    console.log("----entro--");
-    console.log(this.datosVictima);
+    
+    this.cantidadLesionados = 0;
+    this.cantidadFallecidos = 0;
     this.datosVictima.forEach(element => {
       if(element.tipo_id == 1)
       {
@@ -538,9 +544,11 @@ export class RegistroLesionComponent implements OnInit {
       configDialog.data.tipoVehiculo = this.catalogos['TipoVehiculo'];
       configDialog.data.marcas =  this.catalogos['Vehiculo'];
       configDialog.data.entidades = this.catalogos['Entidades'];
-      console.log("---- Entra ----");
-      console.log(configDialog);
+      
     }
+    console.log("----");
+    console.log(objeto);
+    console.log("----");
     const dialogRef = this.dialog.open(VehiculosDialogComponent, configDialog);
 
     dialogRef.afterClosed().subscribe(valid => {

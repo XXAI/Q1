@@ -215,6 +215,13 @@
 
                     </mat-form-field>
                 </div>
+                <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="3px">
+                    <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <mat-label>DIAGNOSTICO</mat-label>
+                        <input matInput formControlName="diagnostico" placeholder="Diagnotico Prehospitalario">
+
+                    </mat-form-field>
+                </div>
             </mat-tab>
 
             <mat-tab label="UBICACIÓN">
@@ -226,7 +233,15 @@
                                     <mat-label>VEHICULO:</mat-label>
                                     <mat-select formControlName="vehiculo_id">
                                         <mat-option *ngFor="let item of listaVehiculos" [value]="item.id">
-                                            {{ item.tipo.descripcion }} {{ item.marca.descripcion }} {{ item.no_placa }}
+                                          
+                                            {{ item.tipo.descripcion }} {{ item.otro_tipo_vehiculo }}
+                                            <a *ngIf="item.marca">
+                                                {{ item.marca.descripcion }}
+                                            </a>
+                                            <a *ngIf="!item.marca">
+                                                {{ item.otra_marca }}
+                                            </a>
+                                              {{ item.no_placa }}
                                         </mat-option>
 
                                     </mat-select>

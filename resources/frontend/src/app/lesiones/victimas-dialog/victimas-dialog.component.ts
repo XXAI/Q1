@@ -15,6 +15,7 @@ export interface VictimaClass {
   nombre?: string;
   apellido_paterno?: string;
   apellido_materno?: string;
+  diagnostico?: string;
   edad?: number;
   sexo_id?: number;
   tipo_usuario?: number;
@@ -137,6 +138,7 @@ export class VictimasDialogComponent implements OnInit {
     'prioridad_traslado':[], 
     'negativa_traslado':[], 
     'especifique_negativa':[], 
+    'diagnostico':[], 
     'tipo_usuario_id':['',[Validators.required]], 
     'hospitalizacion':['',[Validators.required]], 
     'municipio_hospitalizacion':[], 

@@ -25,9 +25,12 @@
                             <button mat-raised-button color="accent" (click)="applyFilter()" style="padding: 5pt; margin-right: 5pt;">
                                 <mat-icon>search</mat-icon> 
                             </button>
-                            <button mat-raised-button color="primary" style="padding: 5pt; margin-right: 5pt;">
+                            <button mat-raised-button [matMenuTriggerFor]="menuPrincipal" color="primary" style="padding: 5pt; margin-right: 5pt;">
                                 <mat-icon>menu</mat-icon> 
                             </button>
+                            <mat-menu #menu="menuPrincipal">
+                                <button mat-menu-item (click)="reporte()"><mat-icon color="primary">print</mat-icon>REPORTE</button>
+                            </mat-menu>
                             <button mat-raised-button color="primary" style="padding: 5pt;" routerLink="/lesiones/registro">
                                 <mat-icon>add_circle</mat-icon> 
                             </button>

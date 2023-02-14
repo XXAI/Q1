@@ -280,7 +280,7 @@
                         <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" *ngIf="otroTipoAccidente.checked == true">
                             <mat-form-field appearance="fill" fxFlex>
                                 <mat-label>Otro Tipo Accidente</mat-label>
-                                <input matInput formControlName="otro_accidente" placeholder="Otro Tipo Accidente">
+                                <input matInput formControlName="otro_tipo_accidente" placeholder="Otro Tipo Accidente">
 
                             </mat-form-field>
                         </div>
@@ -384,7 +384,7 @@
                             <mat-checkbox formControlName="causas_4" #chkFalla (click)="VerificaCausa(chkFalla.checked, 4)">Falla del Vehiculo</mat-checkbox>
                         </div>
                         <div fxFlex.xs="100" fxFlex>
-                            <mat-checkbox formControlName="causas_5" #chkCamino (click)="VerificaCausa(chkCamino.checked, 5)">Condición del camino</mat-checkbox>
+                            <mat-checkbox formControlName="causas_5" #chkCamino (click)="VerificaCausa(chkCamino.checked, 5)">Condiciones del camino</mat-checkbox>
                         </div>
                         <div fxFlex.xs="100" fxFlex>
                             <mat-checkbox formControlName="causas_6" #chkAgente (click)="VerificaCausa(chkAgente.checked, 6)">Agentes Naturales</mat-checkbox>
@@ -605,7 +605,7 @@
                                 </div>
                             </div>
                         </mat-tab>
-                        <mat-tab label="CONDICIONES DE CAMINO" *ngIf="chkCamino.checked" [formGroup]="caminoForm">
+                        <mat-tab label="CONDICIONES DEL CAMINO" *ngIf="chkCamino.checked" [formGroup]="caminoForm">
                             <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
                                 <div fxFlex.xs="100" fxFlex>
                                     <mat-checkbox formControlName="tipo_1" #tipo1 (click)="VerificarCamino(tipo1.checked)">Mala condición de la vía</mat-checkbox>
