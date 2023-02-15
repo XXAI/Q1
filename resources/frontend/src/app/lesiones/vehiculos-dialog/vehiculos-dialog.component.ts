@@ -49,7 +49,6 @@ export class VehiculosDialogComponent implements OnInit {
                           {id:12, tipo:4, descripcion:"PAQUETERÍA"},
                           {id:13, tipo:4, descripcion:"MATERIALES PARA LA CONSTRUCCIÓN A GRANEL"},
                           {id:14, tipo:4, descripcion:"ESPECIALIZADA"},
-                          
                           ];
 
   tipo_uso_vehiculo:any = [];

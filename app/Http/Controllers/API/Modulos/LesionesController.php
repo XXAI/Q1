@@ -102,6 +102,7 @@ class LesionesController extends Controller
                 for ($i=1; $i <= $obj_tipo_accidente['cantidad']; $i++) { 
                     $columnas[] = "tipo_accidente_".$i;
                 }
+                $columnas[] = "otro_tipo_accidente";
                 //
                 //Calculo Vehiculos
                 $obj_vehiculos = RelVehiculos::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
@@ -109,11 +110,28 @@ class LesionesController extends Controller
                                         ->orderByRaw("count(*) DESC")
                                         ->select(DB::RAW("count(*) as cantidad"))
                                         ->first();
+                
+                $columnas[] = "cantidad_vehiculos";
+                ///
+
                 for ($i=1; $i <= $obj_vehiculos['cantidad']; $i++) { 
-                    $columnas[] = "tipo_accidente_".$i;
+                    $columnas[] = "tipo_vehiculo_".$i;
+                    $columnas[] = "otro_tipo_vehiculo_".$i;
+                    $columnas[] = "marca_vehiculo_".$i;
+                    $columnas[] = "otro_marca_vehiculo_".$i;
+                    $columnas[] = "uso_vehiculo_".$i;
+                    $columnas[] = "tipo_uso_vehiculo_".$i;
+                    $columnas[] = "puesto_disposicion_".$i;
+                    $columnas[] = "placa_pais_".$i;
+                    $columnas[] = "no_ocupantes_".$i;
+                    $columnas[] = "color_".$i;
+                    $columnas[] = "modelo_".$i;
+                    $columnas[] = "con_placas_".$i;
+                    $columnas[] = "entidad_pais_".$i;
+                    $columnas[] = "no_placa_".$i;
                 }
                 //                        
-                $columnas[] = "otro_tipo_accidente";
+                
                 $arreglo_accidente = ['','Colisión con vehículo automotor',
                                         'Atropellamiento',
                                         'Colisión con animal',
@@ -127,6 +145,7 @@ class LesionesController extends Controller
                                         'Colisión con ciclista',
                                         'Otro'];                        
                 foreach ($obj as $key => $value) {
+                    //Tipo de Accidente
                     $aux_tipo = RelTipoAccidente::where("lesiones_id", $value['id'])->select("rel_tipo_accidente_id")->get();
                     $bandera_otro = 0;
                     for ($i=1; $i <= $obj_tipo_accidente['cantidad']; $i++) { 
@@ -150,7 +169,72 @@ class LesionesController extends Controller
                             $obj[$key]['otro_tipo_accidente'] = $aux_otro['otro_tipo_accidente'];
                         }   
                     }
+                    //Fin tipo accidente
                     
+                    //Inicio Vehiculos
+
+                    $arreglo_uso        = ['PARTICULAR', 'PUBLICO', 'VEHICULO PASAJEROS', 'VEHICULO SEGUN TIPO DE CARGA'];
+                    $arreglo_tipo_uso   = ['PASAJERO', 'CARGA', 'RURAL MIXTO DE CARGA Y PASAJE', 'ESPECIAL', 'COLECTIVO URBANO', 'COLECTIVO SUBURBANO', 'COLECTIVO INTERMUNICIPAL', 'COLECTIVO FORANEO', 
+                    'TAXI','BAJO TONELAJE', 'ALTO TONELAJE', 'PAQUETERIA', 'MATERIALES PARA LA CONSTRUCCION A GRANEL', 'ESPECIALIZADA']; 
+                    $aux_vehiculo = RelVehiculos::join("catalogo_vehiculos", "catalogo_vehiculos.id", "rel_vehiculos.catalogo_tipo_vehiculo_id")
+                                                ->leftJoin("catalogo_marcas", "catalogo_marcas.id", "rel_vehiculos.marca_id")
+                                                ->leftJoin("catalogo_entidades", "catalogo_entidades.id", "rel_vehiculos.entidad_placas")
+                            ->where("lesiones_id", $value['id'])
+                        ->select(DB::RAW("(select count(*) from rel_vehiculos where deleted_at is null and lesiones_id=".$value['id'].") as no_vehiculos"),
+                                "catalogo_vehiculos.descripcion as tipo_vehiculo",
+                                "otro_tipo_vehiculo",
+                                "catalogo_marcas.descripcion as marca",
+                                "otra_marca",
+                                "uso_vehiculo", 
+                                "tipo_uso_vehiculo_id",
+                                "puesto_disposicion", 
+                                "placa_pais", 
+                                "no_ocupantes",
+                                "color",
+                                "modelo",
+                                "con_placas",
+                                "catalogo_entidades.descripcion as entidad",
+                                "no_placa")
+                        ->get();
+                        
+                    $obj[$key]['cantidad_vehiculos'] = "--";
+                    if(count($aux_vehiculo) > 0)
+                    {
+                        $obj[$key]['cantidad_vehiculos'] = $aux_vehiculo[0]['no_vehiculos'];
+                    }
+                    for ($i=1; $i <= $obj_vehiculos['cantidad']; $i++) { 
+                        
+                        $indice = ($i - 1);
+                        
+                        $obj[$key]["tipo_vehiculo_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["tipo_vehiculo"]:"");
+                        $obj[$key]["otro_tipo_vehiculo_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["otro_tipo_vehiculo"]:"");
+                        $obj[$key]["marca_vehiculo_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["marca"]:"");
+                        $obj[$key]["otro_marca_vehiculo_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["otra_marca"]:"");
+                        
+                        $uso = "";
+                        $tipo_uso = "";
+                        if(isset($aux_vehiculo[$indice]) && intval($aux_vehiculo[$indice]["uso_vehiculo"]) > 0)
+                        {
+                            $uso = $arreglo_uso[($aux_vehiculo[$indice]["uso_vehiculo"] - 1)];
+                            if(intval($aux_vehiculo[$indice]["tipo_uso_vehiculo_id"]) > 0)
+                            {
+                                $tipo_uso = $arreglo_tipo_uso[($aux_vehiculo[$indice]["tipo_uso_vehiculo_id"] - 1)];
+                            }
+                        }
+                        $obj[$key]["uso_vehiculo_".$i] = $uso;
+                        $obj[$key]["tipo_uso_vehiculo_".$i] = $tipo_uso;//(isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["tipo_uso_vehiculo_id"]:"");
+                        
+                        $obj[$key]["puesto_disposicion_".$i] = (isset($aux_vehiculo[$indice])?($aux_vehiculo[$indice]["puesto_disposicion"] == 1)?"SI":"NO":"");
+                        $obj[$key]["placa_pais_".$i] = (isset($aux_vehiculo[$indice])?($aux_vehiculo[$indice]["placa_pais"] == 1)?"SI":"NO":"");
+                        $obj[$key]["no_ocupantes_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["no_ocupantes"]:"");
+                        $obj[$key]["color_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["color"]:"");
+                        $obj[$key]["modelo_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["modelo"]:"");
+                        $obj[$key]["con_placas_".$i] = (isset($aux_vehiculo[$indice])?($aux_vehiculo[$indice]["con_placas"] == 1)?"SI":"NO":"");
+                        $obj[$key]["entidad_pais_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["entidad"]:"");
+                        $obj[$key]["no_placa_".$i] = (isset($aux_vehiculo[$indice])?$aux_vehiculo[$indice]["no_placa"]:"");   
+                    }
+                    
+                    //Fin vehiculos
                 }
                 //Fin tipo Accidente
                 //return $obj;

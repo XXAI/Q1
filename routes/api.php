@@ -45,6 +45,7 @@ Route::group(['middleware'=>'auth'],function($router){
     Route::post('subir-fotos',                  'API\Modulos\LesionesController@fotografias');
     Route::post('subir-documentos',             'API\Modulos\LesionesController@documentos');
     Route::get('document-download/{id}',        'API\Modulos\LesionesController@downloadDocumentos');
+    Route::get('reporte-lesiones',              'API\Modulos\ReporteLesionesController@reporte');
    
     /**
      *  Modulo de Reportes

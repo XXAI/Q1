@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 export class LesionesService {
 
   url                                     = `${environment.base_url}/lesiones`;       
+  url_reporte                             = `${environment.base_url}/reporte-lesiones`;       
   url_catalogos                           = `${environment.base_url}/catalogos`;         
   url_catalogo_localidad                  = `${environment.base_url}/catalogo-localidad`;         
   url_catalogo_unidad                     = `${environment.base_url}/catalogo-unidad`;         
@@ -30,7 +31,7 @@ export class LesionesService {
   
   getLesionesList(payload):Observable<any> {
     if(payload.export_excel){
-      return this.http.get<any>(this.url, {params:payload, responseType: 'blob' as 'json'});
+      return this.http.get<any>(this.url_reporte, {params:payload, responseType: 'blob' as 'json'});
     }
     return this.http.get<any>(this.url,{params: payload}).pipe(
       map( response => {
@@ -38,6 +39,7 @@ export class LesionesService {
       })
     );
   }
+  
 
 
   getIncidente(id) {
