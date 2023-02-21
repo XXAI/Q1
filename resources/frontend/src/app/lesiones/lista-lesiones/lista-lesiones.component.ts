@@ -5,9 +5,8 @@ import { MatTable } from '@angular/material/table';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { debounceTime, tap, switchMap, finalize, map, startWith,  } from 'rxjs/operators';
 import { trigger, transition, animate, style } from '@angular/animations';
-import {Observable} from 'rxjs';
+
 import { MediaObserver } from '@angular/flex-layout';
 import { ConfirmActionDialogComponent } from '../../utils/confirm-action-dialog/confirm-action-dialog.component';
 import { LesionesService } from '../lesiones.service';
@@ -15,10 +14,7 @@ import { LesionesService } from '../lesiones.service';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 
 import { AuthService } from '../../auth/auth.service';
-import { formatDate } from '@angular/common';
 
-
-import { ReportWorker } from '../../web-workers/report-worker';
 import * as FileSaver from 'file-saver';
 
 
@@ -48,6 +44,7 @@ export class ListaLesionesComponent implements OnInit {
   isLoadingPDF: boolean = false;
   isLoadingPDFArea: boolean = false;
   isLoadingAgent: boolean = false;
+  loadReporteExcel:boolean = false;
   mediaSize: string;
 
   showMyStepper:boolean = false;
@@ -256,12 +253,15 @@ export class ListaLesionesComponent implements OnInit {
   reporte()
   {
     let params = { export_excel : true };
+    this.loadReporteExcel = true;
     this.lesionesService.getLesionesList(params).subscribe(
       response => {
+        this.loadReporteExcel = false;
         //console.log(response);
         FileSaver.saveAs(response,'reporte_general');
       },
       errorResponse =>{
+        this.loadReporteExcel = false;
         let objError = errorResponse.error.error.data;
         let claves = Object.keys(objError); 
         this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
