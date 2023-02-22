@@ -104,14 +104,14 @@ class ReporteLesionesController  extends Controller
                                 'COLECTIVO URBANO', 'COLECTIVO SUBURBANO', 'COLECTIVO INTERMUNICIPAL', 'COLECTIVO FORANEO', 
                                 'TAXI','BAJO TONELAJE', 'ALTO TONELAJE', 'PAQUETERIA', 'MATERIALES PARA LA CONSTRUCCION A GRANEL', 'ESPECIALIZADA']; 
 
-        $arreglo_conductor   = ['Iba a exceso de velocidad', 'No guardó distancia', 'No respetó las señales viales', 'No cedió el paso', 
+        $arreglo_conductor   = ['','Iba a exceso de velocidad', 'No guardó distancia', 'No respetó las señales viales', 'No cedió el paso', 
                                 'Utilizaba el teléfono móvil', 'Deslumbramiento', 'Dormitando', 'Rebasó indebidamente', 
                                 'No respetó el semáforo','Invadió el carril contrario', 'Viró indebidamente', 'Presumible estado de ebriedad', 'Otro']; 
         
-        $arreglo_peaton   = ['Cruzó la calle inapropiadamente', 'Subía o bajaba del vehículo', 'No respetó el semáforo', 'Presumible estado de ebriedad', 'Empujaba o trabajaba en el vehículo', 'Otro']; 
-        $arreglo_falla   = ['Llantas', 'Ejes', 'Frenos', 'Transmisión', 'Dirección', 'Motor', 'Suspensión', 'Sobrecarga', 'Luces', 'Exceso de dimensiones', 'Otro']; 
-        $arreglo_camino   = ['Mala condición de la vía', 'Falta de señales', 'Objetos en el camino', 'Camino mojado o encharcado (vía mojada)', 'Vía resbalosa /presenta un riesgo de resbalar fácilmente/provoca falta de adherencia del vehículo', 'Obstrucción de la vía por animales', 'Otro']; 
-        $arreglo_agente   = ['Llovizna','Neblina', 'Lluvia', 'Humo', 'Aguacero', 'Tolvanera', 'Nieve', 'Vientos fuertes', 'Granizo', 'Otro']; 
+        $arreglo_peaton   = ['','Cruzó la calle inapropiadamente', 'Subía o bajaba del vehículo', 'No respetó el semáforo', 'Presumible estado de ebriedad', 'Empujaba o trabajaba en el vehículo', 'Otro']; 
+        $arreglo_falla   = ['','Llantas', 'Ejes', 'Frenos', 'Transmisión', 'Dirección', 'Motor', 'Suspensión', 'Sobrecarga', 'Luces', 'Exceso de dimensiones', 'Otro']; 
+        $arreglo_camino   = ['','Mala condición de la vía', 'Falta de señales', 'Objetos en el camino', 'Camino mojado o encharcado (vía mojada)', 'Vía resbalosa /presenta un riesgo de resbalar fácilmente/provoca falta de adherencia del vehículo', 'Obstrucción de la vía por animales', 'Otro']; 
+        $arreglo_agente   = ['','Llovizna','Neblina', 'Lluvia', 'Humo', 'Aguacero', 'Tolvanera', 'Nieve', 'Vientos fuertes', 'Granizo', 'Otro']; 
         $arreglo_usos = [$arreglo_uso, $arreglo_tipo_uso];   
                                 
         //Fin apartado arreglos                        
@@ -463,9 +463,11 @@ class ReporteLesionesController  extends Controller
             
             $indice = ($i - 1);
             $obj["falla_vehiculo_".$i] = "";
-            if(isset($aux[$indice]) != null)
+            if(isset($aux[$indice]))
             {
-                $obj["falla_vehiculo_".$i] = (isset($aux[$indice])?strtoupper($arreglo[$aux[$indice]["rel_falla_vehiculo_id"]]):"");  
+                //echo $indice." - ".$aux[$indice];
+                //print_r($arreglo);
+                $obj["falla_vehiculo_".$i] = (isset($aux[$indice])?strtoupper($arreglo[($aux[$indice]["rel_falla_vehiculo_id"])]):"");  
                 if($aux[$indice]["rel_falla_vehiculo_id"] == 11)
                 {
                     $bandera = 1;
