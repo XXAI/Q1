@@ -1,6 +1,6 @@
 <mat-toolbar class="bg-dark" style=" height: 40px;">
     <mat-icon style="color: white; cursor: pointer;" routerLink="/apps">apps</mat-icon>
-    <span style="margin-left:10px" *ngIf="!selectedApp"><a routerLink="/">Observatorio Nacional de Lesiones</a></span>
+    <span style="margin-left:10px" *ngIf="!selectedApp"><a routerLink="/">Observatorio Estatal de Lesiones</a></span>
     <span class="header-links" *ngIf="selectedApp"><a *ngFor="let link of appHeaderLinks" routerLink="{{link.route}}">{{link.name}}</a></span>
 
     <span class="spacer"></span>

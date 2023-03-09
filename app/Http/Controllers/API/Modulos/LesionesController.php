@@ -285,7 +285,7 @@ class LesionesController extends Controller
     {
         try{
             $obj = Lesiones::find($edicion);
-            if($parametros['tipoAccidente_12'] == true)
+            if($parametros['tipoAccidente_12'] == 1)
             {
                 $obj->otro_tipo_accidente = $parametros['otro_tipo_accidente'];
                 $obj->save();
@@ -433,7 +433,7 @@ class LesionesController extends Controller
                                         $parametros['conductor']['otro'] = $this->Tildes($parametros['conductor']['otro']);
                                               
                                         /* */
-                                        $obj->otro_causa_conductor = $parametros['conductor']['otro'];
+                                        $obj->otro_causa_conductor = strtoupper($parametros['conductor']['otro']);
                                     }
                                 }
                             }
@@ -458,7 +458,7 @@ class LesionesController extends Controller
                                     }
                                     if($entero == 6)
                                     {
-                                        $obj->otro_causa_peaton = $parametros['peaton']['descripcion_otro'];
+                                        $obj->otro_causa_peaton = strtoupper($parametros['peaton']['descripcion_otro']);
                                     }
                                 }
                             }
@@ -483,13 +483,13 @@ class LesionesController extends Controller
                                         $falla[] =  new RelFallaVehiculo(['rel_falla_vehiculo_id' => $entero]);
                                     }
                                    
-                                    if($entero == 6)
+                                    if($entero == 11)
                                     {
                                          /*Cambiar tildes */
                                          $parametros['falla']['descripcion_otro'] = $this->Tildes($parametros['falla']['descripcion_otro']);
                                               
                                          /* */
-                                        $obj->otro_falla_accidente = $parametros['falla']['descripcion_otro'];
+                                        $obj->otro_falla_accidente = strtoupper($parametros['falla']['descripcion_otro']);
                                     }
                                 }
                             }
@@ -511,13 +511,13 @@ class LesionesController extends Controller
                                         $camino[] =  new RelCondicionCamino(['rel_condicion_camino_id' => $entero]);
                                     }
                                    
-                                    if($entero == 6)
+                                    if($entero == 7)
                                     {
                                           /*Cambiar tildes */
                                           $parametros['camino']['descripcion_otro'] = $this->Tildes($parametros['camino']['descripcion_otro']);
                                               
                                           /* */
-                                        $obj->otro_tipo_camino = $parametros['camino']['descripcion_otro'];
+                                        $obj->otro_condicion = strtoupper($parametros['camino']['descripcion_otro']);
                                     }
                                 }
                             }
@@ -538,13 +538,13 @@ class LesionesController extends Controller
                                         $agentes[] =  new RelAgente(['rel_agente_natural_id' => $entero]);
                                     }
                                     
-                                    if($entero == 6)
+                                    if($entero == 10)
                                     {
                                         /*Cambiar tildes */
                                         $parametros['agentes']['descripcion_otro'] = $this->Tildes($parametros['agentes']['descripcion_otro']);
                                               
                                         /* */
-                                        $obj->otro_falla_accidente = $parametros['agentes']['descripcion_otro'];
+                                        $obj->otro_agente_camino = strtoupper($parametros['agentes']['descripcion_otro']);
                                     }
                                 }
                             }

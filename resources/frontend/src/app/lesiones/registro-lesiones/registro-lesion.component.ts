@@ -304,10 +304,11 @@ export class RegistroLesionComponent implements OnInit {
   {
     this.lesionesService.getIncidente(this.id).subscribe(
       response => {
-        console.log(response);
         //Empezamos a construir los arreglos :)
+        console.log("------");
+        console.log(response);
+        console.log("------");
         let p = response;
-        console.log(p.hora.substr(0,5));
         let principal = {fecha: p.fecha, hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad, colonia: p.colonia, calle: p.calle, no:p.numero, latitud:p.latitud, longitud:p.longitud};
         
         this.principalForm.patchValue(principal);
@@ -325,9 +326,10 @@ export class RegistroLesionComponent implements OnInit {
 
         let t  = response.tipo_accidente;
         let tipo = {};
-        t.forEach(element => {
+        t.forEach(element => function() {
           tipo['tipoAccidente_'+element.rel_tipo_accidente_id] = 1;
         });
+        tipo['otro_tipo_accidente'] = p.otro_tipo_accidente;
         this.tipoAccidenteForm.patchValue(tipo);
         
         let arregloVehiculo = [];
@@ -352,7 +354,8 @@ export class RegistroLesionComponent implements OnInit {
         let causa = {};
         
         this.cantidadCausas = ca.length;
-      
+
+             
         ca.forEach(element => {
           causa['causas_'+element.rel_causa_accidente_id] = 1;
 
@@ -361,11 +364,22 @@ export class RegistroLesionComponent implements OnInit {
             case 1:
               let co = response.causa_conductor;
               let a1 = { sexo:0,aliento_alcoholico:0,cinturon_seguridad:0,edad:0};
+              let bandera_conductor = 0;
               this.cantidadAccidente = co.length;
+              
               co.forEach(element => {
                 a1['tipo_'+element.rel_causa_conductor_id] = 1;
+                if(element.rel_causa_conductor_id == 13)
+                {
+                  bandera_conductor = 1;
+                }
               });
+              if(bandera_conductor ==  1)
+              {
+                a1['otro'] = response.otro_causa_conductor;
+              }
               let co1 = response.causa_conductor_detalle[0];
+              
               
               if(co1)
               {
@@ -381,9 +395,18 @@ export class RegistroLesionComponent implements OnInit {
                 let pe = response.causa_peaton;
                 let p = {};
                 this.cantidadPeaton = pe.length;
+                let bandera_peaton = 0;
                 pe.forEach(element => {
                   p['tipo_'+element.rel_causa_peaton_id] = 1;
+                  if(element.rel_causa_peaton_id == 6)
+                  {
+                    bandera_peaton = 1;
+                  }
                 });
+                if(bandera_peaton == 1)
+                {
+                  p['descripcion_otro'] = response.otro_causa_peaton; 
+                }
                 this.tipoPeatonForm.patchValue(p);
                 break;
                 
@@ -397,9 +420,19 @@ export class RegistroLesionComponent implements OnInit {
                 let fa = response.falla_vehiculo;
                 let f = {};
                 this.cantidadFalla = fa.length;
+                let bandera_falla = 0;
                 fa.forEach(element => {
                   f['tipo_'+element.rel_falla_vehiculo_id] = 1;
+                  if(element.rel_falla_vehiculo_id == 11)
+                  {
+                    bandera_falla = 1;
+                  }
                 });
+                if(bandera_falla == 1)
+                {
+                  f['descripcion_otro'] = response.otro_falla_accidente;
+                }
+
                 this.fallaForm.patchValue(f);
                 break;
                 
@@ -407,9 +440,18 @@ export class RegistroLesionComponent implements OnInit {
                 let cm = response.condicion_camino;
                 let cb = {};
                 this.cantidadCamino = cm.length;
+                let bandera_condicion = 0;
                 cm.forEach(element => {
                   cb['tipo_'+element.rel_condicion_camino_id] = 1;
+                  if(element.rel_condicion_camino_id == 7)
+                  {
+                    bandera_condicion = 1;
+                  }
                 });
+                if(bandera_condicion == 1)
+                {
+                  cb['descripcion_otro'] =response.otro_condicion;
+                }
                 this.caminoForm.patchValue(cb);
                 break;
                 
@@ -417,14 +459,24 @@ export class RegistroLesionComponent implements OnInit {
                 let ag = response.agentes;
                 let a2 = {};
                 this.cantidadAgentes = ag.length;
+                let bandera_agente = 0; 
                 ag.forEach(element => {
                   a2['tipo_'+element.rel_agente_natural_id] = 1;
+                  if(element.rel_agente_natural_id == 10)
+                  {
+                    bandera_agente = 1;
+                  }
                 });
+                if(bandera_agente == 1)
+                {
+                  a2['descripcion_otro'] = response.otro_agente_camino;
+                }
                 this.agentesForm.patchValue(a2);
                 break;
                 
           }
         });
+
 
         this.causasForm.patchValue(causa);
         let vitima = [];
@@ -546,9 +598,7 @@ export class RegistroLesionComponent implements OnInit {
       configDialog.data.entidades = this.catalogos['Entidades'];
       
     }
-    console.log("----");
-    console.log(objeto);
-    console.log("----");
+    
     const dialogRef = this.dialog.open(VehiculosDialogComponent, configDialog);
 
     dialogRef.afterClosed().subscribe(valid => {
