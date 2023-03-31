@@ -25,12 +25,12 @@
                             <button mat-raised-button color="accent" (click)="applyFilter()" style="padding: 5pt; margin-right: 5pt;">
                                 <mat-icon>search</mat-icon> 
                             </button>
-                            <button mat-raised-button color="primary" [disabled]="loadReporteExcel"  (click)="reporte()" style="padding: 5pt; margin-right: 5pt;">
+                            <button mat-raised-button color="primary" [disabled]="loadReporteExcel"  (click)="reporte()" style="padding: 5pt; margin-right: 5pt;" *ngIf="permisoGuardar">
                                 <mat-icon>print</mat-icon>
                                 <mat-progress-bar mode="indeterminate" *ngIf="loadReporteExcel"></mat-progress-bar>
                             </button>
                             
-                            <button mat-raised-button color="primary" style="padding: 5pt;" routerLink="/lesiones/registro">
+                            <button mat-raised-button color="primary" style="padding: 5pt;" routerLink="/lesiones/registro"  *ngIf="permisoGuardar">
                                 <mat-icon>add_circle</mat-icon> 
                             </button>
                         </section>
@@ -206,7 +206,7 @@
 
                                     <mat-menu #menu="matMenu">
                                         <button mat-menu-item routerLink="/lesiones/registro/{{row.id}}/{{row.latitud}}/{{row.longitud}}"><mat-icon color="primary">edit</mat-icon>EDITAR</button>
-                                        <button mat-menu-item (click)="eliminarIncidente(row.id)"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
+                                        <button mat-menu-item (click)="eliminarIncidente(row.id)"  *ngIf="permisoGuardar"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
 
                                     </mat-menu>
 

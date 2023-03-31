@@ -42,6 +42,7 @@ export class RegistroLesionComponent implements OnInit {
   ValidadorCausas:boolean = true;
   localidadIsLoading: boolean = false;
   arregloFotos:any = [];
+  permisoGuardar:boolean = false;
 
   filteredLocalidad: Observable<any[]>;
 
@@ -263,7 +264,29 @@ export class RegistroLesionComponent implements OnInit {
       
     });
 
+    this.loadPermisos();
     
+  }
+
+  public loadPermisos()
+  {
+    this.lesionesService.getPermisos().subscribe(
+      response => {
+        response.data.forEach(element => {
+         if(element == "permisoGuardarIncidente" || element == "permisoAdmin")
+         {
+          this.permisoGuardar = true;
+         }
+        });
+      },
+      errorResponse =>{
+        var errorMessage = "Ocurrió un error.";
+        if(errorResponse.status == 409){
+          errorMessage = errorResponse.error.message;
+        }
+        this.sharedService.showSnackBar(errorMessage, null, 3000);
+      }
+    );
   }
 
   mapClicked($event: any) {
@@ -602,22 +625,27 @@ export class RegistroLesionComponent implements OnInit {
     const dialogRef = this.dialog.open(VehiculosDialogComponent, configDialog);
 
     dialogRef.afterClosed().subscribe(valid => {
-      if(valid){
-        if(valid.activo){ 
-          if(valid.index == null)
-          {
-            this.datosVehiculo.push(valid);
-          }else{
-            this.datosVehiculo[valid.index] = valid;
+      
+      if(this.permisoGuardar)
+      {
+        if(valid){
+          if(valid.activo){ 
+            if(valid.index == null)
+            {
+              this.datosVehiculo.push(valid);
+            }else{
+              this.datosVehiculo[valid.index] = valid;
+            }
+            
+            this.dataSourceVehiculos.connect().next(this.datosVehiculo);
+            if(this.datosVehiculo.length > 0)
+            {
+              this.tipoAccidenteFlag = false;
+            }
           }
-          
-          this.dataSourceVehiculos.connect().next(this.datosVehiculo);
-          if(this.datosVehiculo.length > 0)
-          {
-            this.tipoAccidenteFlag = false;
-          }
-          //console.log(this.datosVehiculo);
         }
+      }else{
+        this.sharedService.showSnackBar("Sin permiso para Guardar", null, 3000);
       }
     });
   }

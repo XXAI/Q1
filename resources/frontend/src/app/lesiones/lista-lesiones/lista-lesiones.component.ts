@@ -40,6 +40,7 @@ import * as FileSaver from 'file-saver';
 })
 export class ListaLesionesComponent implements OnInit {
 
+  permisoGuardar:boolean = false;
   isLoading: boolean = false;
   isLoadingPDF: boolean = false;
   isLoadingPDFArea: boolean = false;
@@ -93,6 +94,7 @@ export class ListaLesionesComponent implements OnInit {
 
   ngOnInit() {
     this.loadData();
+    this.loadPermisos();
   }
 
   getDisplayFn(label: string){
@@ -144,6 +146,27 @@ export class ListaLesionesComponent implements OnInit {
 
         this.catalogos = response.data;
 
+      },
+      errorResponse =>{
+        var errorMessage = "Ocurrió un error.";
+        if(errorResponse.status == 409){
+          errorMessage = errorResponse.error.message;
+        }
+        this.sharedService.showSnackBar(errorMessage, null, 3000);
+      }
+    );
+  }
+
+  public loadPermisos()
+  {
+    this.lesionesService.getPermisos().subscribe(
+      response => {
+        response.data.forEach(element => {
+         if(element == "permisoGuardarIncidente" || element == "permisoAdmin")
+         {
+          this.permisoGuardar = true;
+         }
+        });
       },
       errorResponse =>{
         var errorMessage = "Ocurrió un error.";

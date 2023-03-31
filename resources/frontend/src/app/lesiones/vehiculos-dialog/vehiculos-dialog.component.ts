@@ -84,7 +84,6 @@ export class VehiculosDialogComponent implements OnInit {
 
   ngOnInit() {
     this.tipo_vehiculos = this.data.tipoVehiculo;
-    console.log(this.data);
     if(this.data.index != null)
     {
       this.CambiaUso(this.data.uso_vehiculo);

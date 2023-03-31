@@ -18,6 +18,7 @@ export class LesionesService {
   url_imagenes                            = `${environment.base_url}/imagenes`;         
   url_documentos                          = `${environment.base_url}/documentos`;    
   url_document                            = `${environment.base_url}/document-download`;     
+  url_permisos                            = `${environment.base_url}/permisos-lesiones`;     
 
   constructor(private http: HttpClient) {}
 
@@ -44,6 +45,14 @@ export class LesionesService {
 
   getIncidente(id) {
     return this.http.get<any>(this.url+'/'+id,{}).pipe(
+      map( (response: any) => {
+        return response;
+      }
+    ));
+  }
+  
+  getPermisos() {
+    return this.http.get<any>(this.url_permisos,{}).pipe(
       map( (response: any) => {
         return response;
       }

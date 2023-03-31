@@ -120,7 +120,7 @@
                     </section>
                     <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                         <div fxFlex="none">
-                            <button mat-raised-button color="primary" [disabled]="!principalForm.valid || isLoading" (click)="Guardar(1)"><mat-icon>save</mat-icon> Guardar</button>
+                            <button mat-raised-button color="primary" [disabled]="!principalForm.valid || isLoading" (click)="Guardar(1)" *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
                         </div>
                     </section>
                 </mat-tab>
@@ -227,7 +227,7 @@
                         </div>
                         <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                             <div fxFlex="none">
-                                <button mat-raised-button color="primary" [disabled]="!zonaForm.valid || isLoading" (click)="Guardar(2)"><mat-icon>save</mat-icon> Guardar</button>
+                                <button mat-raised-button color="primary" [disabled]="!zonaForm.valid || isLoading" (click)="Guardar(2)"  *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
                             </div>
                         </section>
                     </section>
@@ -286,7 +286,7 @@
                         </div>
                         <br>
                         <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-                            <button mat-raised-button color="primary" (click)="showVehiculoDialog(null)"><mat-icon>add_circle</mat-icon>AGREGAR VEHICULO</button>
+                            <button mat-raised-button color="primary" (click)="showVehiculoDialog(null)"  *ngIf="permisoGuardar"><mat-icon>add_circle</mat-icon>AGREGAR VEHICULO</button>
                         </div>
 
                         <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
@@ -341,7 +341,7 @@
 
                                             <mat-menu #menu="matMenu">
                                                 <button mat-menu-item (click)="editarVehiculo(row, i)"><mat-icon  color="primary">edit</mat-icon>EDITAR</button>
-                                                <button mat-menu-item (click)="eliminarVehiculo(row.id)"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
+                                                <button mat-menu-item (click)="eliminarVehiculo(row.id)" *ngIf="permisoGuardar"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
                                             </mat-menu>
 
                                         </td>
@@ -363,7 +363,7 @@
                         </div>
                         <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                             <div fxFlex="none">
-                                <button mat-raised-button color="primary" [disabled]=" cantidadTipos<0" (click)="Guardar(3)"><mat-icon>save</mat-icon> Guardar</button>
+                                <button mat-raised-button color="primary" [disabled]=" cantidadTipos<0" (click)="Guardar(3)"  *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
                             </div>
                         </section>
                     </section>
@@ -706,13 +706,13 @@
                     <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                         <div fxFlex="none">
                             <button mat-raised-button color="primary" [disabled]="(cantidadCausas<=0 ||(chkConductor.checked?(!tipoConductorForm.valid || cantidadAccidente<=0) :false) || (chkPeaton.checked?(!tipoPeatonForm.valid || cantidadPeaton<=0) :false) || (chkPasajero.checked?!tipoPasajeroForm.valid :false) || (chkFalla.checked?(!fallaForm.valid || cantidadFalla<=0) :false) || (chkCamino.checked?(!caminoForm.valid || cantidadCamino<=0) :false) || (chkAgente.checked?(!agentesForm.valid || cantidadAgentes<=0) :false))"
-                                (click)="Guardar(4)"><mat-icon>save</mat-icon> Guardar</button>
+                                (click)="Guardar(4)"  *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
                         </div>
                     </section>
                 </mat-tab>
                 <mat-tab label="VICTIMAS" [disabled]="editable">
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
-                        <button mat-raised-button color="primary" (click)="showVictimaDialog(null)"><mat-icon>add_circle</mat-icon>AGREGAR VICTIMA</button>
+                        <button mat-raised-button color="primary" (click)="showVictimaDialog(null)"  *ngIf="permisoGuardar"><mat-icon>add_circle</mat-icon>AGREGAR VICTIMA</button>
                     </div>
                     <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px">
                         <div fxFlex.xs="100" fxFlex style="padding: 10pt; background-color: beige;">
@@ -775,7 +775,7 @@
 
                                         <mat-menu #menu="matMenu">
                                             <button mat-menu-item (click)="editarVictima(row, i)"><mat-icon  color="primary">edit</mat-icon>EDITAR</button>
-                                            <button mat-menu-item (click)="eliminarVictima(row.id)"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
+                                            <button mat-menu-item (click)="eliminarVictima(row.id)" *ngIf="permisoGuardar"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
 
                                         </mat-menu>
 
@@ -797,7 +797,7 @@
                     </div>
                     <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                         <div fxFlex="none">
-                            <button mat-raised-button color="primary" (click)="Guardar(5)"><mat-icon>save</mat-icon> Guardar</button>
+                            <button mat-raised-button color="primary" (click)="Guardar(5)"  *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
                         </div>
                     </section>
                 </mat-tab>
@@ -807,7 +807,7 @@
                             <input type="file" formControlName="file" class="form-control" accept="image/jpeg" multiple (change)="fileChange($event)">
                         </div>
                         <div fxFlex="50" fxFlex.xs="100">
-                            <button type="button" mat-raised-button color="primary" (click)="subir();">SUBIR IMAGENES</button>
+                            <button type="button" mat-raised-button color="primary" (click)="subir();"  *ngIf="permisoGuardar">SUBIR IMAGENES</button>
 
                         </div>
                     </div>
@@ -836,7 +836,7 @@
                             <input type="file" formControlName="file" class="form-control" accept="application/pdf" multiple (change)="fileChangeDocument($event)">
                         </div>
                         <div fxFlex="50" fxFlex.xs="100">
-                            <button type="button" mat-raised-button color="primary" (click)="subirDocumento();">SUBIR DOCUMENTOS</button>
+                            <button type="button" mat-raised-button color="primary" (click)="subirDocumento();"  *ngIf="permisoGuardar">SUBIR DOCUMENTOS</button>
                         </div>
                     </div>
                     <hr>
@@ -855,7 +855,7 @@
                                 </button>
 
                                 <mat-menu #menu="matMenu">
-                                    <button mat-menu-item (click)="eliminarDocumento(row.id)"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
+                                    <button mat-menu-item (click)="eliminarDocumento(row.id)"><mat-icon color="primary" *ngIf="permisoGuardar">delete</mat-icon>ELIMINAR</button>
                                     <button mat-menu-item (click)="verDocumento(row.id)"><mat-icon color="primary">remove_red_eye</mat-icon>VER</button>
                                 </mat-menu>
 
