@@ -124,7 +124,7 @@ export class VictimasDialogComponent implements OnInit {
     'nombre':[], 
     'apellido_paterno':[], 
     'apellido_materno':[], 
-    'pre_hospitalizacion':['',[Validators.required]],
+    'pre_hospitalizacion':[''],
     'edad':[], 
     'silla_id':[], 
     'sexo_id':[], 
@@ -139,12 +139,12 @@ export class VictimasDialogComponent implements OnInit {
     'negativa_traslado':[], 
     'especifique_negativa':[], 
     'diagnostico':[], 
-    'tipo_usuario_id':['',[Validators.required]], 
-    'hospitalizacion':['',[Validators.required]], 
+    'tipo_usuario_id':[''], 
+    'hospitalizacion':[''], 
     'municipio_hospitalizacion':[], 
     'clues':[], 
     'casco':[], 
-    'ubicacion':['',[Validators.required]], 
+    'ubicacion':[''], 
     'vehiculo_id':[], 
   });
 
@@ -206,8 +206,15 @@ export class VictimasDialogComponent implements OnInit {
       this.resultado.index = this.data.index;
     }
     this.resultado.dataTipovictima = this.tipo_victima.find(x=>x.id == this.resultado.tipo_id).descripcion;
-    this.resultado.dataTipousuario = this.tipo_usuario.find(x=>x.id == this.resultado.tipo_usuario_id).descripcion;
-    this.resultado.dataSexo = this.sexo.find(x=>x.id == this.resultado.sexo_id).descripcion;
+    console.log(this.resultado.sexo_id);
+    if(this.resultado.tipo_usuario_id != "")
+    {
+      this.resultado.dataTipousuario = this.tipo_usuario.find(x=>x.id == this.resultado.tipo_usuario_id).descripcion;
+    }
+    if(this.resultado.sexo_id != null)
+    {
+      this.resultado.dataSexo = this.sexo.find(x=>x.id == this.resultado.sexo_id).descripcion;
+    }
     if(this.resultado.hospitalizacion == 1)
     {
       this.resultado.clues_hospitalizacion = this.listaUnidades.find(x=>x.clues == this.resultado.clues);

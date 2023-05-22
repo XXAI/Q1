@@ -830,7 +830,7 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="DOCUMENTOS" [disabled]="editable" [formGroup]="formArchivos">
+                <!--mat-tab label="DOCUMENTOS" [disabled]="editable" [formGroup]="formArchivos">
                     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="5px" style="margin-top:10px">
                         <div fxFlex="50" fxFlex.xs="100">
                             <input type="file" formControlName="file" class="form-control" accept="application/pdf" multiple (change)="fileChangeDocument($event)">
@@ -873,7 +873,7 @@
 
                         <tr mat-footer-row *matFooterRowDef="['noResultsFound']" class="not-results-found" [ngClass]="{'hide':!(datosDocumentos!=null && datosDocumentos.length==0)}"></tr>
                     </table>
-                </mat-tab>
+                </mat-tab-->
             </mat-tab-group>
 
 

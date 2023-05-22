@@ -513,8 +513,13 @@ export class RegistroLesionComponent implements OnInit {
           {
             el.dataValidacion = validacion.find(x=>x.id == el.acta_certificacion_id).descripcion;
           }
-          el.dataTipousuario = tipo_usuario.find(x=>x.id == el.tipo_usuario_id).descripcion;
+          console.log(el.tipo_usuario_id);
+          if(el.tipo_usuario_id != null)
+          {
+            el.dataTipousuario = tipo_usuario.find(x=>x.id == el.tipo_usuario_id).descripcion;
 
+          }
+          
           let contador =  0;
           let arrayLesiones = Array();
           el.lesion_parte.forEach(lesion => {
