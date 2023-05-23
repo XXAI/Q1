@@ -43,7 +43,11 @@
                             </mat-form-field>
                             <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                                 <mat-label>LOCALIDAD</mat-label>
-                                <input matInput placeholder="localidad" [matAutocomplete]="localidadAutocomplete" formControlName='localidad'>
+                                <input matInput formControlName="localidad" placeholder="LOCALIDAD" required autocomplete="off">
+                                <mat-error *ngIf=" principalForm.get('localidad').invalid && ( principalForm.get('localidad').dirty ||  principalForm.get('localidad').touched)">
+                                    <span *ngIf=" principalForm.get('localidad').errors.required">El LOCALIDAD es un campo obligatorio</span>
+                                </mat-error>
+                                <!--input matInput placeholder="localidad" [matAutocomplete]="localidadAutocomplete" formControlName='localidad'>
                                 <mat-autocomplete #localidadAutocomplete="matAutocomplete" [displayWith]="displayLocalidadFn" [panelWidth]="'auto'">
                                     <mat-option *ngIf="localidadIsLoading" class="is-loading">
                                         <mat-spinner diameter="25"></mat-spinner>
@@ -57,7 +61,7 @@
 
                                 <mat-error *ngIf="principalForm.get('localidad').invalid && (principalForm.get('localidad').dirty || principalForm.get('localidad').touched)">
                                     <span *ngIf="principalForm.get('localidad').errors.required">Campo obligatorio</span>
-                                </mat-error>
+                                </mat-error-->
 
                             </mat-form-field>
 

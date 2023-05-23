@@ -195,7 +195,7 @@ class LesionesController extends Controller
                 $obj->hora                      = $parametros['hora'];
                 $obj->entidad_federativa_id     = $parametros['entidad'];
                 $obj->municipio_id              = $parametros['municipio'];
-                $obj->localidad_id              = $parametros['localidad']['id'];
+                $obj->localidad_id              = $parametros['localidad'];
                 $obj->colonia                   = strtoupper($parametros['colonia']);
                 $obj->calle                     = strtoupper($parametros['calle']);
                 $obj->numero                    = strtoupper($parametros['no']);

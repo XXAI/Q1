@@ -113,7 +113,7 @@ export class RegistroLesionComponent implements OnInit {
       hora:[''],
       entidad:[1],
       municipio:[''],
-      localidad:[''],
+      localidad:['',Validators.required],
       colonia:['',Validators.required],
       calle:['',Validators.required],
       no:['', Validators.required],
@@ -328,11 +328,9 @@ export class RegistroLesionComponent implements OnInit {
     this.lesionesService.getIncidente(this.id).subscribe(
       response => {
         //Empezamos a construir los arreglos :)
-        console.log("------");
-        console.log(response);
-        console.log("------");
+        
         let p = response;
-        let principal = {fecha: p.fecha, hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad, colonia: p.colonia, calle: p.calle, no:p.numero, latitud:p.latitud, longitud:p.longitud};
+        let principal = {fecha: p.fecha, hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad_id, colonia: p.colonia, calle: p.calle, no:p.numero, latitud:p.latitud, longitud:p.longitud};
         
         this.principalForm.patchValue(principal);
 
@@ -747,7 +745,7 @@ export class RegistroLesionComponent implements OnInit {
       } 
     );
 
-    this.principalForm.get('localidad').valueChanges
+    /*this.principalForm.get('localidad').valueChanges
       .pipe(
         debounceTime(300),
         tap( () => {
@@ -773,7 +771,7 @@ export class RegistroLesionComponent implements OnInit {
             }
           }
         ),
-      ).subscribe(items => this.filteredLocalidad = items);
+      ).subscribe(items => this.filteredLocalidad = items);*/
   }
 
   private _filter(value: any, catalog: string, valueField: string): string[] {
@@ -962,9 +960,9 @@ export class RegistroLesionComponent implements OnInit {
       });
     }
 
-    displayLocalidadFn(item: any) {
+    /*displayLocalidadFn(item: any) {
       if (item) { return item.descripcion; }
-    }
+    }*/
 
     subirDocumento()
     {
