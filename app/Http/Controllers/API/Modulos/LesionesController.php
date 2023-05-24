@@ -34,7 +34,7 @@ class LesionesController extends Controller
     public function index(Request $request)
     {
         try{
-            //$accessData = $this->getUserAccessData();
+            $loggedUser = $this->getUserAccessData();
             $parametros = $request->all();
             
             $object = Lesiones::with("municipio","localidad");
@@ -47,7 +47,9 @@ class LesionesController extends Controller
                                 ->orWhere('calle','LIKE','%'.$parametros['query'].'%');
                 });
             }
-
+            if(!$loggedUser->is_superuser){
+                $object = $object->where("municipio_id", $loggedUser->catalogo_municipio_id);
+            }
             /*if(!$accessData->is_superuser){
                 $proyectos = $proyectos->where(function($query)use($accessData){
                                                     $query->whereIn('direccion_id',$accessData->direcciones_ids)
@@ -65,7 +67,7 @@ class LesionesController extends Controller
                     $object = $object->get();
                 }
             
-            return response()->json(['data'=>$object],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$object, "obj"=>$loggedUser],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
@@ -725,5 +727,13 @@ class LesionesController extends Controller
             DB::rollback();
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
+    }
+
+    private function getUserAccessData($loggedUser = null){
+        if(!$loggedUser){
+            $loggedUser = auth()->userOrFail();
+        }
+    
+        return $loggedUser;
     }
 }

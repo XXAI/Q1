@@ -18,7 +18,7 @@ import { AVATARS } from '../../avatars';
 })
 
 export class FormComponent implements OnInit {
-
+  catalogos: any = {'municipios':[]};
   constructor(
     private sharedService: SharedService, 
     private usersService: UsersService,
@@ -42,6 +42,7 @@ export class FormComponent implements OnInit {
     'password': ['',[Validators.minLength(6)]],
     'is_superuser': [false],
     'avatar': [''],
+    'catalogo_municipio_id': [''],
     'roles': [[]],
     'permissions': [[]],
     'direcciones': [[]],
@@ -240,6 +241,21 @@ export class FormComponent implements OnInit {
         }
       );
     }); 
+
+    this.inicializaMunicipios();
+  }
+
+
+  inicializaMunicipios()
+  {
+    let carga_catalogos = {'Estados':0, 'Municipio':0, 'TipoVehiculo':0, 'Vehiculo':0};
+    this.usersService.getCatalogos(carga_catalogos).subscribe(
+      response => {
+        this.catalogos = response.data;
+        this.isLoading = false; 
+      } 
+    );
+
   }
 
   removeRole(index){

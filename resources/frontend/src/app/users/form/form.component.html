@@ -48,7 +48,12 @@
                                 <span *ngIf="usuarioForm.get('password').errors.required">La Contraseña es obligatoria</span>
                             </mat-error>
                         </mat-form-field>
-
+                        <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                            <mat-label>MUNICIPIO</mat-label>
+                            <mat-select formControlName="catalogo_municipio_id" required>
+                                <mat-option *ngFor="let item of catalogos['Municipio']" [value]="item.id">{{ item.descripcion }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                         <section fxFlex fxFlex.xs="100" class="checkbox-section" *ngIf="authUser.is_superuser">
                             <mat-checkbox #isSuperUser formControlName="is_superuser" (change)="(isSuperUser.checked)?(metaData.selectedIndex = 2):(metaData.selectedIndex = 0)">Es super-usuario</mat-checkbox>
                         </section>

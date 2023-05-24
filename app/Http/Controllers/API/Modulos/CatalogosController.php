@@ -23,7 +23,7 @@ class CatalogosController extends Controller
     public function getCatalogos(Request $request){
         try{
             $parametros = $request->all();
-            
+            $user = $this->getUserAccessData();
             $data = [];
             foreach ($parametros as $clave => $valor)
             {
@@ -33,7 +33,18 @@ class CatalogosController extends Controller
                     $data['Entidades'] = ($parametros[$clave] != 0)? Entidades::find($parametros[$clave]):Entidades::all();
                 }else if($clave == 'Municipio')
                 {
-                    $data['Municipio'] = ($parametros[$clave] != 0)? Municipios::find($parametros[$clave]):Municipios::all();
+                    if($parametros[$clave] != 0)
+                    {
+                        $data['Municipio'] = Municipios::find($parametros[$clave]);
+                    }else{
+                        if($user->is_superuser)
+                        {
+                            $data['Municipio'] =Municipios::all();
+                        }else{
+                            $data['Municipio'] =Municipios::where("id",$user->catalogo_municipio_id)->get();
+                        }
+                    }
+                   
                 }else if($clave == 'TipoVehiculo')
                 {
                     $data['TipoVehiculo'] = ($parametros[$clave] != 0)? TipoVehiculos::find($parametros[$clave]):TipoVehiculos::all();
@@ -125,4 +136,12 @@ class CatalogosController extends Controller
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }*/
+
+    private function getUserAccessData($loggedUser = null){
+        if(!$loggedUser){
+            $loggedUser = auth()->userOrFail();
+        }
+    
+        return $loggedUser;
+    }
 }
