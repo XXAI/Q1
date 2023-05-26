@@ -19,6 +19,10 @@ import { AVATARS } from '../../avatars';
 
 export class FormComponent implements OnInit {
   catalogos: any = {'municipios':[]};
+  municipios:any[] = [];
+  municipios_seleccionados:any[] = [];
+  seleccionado:any[] =[];
+
   constructor(
     private sharedService: SharedService, 
     private usersService: UsersService,
@@ -42,7 +46,7 @@ export class FormComponent implements OnInit {
     'password': ['',[Validators.minLength(6)]],
     'is_superuser': [false],
     'avatar': [''],
-    'catalogo_municipio_id': [''],
+    'municipios': [''],
     'roles': [[]],
     'permissions': [[]],
     'direcciones': [[]],
@@ -156,7 +160,7 @@ export class FormComponent implements OnInit {
 
           //Starts: User
           if(results[2]){
-            console.log("aca", results[2]);
+            
             this.usuario = results[2];
             this.usuarioForm.patchValue(this.usuario);
 
@@ -246,12 +250,70 @@ export class FormComponent implements OnInit {
   }
 
 
+  seleccionar(id)
+  {
+    let estilo = this.catalogos.Municipio.find(element => element.id == id).estatus;
+    let index = this.catalogos.Municipio.findIndex(element => element.id == id);
+    if(estilo == true)
+    {
+      this.catalogos.Municipio[index].estatus =false;
+    }else{
+      this.catalogos.Municipio[index].estatus =true;
+    }
+  }
+
+  seleccionados(id){
+    let estilo = this.municipios_seleccionados.find(element => element.id == id).estatus;
+    let index = this.municipios_seleccionados.findIndex(element => element.id == id);
+    if(estilo == true)
+    {
+      this.municipios_seleccionados[index].estatus =false;
+    }else{
+      this.municipios_seleccionados[index].estatus =true;
+    }
+  }
+
+  agregarMunicipio(){
+    let auxiliar:any[] = [];
+    this.catalogos.Municipio.forEach(element => {
+      if(element.estatus == true)
+      {
+        element.estatus = false;
+        this.municipios_seleccionados.push(element);
+      }else{
+        auxiliar.push(element);
+      }
+    });
+    this.catalogos.Municipio = auxiliar;
+    this.seleccionado = [];
+  }
+
+  quitarMunicipio(){
+    let auxiliar:any[] = [];
+    this.municipios_seleccionados.forEach(element => {
+      if(element.estatus == true)
+      {
+        element.estatus = false;
+        this.catalogos.Municipio.push(element);
+      }else{
+        auxiliar.push(element);
+      }
+    });
+    this.municipios_seleccionados = auxiliar;
+    this.seleccionado = [];
+  
+  }
+
   inicializaMunicipios()
   {
     let carga_catalogos = {'Estados':0, 'Municipio':0, 'TipoVehiculo':0, 'Vehiculo':0};
     this.usersService.getCatalogos(carga_catalogos).subscribe(
       response => {
         this.catalogos = response.data;
+        let catalogo = this.catalogos.Municipio.map( function(response){
+          response.estatus = false;
+          //return response.estatus = false;
+        })
         this.isLoading = false; 
       } 
     );
@@ -496,6 +558,7 @@ export class FormComponent implements OnInit {
     let roles = [];
     let permissions = {};
     let direcciones = {};
+    let municipios = [];
 
     for(let id in this.assignedPermissions){
       let permission = this.assignedPermissions[id];
@@ -511,6 +574,11 @@ export class FormComponent implements OnInit {
           }
         }
       }
+    }
+
+    for(let id in this.municipios_seleccionados){
+      let obj = this.municipios_seleccionados[id];
+      municipios.push(obj.id);
     }
 
     for(let i in this.selectedDirecciones){
@@ -532,7 +600,7 @@ export class FormComponent implements OnInit {
     this.usuarioForm.get('direcciones').patchValue(direcciones);
     this.usuarioForm.get('permissions').patchValue(permissions);
     this.usuarioForm.get('roles').patchValue(roles);
-
+    this.usuarioForm.get('municipios').patchValue(municipios);
     this.usuarioForm.get('avatar').patchValue(this.selectedAvatar);
 
     if(this.usuario.id){

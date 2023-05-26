@@ -75,6 +75,12 @@ export class ListaLesionesComponent implements OnInit {
   filteredCatalogs:any = {};
   catalogos: any = {};
 
+  filterForm = this.fb.group({
+
+    'catalogo_municipio_id'                  : [undefined],
+
+  });
+
   fechaActual:any = '';
   maxDate:Date;
   minDate:Date;
@@ -95,6 +101,20 @@ export class ListaLesionesComponent implements OnInit {
   ngOnInit() {
     this.loadData();
     this.loadPermisos();
+    this.loadCatalogos();
+  }
+
+  loadCatalogos()
+  {
+    this.isLoading = true;
+
+    let carga_catalogos = {'Estados':0, 'Municipio':0, 'TipoVehiculo':0, 'Vehiculo':0};
+    this.lesionesService.getCatalogos(carga_catalogos).subscribe(
+      response => {
+        this.catalogos = response.data;
+        this.isLoading = false; 
+      } 
+    );
   }
 
   getDisplayFn(label: string){
@@ -210,27 +230,17 @@ export class ListaLesionesComponent implements OnInit {
     
     params.query = this.searchQuery;
 
-    //let filterFormValues = this.filterForm.value;
+    let filterFormValues = this.filterForm.value;
     let countFilter = 0;
 
-    /*for(let i in filterFormValues){
+    for(let i in filterFormValues){
       if(filterFormValues[i]){
-        if(i == 'clues'){
-          params[i] = filterFormValues[i].clues;
-        }else if(i == 'cr'){
-          params[i] = filterFormValues[i].cr;
-        }else if(i == 'comisionado'){
+        if(i == 'catalogo_municipio_id'){
           params[i] = filterFormValues[i];
-        }else if(i == 'e4'){
-          params[i] = filterFormValues[i];
-        }else if(i == 'fiscales'){
-          params[i] = filterFormValues[i];
-        }else{ //profesion y rama (grupos)
-          params[i] = filterFormValues[i].id;
         }
         countFilter++;
       }
-    }*/
+    }
 
     if(countFilter > 0){
       params.active_filter = true;
@@ -249,9 +259,8 @@ export class ListaLesionesComponent implements OnInit {
     }
 
     this.sharedService.setDataToCurrentApp('searchQuery',this.searchQuery);
-    //this.sharedService.setDataToCurrentApp('filter',filterFormValues);
-
-
+    this.sharedService.setDataToCurrentApp('filter',filterFormValues);
+    
     this.lesionesService.getLesionesList(params).subscribe(
       response => {
         console.log(response);

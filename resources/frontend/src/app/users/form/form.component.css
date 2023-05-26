@@ -119,3 +119,14 @@ button[disabled]{
     margin-right: -16px;
     margin-top: -16px;
 }
+
+.success
+{
+    background-color: #8184a0;
+    color: white;
+}
+
+.danger{
+    background-color: white;
+    color: black;
+}

@@ -48,12 +48,12 @@
                                 <span *ngIf="usuarioForm.get('password').errors.required">La Contraseña es obligatoria</span>
                             </mat-error>
                         </mat-form-field>
-                        <mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
+                        <!--mat-form-field fxFlex fxFlex.xs="100" appearance="fill">
                             <mat-label>MUNICIPIO</mat-label>
                             <mat-select formControlName="catalogo_municipio_id" required>
                                 <mat-option *ngFor="let item of catalogos['Municipio']" [value]="item.id">{{ item.descripcion }}</mat-option>
                             </mat-select>
-                        </mat-form-field>
+                        </mat-form-field-->
                         <section fxFlex fxFlex.xs="100" class="checkbox-section" *ngIf="authUser.is_superuser">
                             <mat-checkbox #isSuperUser formControlName="is_superuser" (change)="(isSuperUser.checked)?(metaData.selectedIndex = 2):(metaData.selectedIndex = 0)">Es super-usuario</mat-checkbox>
                         </section>
@@ -169,6 +169,29 @@
                                 </div>
                             </div>
                         </mat-tab>
+                        <mat-tab label="Municipios" [disabled]="(usuarioForm.get('is_superuser').value == true)">
+                            <div style="padding: 10px;"  fxLayout="row" fxLayout.xs="column">
+                             <div style="border: 1px solid #CFCFCF; width: 300px; height: 400px; overflow-y: scroll;"  fxFlex="45">
+                                 <div *ngFor="let item of catalogos['Municipio']" style="padding: 5px; border: 1px solid #efefef; cursor: pointer;" [ngClass]="item.estatus ? 'success' : 'danger'" (click)="seleccionar(item.id)">
+                                     {{ item.descripcion }}
+                                 </div>
+                             </div>
+                             <div fxFlex="5">
+                                 <div fxLayout="column" fxLayoutAlign="space-around center">
+                                     <button mat-raised-button color="primary" (click)="agregarMunicipio()">>></button>
+                                 <br>
+                                     <button mat-raised-button color="primary" (click)="quitarMunicipio()"><<</button>
+                                 </div>
+                                 
+                             </div>
+                             <div style="border: 1px solid #CFCFCF; width: 300px; height: 400px; overflow-y: scroll;" fxFlex="45">
+                                 <div *ngFor="let item of municipios_seleccionados" style="padding: 5px; border: 1px solid #efefef; cursor: pointer;" [ngClass]="item.estatus ? 'success' : 'danger'" (click)="seleccionados(item.id)">
+                                     {{ item.descripcion }}
+                                 </div>
+                             </div>
+                            </div>
+                         </mat-tab>
+
                         <!-- <mat-tab [disabled]="(usuarioForm.get('is_superuser').value == true)">
                             <ng-template mat-tab-label>
                                 <span matBadge="{{selectedDirecciones.length}}" matBadgeSize="medium" matBadgeColor="primary" matBadgePosition="above after" matBadgeOverlap="false" [matBadgeHidden]="selectedDirecciones.length <= 0">Direcciones</span>

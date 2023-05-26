@@ -17,14 +17,38 @@ use App\Models\Catalogos\Municipios;
 use App\Models\Catalogos\Vehiculos;
 use App\Models\Catalogos\TipoVehiculos;
 use App\Models\Catalogos\Clues;
+use App\Models\User;
 
 class CatalogosController extends Controller
 {
     public function getCatalogos(Request $request){
         try{
             $parametros = $request->all();
-            $user = $this->getUserAccessData();
+            $loggedUser = $this->getUserAccessData();
+            $permisos = User::with('roles.permissions','permissions', 'municipios')->find($loggedUser->id);
             $data = [];
+            $permiso_guardar = false;
+            if(!$loggedUser->is_superuser){
+                foreach ($permisos->roles as $key => $value) {
+                    foreach ($value->permissions as $key2 => $value2) {
+                        if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
+                        {
+                            $permiso_guardar = true;
+                        }
+                       
+                        
+                    }
+                }
+                foreach ($permisos->permissions as $key2 => $value2) {
+                    if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
+                    {
+                        $permiso_guardar = true;
+                    }
+                   
+                   
+                }
+            }     
+
             foreach ($parametros as $clave => $valor)
             {
                 if($clave == 'Estados')
@@ -37,11 +61,11 @@ class CatalogosController extends Controller
                     {
                         $data['Municipio'] = Municipios::find($parametros[$clave]);
                     }else{
-                        if($user->is_superuser)
+                        if($loggedUser->is_superuser || $permiso_guardar == false)
                         {
                             $data['Municipio'] =Municipios::all();
                         }else{
-                            $data['Municipio'] =Municipios::where("id",$user->catalogo_municipio_id)->get();
+                            $data['Municipio'] =Municipios::whereIn("id",$loggedUser->listaMunicipios)->get();
                         }
                     }
                    
@@ -141,6 +165,15 @@ class CatalogosController extends Controller
         if(!$loggedUser){
             $loggedUser = auth()->userOrFail();
         }
+
+        $loggedUser->load('municipios');
+        $lista_municipio = [];
+        foreach ($loggedUser->municipios as $municipio) {
+            $lista_municipio[] = intval($municipio['id']);
+            //echo $municipio['id']."-";
+        }
+    
+        $loggedUser->listaMunicipios = $lista_municipio;
     
         return $loggedUser;
     }

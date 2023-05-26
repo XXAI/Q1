@@ -27,6 +27,7 @@ use App\Models\RelFotografias;
 use App\Models\RelDocumentos;
 use App\Models\RelLesionParte;
 use App\Models\RelLesionParteTipo;
+use App\Models\User;
 use Image;
 
 class LesionesController extends Controller
@@ -36,7 +37,6 @@ class LesionesController extends Controller
         try{
             $loggedUser = $this->getUserAccessData();
             $parametros = $request->all();
-            
             $object = Lesiones::with("municipio","localidad");
             
             //Filtros, busquedas, ordenamiento
@@ -48,24 +48,48 @@ class LesionesController extends Controller
                 });
             }
             if(!$loggedUser->is_superuser){
-                $object = $object->where("municipio_id", $loggedUser->catalogo_municipio_id);
+                $object = $object->whereIn("municipio_id", $loggedUser->listaMunicipios);
             }
-            /*if(!$accessData->is_superuser){
-                $proyectos = $proyectos->where(function($query)use($accessData){
-                                                    $query->whereIn('direccion_id',$accessData->direcciones_ids)
-                                                            ->orWhereIn('id',$accessData->proyectos_ids);
-                                                });
-            }*/
-            
-                $object = $object->orderBy('updated_at','desc');
-
-                if(isset($parametros['page'])){
-                    $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
-                    $object = $object->paginate($resultadosPorPagina);
-
-                } else {
-                    $object = $object->get();
+            $permiso_guardar = false;
+            $permisos = User::with('roles.permissions','permissions', 'municipios')->find($loggedUser->id);
+            if(!$loggedUser->is_superuser){
+                foreach ($permisos->roles as $key => $value) {
+                    foreach ($value->permissions as $key2 => $value2) {
+                        if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
+                        {
+                            $permiso_guardar = true;
+                        }
+                       
+                        
+                    }
                 }
+                foreach ($permisos->permissions as $key2 => $value2) {
+                    if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
+                    {
+                        $permiso_guardar = true;
+                    }
+                   
+                   
+                }
+            }           
+            
+            if(!$loggedUser->is_superuser && $permiso_guardar == false){
+                $object = $object->whereIn("municipio_id", $loggedUser->listaMunicipios);
+            }
+
+            if(isset($parametros['active_filter']) && $parametros['active_filter'])
+            {
+                $object = $object->where("municipio_id", $parametros['catalogo_municipio_id']); 
+            }
+            $object = $object->orderBy('updated_at','desc');
+
+            if(isset($parametros['page'])){
+                $resultadosPorPagina = isset($parametros["per_page"])? $parametros["per_page"] : 20;
+                $object = $object->paginate($resultadosPorPagina);
+
+            } else {
+                $object = $object->get();
+            }
             
             return response()->json(['data'=>$object, "obj"=>$loggedUser],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
@@ -117,32 +141,57 @@ class LesionesController extends Controller
            
             $parametros = $request->all(); 
             $return_data = array();
-            if($parametros['etapa'] == 1)
+            $permiso_guardar = false;
+            if(!$loggedUser->is_superuser){
+                foreach ($permisos->roles as $key => $value) {
+                    foreach ($value->permissions as $key2 => $value2) {
+                        if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
+                        {
+                            $permiso_guardar = true;
+                        }
+                       
+                        
+                    }
+                }
+                foreach ($permisos->permissions as $key2 => $value2) {
+                    if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
+                    {
+                        $permiso_guardar = true;
+                    }
+                   
+                   
+                }
+            }         
+            if($permiso_guardar == true)
             {
-                $return_data = $this->GuardarLugar($parametros, $id);
-                
-            }else if($parametros['etapa'] == 2)
-            {
-                $return_data = $this->GuardarZona($parametros, $id);
-            }else if($parametros['etapa'] == 3)
-            {
-                $return_data = $this->GuardarTipo($parametros, $id);
-            }else if($parametros['etapa'] == 4)
-            {
-                $return_data = $this->GuardarCausa($parametros, $id);
-            }else if($parametros['etapa'] == 5)
-            {
-                
-                $return_data = $this->GuardarVictima($parametros, $id);
-            }else if($parametros['etapa'] == 6)
-            {
-                
+                if($parametros['etapa'] == 1)
+                {
+                    $return_data = $this->GuardarLugar($parametros, $id);
+                    
+                }else if($parametros['etapa'] == 2)
+                {
+                    $return_data = $this->GuardarZona($parametros, $id);
+                }else if($parametros['etapa'] == 3)
+                {
+                    $return_data = $this->GuardarTipo($parametros, $id);
+                }else if($parametros['etapa'] == 4)
+                {
+                    $return_data = $this->GuardarCausa($parametros, $id);
+                }else if($parametros['etapa'] == 5)
+                {
+                    
+                    $return_data = $this->GuardarVictima($parametros, $id);
+                }else if($parametros['etapa'] == 6)
+                {
+                    
+                }
+                if($return_data['estatus'] == false)
+                {
+                    unset($return_data['estatus']);
+                    return response()->json(["error" => $return_data], HttpResponse::HTTP_CONFLICT);
+                }
             }
-            if($return_data['estatus'] == false)
-            {
-                unset($return_data['estatus']);
-                return response()->json(["error" => $return_data], HttpResponse::HTTP_CONFLICT);
-            }
+            
 
             return response()->json($return_data,HttpResponse::HTTP_OK);
         }catch(\Exception $e){
@@ -195,7 +244,7 @@ class LesionesController extends Controller
                 $loggedUser = auth()->userOrFail();
                 $obj->fecha                     = $parametros['fecha'];
                 $obj->hora                      = $parametros['hora'];
-                $obj->entidad_federativa_id     = $parametros['entidad'];
+                $obj->entidad_federativa_id     = 7;
                 $obj->municipio_id              = $parametros['municipio'];
                 $obj->localidad_id              = strtoupper($parametros['localidad']);
                 $obj->colonia                   = strtoupper($parametros['colonia']);
@@ -733,7 +782,14 @@ class LesionesController extends Controller
         if(!$loggedUser){
             $loggedUser = auth()->userOrFail();
         }
+        $loggedUser->load('municipios');
+        $lista_municipio = [];
+        foreach ($loggedUser->municipios as $municipio) {
+            $lista_municipio[] = intval($municipio['id']);
+            //echo $municipio['id']."-";
+        }
     
+        $loggedUser->listaMunicipios = $lista_municipio;
         return $loggedUser;
     }
 }

@@ -106,19 +106,21 @@ class UserController extends Controller
                 $usuario->password = Hash::make($parametros['password']);
                 $usuario->is_superuser = $parametros['is_superuser'];
                 $usuario->avatar = $parametros['avatar'];
-                $usuario->catalogo_municipio_id = $parametros['catalogo_municipio_id'];
+                //$usuario->catalogo_municipio_id = $parametros['catalogo_municipio_id'];
                 
                 $usuario->save();
 
                 if(!$usuario->is_superuser){
                     $roles = $parametros['roles'];
                     $permisos = $parametros['permissions'];
+                    $municipios = $parametros['municipios'];
                     //$direcciones_proyectos = $parametros['direcciones'];
                     //$direcciones = [];
                     //$proyectos = [];
                 }else{
                     $roles = [];
                     $permisos = [];
+                    $municipios = [];
                     //$direcciones_proyectos = [];
                     //$direcciones = [];
                     //$proyectos = [];
@@ -140,7 +142,8 @@ class UserController extends Controller
                 //$usuario->proyectos()->sync($proyectos);
                 $usuario->roles()->sync($roles);
                 $usuario->permissions()->sync($permisos);
-
+                $usuario->municipios()->sync($municipios);
+                 
                 DB::commit();
 
                 return response()->json(['data'=>$usuario],HttpResponse::HTTP_OK);
@@ -199,7 +202,7 @@ class UserController extends Controller
                 $usuario->username = $parametros['username'];
                 $usuario->is_superuser = $parametros['is_superuser'];
                 $usuario->avatar = $parametros['avatar'];
-                $usuario->catalogo_municipio_id = $parametros['catalogo_municipio_id'];
+                //$usuario->catalogo_municipio_id = $parametros['catalogo_municipio_id'];
                 
                 if($parametros['password']){
                     $usuario->password = Hash::make($parametros['password']);
@@ -210,12 +213,14 @@ class UserController extends Controller
                 if(!$usuario->is_superuser){
                     $roles = $parametros['roles'];
                     $permisos = $parametros['permissions'];
+                    $municipios = $parametros['municipios'];
                     //$direcciones_proyectos = $parametros['direcciones'];
                     //$direcciones = [];
                     //$proyectos = [];
                 }else{
                     $roles = [];
                     $permisos = [];
+                    $municipios = [];
                     //$direcciones_proyectos = [];
                     //$direcciones = [];
                     //$proyectos = [];
@@ -237,6 +242,7 @@ class UserController extends Controller
                 //$usuario->proyectos()->sync($proyectos);
                 $usuario->roles()->sync($roles);
                 $usuario->permissions()->sync($permisos);
+                $usuario->municipios()->sync($municipios);
 
                 DB::commit();
 
