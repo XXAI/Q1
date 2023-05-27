@@ -37,7 +37,7 @@ class LesionesController extends Controller
         try{
             $loggedUser = $this->getUserAccessData();
             $parametros = $request->all();
-            $object = Lesiones::with("municipio","localidad");
+            $object = Lesiones::with("municipio","localidad")->orderBy("id", "desc");
             
             //Filtros, busquedas, ordenamiento
             if(isset($parametros['query']) && $parametros['query']){
@@ -47,9 +47,7 @@ class LesionesController extends Controller
                                 ->orWhere('calle','LIKE','%'.$parametros['query'].'%');
                 });
             }
-            if(!$loggedUser->is_superuser){
-                $object = $object->whereIn("municipio_id", $loggedUser->listaMunicipios);
-            }
+           
             $permiso_guardar = false;
             $permisos = User::with('roles.permissions','permissions', 'municipios')->find($loggedUser->id);
             if(!$loggedUser->is_superuser){
@@ -73,7 +71,7 @@ class LesionesController extends Controller
                 }
             }           
             
-            if(!$loggedUser->is_superuser && $permiso_guardar == false){
+            if(!$loggedUser->is_superuser && $permiso_guardar == true){
                 $object = $object->whereIn("municipio_id", $loggedUser->listaMunicipios);
             }
 
@@ -91,7 +89,7 @@ class LesionesController extends Controller
                 $object = $object->get();
             }
             
-            return response()->json(['data'=>$object, "obj"=>$loggedUser],HttpResponse::HTTP_OK);
+            return response()->json(['data'=>$object],HttpResponse::HTTP_OK);
         }catch(\Exception $e){
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
@@ -138,7 +136,8 @@ class LesionesController extends Controller
     public function update(Request $request, $id)
     {
         try{
-           
+            $loggedUser = $this->getUserAccessData();
+            $permisos = User::with('roles.permissions','permissions', 'municipios')->find($loggedUser->id);
             $parametros = $request->all(); 
             $return_data = array();
             $permiso_guardar = false;
