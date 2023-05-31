@@ -41,6 +41,7 @@ import * as FileSaver from 'file-saver';
 export class ListaLesionesComponent implements OnInit {
 
   permisoGuardar:boolean = false;
+  permisoGuardarLesiones:boolean = false;
   isLoading: boolean = false;
   isLoadingPDF: boolean = false;
   isLoadingPDFArea: boolean = false;
@@ -185,6 +186,11 @@ export class ListaLesionesComponent implements OnInit {
          if(element == "permisoGuardarIncidente" || element == "permisoAdmin")
          {
           this.permisoGuardar = true;
+         }
+         
+         if(element == "permisoGuardarLesiones")
+         {
+          this.permisoGuardarLesiones = true;
          }
         });
       },

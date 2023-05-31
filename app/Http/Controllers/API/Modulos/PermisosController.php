@@ -33,6 +33,10 @@ class PermisosController extends Controller
                         {
                             $permisos_especiales[] = "permisoGuardarIncidente";
                         }
+                        if($value2->id == 'AyeIle5U0aOZNwkKSwjs6wVAbxb62u04')
+                        {
+                            $permisos_especiales[] = "permisoGuardarLesiones";
+                        }
                         
                      
                     }
@@ -42,6 +46,10 @@ class PermisosController extends Controller
                     if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
                     {
                         $permisos_especiales[] = "permisoGuardarIncidente";
+                    }
+                    if($value2->id == 'AyeIle5U0aOZNwkKSwjs6wVAbxb62u04')
+                    {
+                        $permisos_especiales[] = "permisoGuardarLesiones";
                     }
                     
                    

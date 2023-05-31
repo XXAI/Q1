@@ -27,6 +27,7 @@ use App\Models\RelFotografias;
 use App\Models\RelDocumentos;
 use App\Models\RelLesionParte;
 use App\Models\RelLesionParteTipo;
+use App\Models\User;
 
 class ReporteLesionesController  extends Controller
 {
@@ -34,10 +35,34 @@ class ReporteLesionesController  extends Controller
     {
        
     ini_set('memory_limit', '-1');
+    
+    /*$loggedUser = $this->getUserAccessData();
+    $permisos = User::with('roles.permissions','permissions', 'municipios')->find($loggedUser->id);
+    $permiso_guardar = false;
+    if(!$loggedUser->is_superuser){
+        foreach ($permisos->roles as $key => $value) {
+            foreach ($value->permissions as $key2 => $value2) {
+                if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
+                {
+                    $permiso_guardar = true;
+                }
                 
+                
+            }
+        }
+        foreach ($permisos->permissions as $key2 => $value2) {
+            if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
+            {
+                $permiso_guardar = true;
+            }
+            
+            
+        }
+    }*/     
+
     $obj = Lesiones::join("catalogo_entidades as b", "lesiones.entidad_federativa_id", "b.id")
-                        ->join("catalogo_municipios as c", "lesiones.municipio_id", "c.id")
-                        ->join("catalogo_localidades as d", "lesiones.localidad_id", "d.id")
+                        ->leftjoin("catalogo_municipios as c", "lesiones.municipio_id", "c.id")
+                        //->leftjoin("catalogo_localidades as d", "lesiones.localidad_id", "d.id")
             ->select("lesiones.id",
             DB::raw("concat('CHIS-',lesiones.id) as folio"),
             "lesiones.fecha as fecha_incidente",
@@ -45,7 +70,7 @@ class ReporteLesionesController  extends Controller
             "lesiones.created_at as fecha_hora_captura",
             "b.descripcion AS entidad",
             "c.descripcion AS municipio",
-            "d.descripcion AS localidad",
+            "lesiones.localidad_id AS localidad",
             "lesiones.colonia",
             "lesiones.calle",
             "lesiones.numero",
@@ -62,9 +87,15 @@ class ReporteLesionesController  extends Controller
             DB::RAW("IF(lesiones.via_id = 1, IF(lesiones.tipo_pavimentado=1, 'ASFALTO','CONCRETO'), IF(lesiones.tipo_via_id = 1, 'TERRACERÍA', IF(lesiones.tipo_via_id = 2, 'EMPEDRADO', 'OTRO'))) AS tipo_via"),
             "lesiones.otro_tipo_via",
             DB::RAW("IF(lesiones.tipo_camino IS NULL ,'',IF(lesiones.tipo_camino = 1,'CAMINO RURAL', IF(lesiones.tipo_camino = 2, 'CARRETERA ESTATAL', 'OTRO'))) AS tipo_camino"),
-            "lesiones.otro_tipo_camino")
-            ->get();
+            "lesiones.otro_tipo_camino");
+            //->get();
 
+        /*if($permiso_guardar == true || !$loggedUser->is_superuser)
+        {
+            $obj = $obj->where("user_id", $loggedUser->id); 
+        }*/
+            
+        $obj = $obj->get();
         //Calculo de accidentes
         $cantidad_tipo_accidente = $this->getCantidadTipoAccidente();
         //Calculo de Vehiculos
@@ -144,8 +175,9 @@ class ReporteLesionesController  extends Controller
             //Fin Victimas
            
         }    
-        //return $obj;    
+        
         $columnas = array_keys(collect($obj[0])->toArray());
+        //return $columnas;
         //return $obj;
         $filename = 'reporte-general';
         return (new DevReportExport($obj,$columnas))->download($filename.'.xlsx');
@@ -562,7 +594,7 @@ class ReporteLesionesController  extends Controller
     private function ConsultaVictimaLesion($id, $cantidad, $arreglo, $obj)
     {
         $arreglo_prestador = [
-            '', 'SSA', 'PROTECCIÓN CIVIL', 'SEDENA', 'IMSS','ISSSTE', 'ISSSTECH', 'ERUM', 'BOMBEROS', 'OTROS'
+            '', 'SSA', 'CRUZ ROJA', 'PROTECCIÓN CIVIL', 'SEDENA', 'IMSS','ISSSTE', 'ISSSTECH', 'ERUM', 'BOMBEROS', 'OTROS'
         ];
 
         $arreglo_nivel = [
@@ -620,6 +652,7 @@ class ReporteLesionesController  extends Controller
             
             $obj["pre_hospitalizacion_".$i]         = !isset($aux[$indice])?"":($aux[$indice]["pre_hospitalizacion"]==1?"SI":"NO");
             $obj["no_ambulancia_".$i]         = !isset($aux[$indice])?"":strtoupper($aux[$indice]["no_ambulancia"]);
+            
             $obj["prestador_servicio_".$i]         = !isset($aux[$indice])?"":($aux[$indice]["prestador_servicio"]!=null?$arreglo_prestador[$aux[$indice]["prestador_servicio"]]:'');
             $obj["otro_prestador_".$i]         = !isset($aux[$indice])?"":strtoupper($aux[$indice]["otro_prestador"]);
             $obj["nivel_conciencia_".$i]         = !isset($aux[$indice])?"":($aux[$indice]["nivel_conciencia"]!=null?$arreglo_nivel[$aux[$indice]["nivel_conciencia"]]:'');
@@ -740,5 +773,20 @@ class ReporteLesionesController  extends Controller
         }
         
         return $obj;
+    }
+
+    private function getUserAccessData($loggedUser = null){
+        if(!$loggedUser){
+            $loggedUser = auth()->userOrFail();
+        }
+        $loggedUser->load('municipios');
+        $lista_municipio = [];
+        foreach ($loggedUser->municipios as $municipio) {
+            $lista_municipio[] = intval($municipio['id']);
+            //echo $municipio['id']."-";
+        }
+    
+        $loggedUser->listaMunicipios = $lista_municipio;
+        return $loggedUser;
     }
 }
