@@ -35,7 +35,7 @@ class PermisosController extends Controller
                         }
                         if($value2->id == 'AyeIle5U0aOZNwkKSwjs6wVAbxb62u04')
                         {
-                            $permisos_especiales[] = "permisoGuardarLesiones";
+                            $permisos_especiales[] = "permisoImprimir";
                         }
                         
                      
@@ -49,7 +49,7 @@ class PermisosController extends Controller
                     }
                     if($value2->id == 'AyeIle5U0aOZNwkKSwjs6wVAbxb62u04')
                     {
-                        $permisos_especiales[] = "permisoGuardarLesiones";
+                        $permisos_especiales[] = "permisoImprimir";
                     }
                     
                    

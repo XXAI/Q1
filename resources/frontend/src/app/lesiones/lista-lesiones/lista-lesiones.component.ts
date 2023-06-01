@@ -41,6 +41,7 @@ import * as FileSaver from 'file-saver';
 export class ListaLesionesComponent implements OnInit {
 
   permisoGuardar:boolean = false;
+  permisoImprimir:boolean = false;
   permisoGuardarLesiones:boolean = false;
   isLoading: boolean = false;
   isLoadingPDF: boolean = false;
@@ -183,15 +184,17 @@ export class ListaLesionesComponent implements OnInit {
     this.lesionesService.getPermisos().subscribe(
       response => {
         response.data.forEach(element => {
+          console.log(element);
          if(element == "permisoGuardarIncidente" || element == "permisoAdmin")
          {
           this.permisoGuardar = true;
          }
          
-         if(element == "permisoGuardarLesiones")
+         if(element == "permisoImprimir" || element == "permisoAdmin")
          {
-          this.permisoGuardarLesiones = true;
+          this.permisoImprimir = true;
          }
+         console.log(this.permisoGuardar);
         });
       },
       errorResponse =>{
