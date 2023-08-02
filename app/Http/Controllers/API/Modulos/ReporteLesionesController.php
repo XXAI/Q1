@@ -143,6 +143,7 @@ class ReporteLesionesController  extends Controller
         $arreglo_falla   = ['','Llantas', 'Ejes', 'Frenos', 'Transmisión', 'Dirección', 'Motor', 'Suspensión', 'Sobrecarga', 'Luces', 'Exceso de dimensiones', 'Otro']; 
         $arreglo_camino   = ['','Mala condición de la vía', 'Falta de señales', 'Objetos en el camino', 'Camino mojado o encharcado (vía mojada)', 'Vía resbalosa /presenta un riesgo de resbalar fácilmente/provoca falta de adherencia del vehículo', 'Obstrucción de la vía por animales', 'Otro']; 
         $arreglo_agente   = ['','Llovizna','Neblina', 'Lluvia', 'Humo', 'Aguacero', 'Tolvanera', 'Nieve', 'Vientos fuertes', 'Granizo', 'Otro']; 
+        
         $arreglo_usos = [$arreglo_uso, $arreglo_tipo_uso];   
                                 
         //Fin apartado arreglos                        
@@ -305,6 +306,7 @@ class ReporteLesionesController  extends Controller
                 }
             }
         }
+        $obj['otro_tipo_accidente'] = "";
         if($bandera_otro == 1)
         {
             if(isset($otro['otro_tipo_accidente']))
@@ -406,6 +408,7 @@ class ReporteLesionesController  extends Controller
             }
              
         }
+        $obj['otro_tipo_accidente'] = "";
         if($bandera == 1)
         {
             if(isset($otro['otro_tipo_accidente']))
@@ -450,6 +453,7 @@ class ReporteLesionesController  extends Controller
             }
             
         }
+        $obj['otro_causa_peaton'] = "";
         if($bandera == 1)
         {
             if(isset($otro['otro_causa_peaton']))
@@ -507,6 +511,7 @@ class ReporteLesionesController  extends Controller
             }
             
         }
+        $obj['otro_causa_falla_vehiculo'] = "";
         if($bandera == 1)
         {
             if(isset($otro['otro_falla_accidente']))
@@ -544,6 +549,7 @@ class ReporteLesionesController  extends Controller
             }
             
         }
+        $obj['otro_causa_condicion_camino'] ="";
         if($bandera == 1)
         {
             if(isset($otro['otro_condicion']))
@@ -581,6 +587,7 @@ class ReporteLesionesController  extends Controller
             }
             
         }
+        $obj['otro_agente_natural'] = "";
         if($bandera == 1)
         {
             if(isset($otro['otro_agente_camino']))
