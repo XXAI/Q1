@@ -330,8 +330,8 @@ export class RegistroLesionComponent implements OnInit {
         //Empezamos a construir los arreglos :)
         
         let p = response;
-        let principal = {fecha: p.fecha, hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad_id, colonia: p.colonia, calle: p.calle, no:p.numero, latitud:p.latitud, longitud:p.longitud};
-        
+        let principal = {fecha: p.fecha+"T18:00:00", hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad_id, colonia: p.colonia, calle: p.calle, no:p.numero, latitud:p.latitud, longitud:p.longitud};
+        console.log(principal);
         this.principalForm.patchValue(principal);
 
         let z = response;
