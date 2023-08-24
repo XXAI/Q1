@@ -401,19 +401,19 @@ class ReporteLesionesController  extends Controller
             if(isset($aux[$indice]) != null)
             {
                 $obj["conductor_".$i] = strtoupper($arreglo[$aux[$indice]["rel_causa_conductor_id"]]);  
-                if($aux[$indice]["rel_causa_conductor_id"] == 12)
+                if($aux[$indice]["rel_causa_conductor_id"] == 13)
                 {
                     $bandera = 1;
                 }
             }
              
         }
-        $obj['otro_tipo_accidente'] = "";
+        $obj['otro_causa_conductor'] = "";
         if($bandera == 1)
         {
-            if(isset($otro['otro_tipo_accidente']))
+            if(isset($otro['otro_causa_conductor']))
             {
-                $obj['otro_tipo_accidente'] = strtoupper($otro['otro_tipo_accidente']);
+                $obj['otro_causa_conductor'] = strtoupper($otro['otro_causa_conductor']);
             }      
         }
         $data = RelCausaConductorDetalles::where("lesiones_id", $id)->first();
