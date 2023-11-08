@@ -805,7 +805,7 @@
                         </div>
                     </section>
                 </mat-tab>
-                <mat-tab label="FOTOGRAFIAS" [disabled]="editable" [formGroup]="formFotos">
+                <mat-tab label="FOTOGRAFIAS" [disabled]="editable" [formGroup]="formFotos" *ngIf="false">
                     <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="5px" style="margin-top:10px">
                         <div fxFlex="50" fxFlex.xs="100">
                             <input type="file" formControlName="file" class="form-control" accept="image/jpeg" multiple (change)="fileChange($event)">

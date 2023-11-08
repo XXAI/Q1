@@ -330,7 +330,7 @@ export class RegistroLesionComponent implements OnInit {
         //Empezamos a construir los arreglos :)
         
         let p = response;
-        let principal = {fecha: p.fecha+"T18:00:00", hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad_id, colonia: p.colonia, calle: p.calle, no:p.numero, latitud:p.latitud, longitud:p.longitud};
+        let principal = {fecha: p.fecha+"T18:00:00", hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad_id, colonia: p.colonia, calle: p.calle, cp:p.cp, no:p.numero, latitud:p.latitud, longitud:p.longitud};
         console.log(principal);
         this.principalForm.patchValue(principal);
 
@@ -345,9 +345,9 @@ export class RegistroLesionComponent implements OnInit {
         }
         this.zonaForm.patchValue(zona);
 
-        let t  = response.tipo_accidente;
+        let loop_tipo_accidente  = response.tipo_accidente;
         let tipo = {};
-        t.forEach(element => function() {
+        loop_tipo_accidente.forEach(element => {
           tipo['tipoAccidente_'+element.rel_tipo_accidente_id] = 1;
         });
         tipo['otro_tipo_accidente'] = p.otro_tipo_accidente;
@@ -912,9 +912,18 @@ export class RegistroLesionComponent implements OnInit {
         
       },
       errorResponse =>{
+        console.log(errorResponse);
+        let datos = errorResponse.error.error;
         let objError = errorResponse.error.error.data;
-        let claves = Object.keys(objError); 
-        this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+        
+        if(datos.etapa == 0)
+        {
+          this.sharedService.showSnackBar(datos.descripcion, null, 3000);  
+        }else{
+          let claves = Object.keys(objError); 
+          this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+          
+        }
         this.isLoading = false;
       } 
     );
