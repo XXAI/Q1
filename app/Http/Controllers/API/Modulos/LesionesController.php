@@ -29,6 +29,7 @@ use App\Models\RelLesionParte;
 use App\Models\RelLesionParteTipo;
 use App\Models\User;
 use Image;
+use Carbon\Carbon;
 
 class LesionesController extends Controller
 {
@@ -160,7 +161,25 @@ class LesionesController extends Controller
                    
                    
                 }
-            }         
+            }else{
+                $permiso_guardar = true;  
+            }   
+            
+            //Verficar fecha para que no puedan modificar despues de 3 semanas
+            $fecha_actual = Carbon::now();
+            if($id !=0)
+            {
+                $obj = Lesiones::find($id);
+                $fecha_registro = Carbon::parse($obj->created_at);
+                
+                $diferencia = $fecha_actual->diffInDays($fecha_registro);  
+                if($diferencia > 30)
+                {
+                    return response()->json(['error'=>["etapa"=>0, "descripcion"=>"Error, fecha limite superada"]], HttpResponse::HTTP_CONFLICT); 
+                }
+                 
+            }
+
             if($permiso_guardar == true)
             {
                 if($parametros['etapa'] == 1)
