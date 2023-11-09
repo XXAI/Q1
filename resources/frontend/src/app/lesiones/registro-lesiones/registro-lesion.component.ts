@@ -349,6 +349,7 @@ export class RegistroLesionComponent implements OnInit {
         let tipo = {};
         loop_tipo_accidente.forEach(element => {
           tipo['tipoAccidente_'+element.rel_tipo_accidente_id] = 1;
+          this.cantidadTipos++;
         });
         tipo['otro_tipo_accidente'] = p.otro_tipo_accidente;
         this.tipoAccidenteForm.patchValue(tipo);
