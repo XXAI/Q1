@@ -166,7 +166,7 @@ class LesionesController extends Controller
             }   
             
             //Verficar fecha para que no puedan modificar despues de 3 semanas
-            $fecha_actual = Carbon::now();
+            /*$fecha_actual = Carbon::now();
             if($id !=0)
             {
                 $obj = Lesiones::find($id);
@@ -178,7 +178,7 @@ class LesionesController extends Controller
                     return response()->json(['error'=>["etapa"=>0, "descripcion"=>"Error, fecha limite superada"]], HttpResponse::HTTP_CONFLICT); 
                 }
                  
-            }
+            }*/
 
             if($permiso_guardar == true)
             {
