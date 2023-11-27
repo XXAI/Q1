@@ -88,6 +88,7 @@ class ReporteLesionesController  extends Controller
             "lesiones.otro_tipo_via",
             DB::RAW("IF(lesiones.tipo_camino IS NULL ,'',IF(lesiones.tipo_camino = 1,'CAMINO RURAL', IF(lesiones.tipo_camino = 2, 'CARRETERA ESTATAL', 'OTRO'))) AS tipo_camino"),
             "lesiones.otro_tipo_camino");
+            //->where("lesiones.id", 251);
             //->get();
 
         /*if($permiso_guardar == true || !$loggedUser->is_superuser)
@@ -113,8 +114,8 @@ class ReporteLesionesController  extends Controller
         //
 
         //Calculo de vitimas
-        $cantidad_victimas_lesion = $this->getVictimaLesion();
-        $cantidad_victimas_defunsion = $this->getVictimaDefunsion();
+        //$cantidad_victimas_lesion = $this->getVictimaLesion();
+        //$cantidad_victimas_defunsion = $this->getVictimaDefunsion();
         //
         //Apartado Arreglos
         $arreglo_accidente = ['','Colisión con vehículo automotor',
@@ -643,7 +644,7 @@ class ReporteLesionesController  extends Controller
         $obj['cantidad_lesionados'] = "--";
         if(count($aux) > 0)
         {
-            $obj['cantidad_lesionados'] = $cantidad;
+            $obj['cantidad_lesionados'] = count($aux);
         }
         for ($i=1; $i <= $cantidad; $i++) { 
             
@@ -735,7 +736,7 @@ class ReporteLesionesController  extends Controller
         $obj['cantidad_defunciones'] = "--";
         if(count($aux) > 0)
         {
-            $obj['cantidad_defunciones'] = $cantidad;
+            $obj['cantidad_defunciones'] = count($aux);
         }
         for ($i=1; $i <= $cantidad; $i++) { 
             
