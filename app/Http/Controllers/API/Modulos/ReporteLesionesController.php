@@ -114,8 +114,8 @@ class ReporteLesionesController  extends Controller
         //
 
         //Calculo de vitimas
-        //$cantidad_victimas_lesion = $this->getVictimaLesion();
-        //$cantidad_victimas_defunsion = $this->getVictimaDefunsion();
+        $cantidad_victimas_lesion = $this->getVictimaLesion();
+        $cantidad_victimas_defunsion = $this->getVictimaDefunsion();
         //
         //Apartado Arreglos
         $arreglo_accidente = ['','Colisión con vehículo automotor',
