@@ -761,9 +761,9 @@
                                 <ng-container matColumnDef="hospitalizacion">
                                     <th mat-header-cell *matHeaderCellDef fxHide.xs="true"> Hospitalizacion </th>
                                     <td mat-cell *matCellDef="let row" fxHide.xs="true">
-                                        <div *ngIf="row.hospitalizacion == 1">
+                                        <!--div *ngIf="row.hospitalizacion == 1">
                                             {{ row.clues_hospitalizacion.clues }} {{ row.clues_hospitalizacion.descripcion }} - {{ row.clues_hospitalizacion.clave_institucion }}
-                                        </div>
+                                        </div-->
                                         <div *ngIf="row.hospitalizacion == 2">
                                             NO HOSPITALIZADO
                                         </div>

@@ -503,6 +503,7 @@ export class RegistroLesionComponent implements OnInit {
         this.causasForm.patchValue(causa);
         let vitima = [];
         response.victima.forEach(el => {
+          
           let tipo_victima:any = [{id:1, descripcion:"LESIÓN"},{id:2, descripcion:"DEFUNSIÓN"}];
           let validacion:any = [{id:1, descripcion:"ACTA"},{id:2, descripcion:"CERTIFICADO"}];
           let tipo_usuario:any = [{id:1, descripcion:"CONDUCTOR"},{id:2, descripcion:"PASAJERO"},{id:3, descripcion:"PEATÓN"},{id:4, descripcion:"CICLISTA"},{id:5, descripcion:"MOTOCICLISTA"}];
@@ -510,9 +511,13 @@ export class RegistroLesionComponent implements OnInit {
           el.dataTipovictima = tipo_victima.find(x=>x.id == el.tipo_id).descripcion;
           if(el.tipo_id == 2)
           {
-            el.dataValidacion = validacion.find(x=>x.id == el.acta_certificacion_id).descripcion;
+            if(el.acta_certificacion_id != null)
+            {
+              el.dataValidacion = validacion.find(x=>x.id == el.acta_certificacion_id).descripcion;
+            }
+            
           }
-          console.log(el.tipo_usuario_id);
+          
           if(el.tipo_usuario_id != null)
           {
             el.dataTipousuario = tipo_usuario.find(x=>x.id == el.tipo_usuario_id).descripcion;
@@ -567,8 +572,8 @@ export class RegistroLesionComponent implements OnInit {
         this.datosVictima = vitima;
         //console.log(this.datosVictima);
         this.dataSourceVictima.connect().next(this.datosVictima);
-        this.cargarImages();
-        this.cargarDocumentos();
+        //this.cargarImages();
+        //this.cargarDocumentos();
         this.contarVictimas();
         //this.isLoading = false; 
       },
