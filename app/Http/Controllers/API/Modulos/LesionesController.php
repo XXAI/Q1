@@ -642,7 +642,14 @@ class LesionesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            $permiso = Lesiones::find($id);
+            $permiso->delete();
+
+            return response()->json(['data'=>'Registro eliminado'], HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
     }
 
     public function getImagenes($id)

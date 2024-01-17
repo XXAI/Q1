@@ -37,6 +37,10 @@ class PermisosController extends Controller
                         {
                             $permisos_especiales[] = "permisoImprimir";
                         }
+                        if($value2->id == 'Qjd9311MNhH8WNkjlfCPjITSPnmUSZxg')
+                        {
+                            $permisos_especiales[] = "permisoEliminarLesion";
+                        }
                         
                      
                     }
@@ -50,6 +54,10 @@ class PermisosController extends Controller
                     if($value2->id == 'AyeIle5U0aOZNwkKSwjs6wVAbxb62u04')
                     {
                         $permisos_especiales[] = "permisoImprimir";
+                    }
+                    if($value2->id == 'Qjd9311MNhH8WNkjlfCPjITSPnmUSZxg')
+                    {
+                        $permisos_especiales[] = "permisoEliminarLesion";
                     }
                     
                    

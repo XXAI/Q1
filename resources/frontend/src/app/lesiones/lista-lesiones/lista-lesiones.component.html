@@ -147,7 +147,7 @@
 
                                     <mat-menu #menu="matMenu">
                                         <button mat-menu-item routerLink="/lesiones/registro/{{row.id}}/{{row.latitud}}/{{row.longitud}}"><mat-icon color="primary">edit</mat-icon>EDITAR</button>
-                                        <button mat-menu-item (click)="eliminarIncidente(row.id)"  *ngIf="permisoGuardar"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
+                                        <button mat-menu-item (click)="eliminarIncidente(row.id)"  *ngIf="permisoEliminarLesion"><mat-icon color="primary">delete</mat-icon>ELIMINAR</button>
 
                                     </mat-menu>
 

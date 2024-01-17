@@ -43,6 +43,7 @@ export class ListaLesionesComponent implements OnInit {
   permisoGuardar:boolean = false;
   permisoImprimir:boolean = false;
   permisoGuardarLesiones:boolean = false;
+  permisoEliminarLesion:boolean = false;
   isLoading: boolean = false;
   isLoadingPDF: boolean = false;
   isLoadingPDFArea: boolean = false;
@@ -184,7 +185,7 @@ export class ListaLesionesComponent implements OnInit {
     this.lesionesService.getPermisos().subscribe(
       response => {
         response.data.forEach(element => {
-          console.log(element);
+         // console.log(element);
          if(element == "permisoGuardarIncidente" || element == "permisoAdmin")
          {
           this.permisoGuardar = true;
@@ -194,7 +195,15 @@ export class ListaLesionesComponent implements OnInit {
          {
           this.permisoImprimir = true;
          }
-         console.log(this.permisoGuardar);
+         if(element == "permisoImprimir" || element == "permisoAdmin")
+         {
+          this.permisoImprimir = true;
+         }
+         if(element == "permisoEliminarLesion" || element == "permisoAdmin")
+         {
+          this.permisoEliminarLesion = true;
+         }
+         //console.log(this.permisoGuardar);
         });
       },
       errorResponse =>{
@@ -317,6 +326,28 @@ export class ListaLesionesComponent implements OnInit {
   }
   eliminarIncidente(indice)
   {
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      width: '500px',
+      data:{dialogTitle:'ELIMINAR',dialogMessage:'¿Realmente desea eliminar este registro? Escriba ACEPTAR a continuación para realizar el proceso.',validationString:'ACEPTAR',btnColor:'primary',btnText:'Aceptar'}
+    });
+
+    dialogRef.afterClosed().subscribe(valid => {
+      if(valid){
+        this.lesionesService.deleteIncidente(indice).subscribe(
+          response => {
+            this.loadData();
+            this.sharedService.showSnackBar("SE HA ELIMINADO CORRECTAMENTE EL REGISTRO", null, 3000);
+          },
+          errorResponse =>{
+            this.loadReporteExcel = false;
+            let objError = errorResponse.error.error.data;
+            let claves = Object.keys(objError); 
+            this.sharedService.showSnackBar("Existe un problema en el campo "+claves[0], null, 3000);
+            this.isLoading = false;
+          } 
+        );
+      }
+    });
 
   }
 
