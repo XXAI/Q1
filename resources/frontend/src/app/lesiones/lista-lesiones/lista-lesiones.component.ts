@@ -300,14 +300,14 @@ export class ListaLesionesComponent implements OnInit {
     return event;
   }
 
-  reporte()
+  reporte(anio)
   {
-    let params = { export_excel : true };
+    let params = { export_excel : true, anio_reporte:anio };
     this.loadReporteExcel = true;
     this.lesionesService.getLesionesList(params).subscribe(
       response => {
         this.loadReporteExcel = false;
-        //console.log(response);
+        //console.log("Hola",response);
         FileSaver.saveAs(response,'reporte_general');
       },
       errorResponse =>{

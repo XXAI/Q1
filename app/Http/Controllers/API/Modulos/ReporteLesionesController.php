@@ -35,31 +35,8 @@ class ReporteLesionesController  extends Controller
     {
        
     ini_set('memory_limit', '-1');
-    
-    /*$loggedUser = $this->getUserAccessData();
-    $permisos = User::with('roles.permissions','permissions', 'municipios')->find($loggedUser->id);
-    $permiso_guardar = false;
-    if(!$loggedUser->is_superuser){
-        foreach ($permisos->roles as $key => $value) {
-            foreach ($value->permissions as $key2 => $value2) {
-                if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
-                {
-                    $permiso_guardar = true;
-                }
-                
-                
-            }
-        }
-        foreach ($permisos->permissions as $key2 => $value2) {
-            if($value2->id == 'EV7n1jFHymsUVBAGa1Bo6XSvMZfg64kh')
-            {
-                $permiso_guardar = true;
-            }
-            
-            
-        }
-    }*/     
-
+    $parametros = $request->all();
+    $anio = $parametros['anio_reporte'];
     $obj = Lesiones::join("catalogo_entidades as b", "lesiones.entidad_federativa_id", "b.id")
                         ->leftjoin("catalogo_municipios as c", "lesiones.municipio_id", "c.id")
                         //->leftjoin("catalogo_localidades as d", "lesiones.localidad_id", "d.id")
@@ -87,7 +64,9 @@ class ReporteLesionesController  extends Controller
             DB::RAW("IF(lesiones.via_id = 1, IF(lesiones.tipo_pavimentado=1, 'ASFALTO','CONCRETO'), IF(lesiones.tipo_via_id = 1, 'TERRACERÍA', IF(lesiones.tipo_via_id = 2, 'EMPEDRADO', 'OTRO'))) AS tipo_via"),
             "lesiones.otro_tipo_via",
             DB::RAW("IF(lesiones.tipo_camino IS NULL ,'',IF(lesiones.tipo_camino = 1,'CAMINO RURAL', IF(lesiones.tipo_camino = 2, 'CARRETERA ESTATAL', 'OTRO'))) AS tipo_camino"),
-            "lesiones.otro_tipo_camino");
+            "lesiones.otro_tipo_camino")
+            ->whereBetween("fecha", [$anio.'-01-01',$anio.'-12-31'])
+            ->orderBy("fecha", "asc");
             //->where("lesiones.id", 251);
             //->get();
 
@@ -99,8 +78,6 @@ class ReporteLesionesController  extends Controller
         $obj = $obj->get();
         //Calculo de accidentes
         $cantidad_tipo_accidente = $this->getCantidadTipoAccidente();
-        //Calculo de Vehiculos
-        $cantidad_vehiculos = $this->getVehiculos();
         //Calculo de Vehiculos
         $cantidad_vehiculos = $this->getVehiculos();
         
@@ -683,7 +660,7 @@ class ReporteLesionesController  extends Controller
             $obj["casco_".$i]         = !isset($aux[$indice])?"":($aux[$indice]["casco"]==1?"SI":"NO");
             $obj["ubicacion_".$i]         = !isset($aux[$indice])?"":$aux[$indice]["ubicacion"];
             $obj["vehiculo_".$i]         = !isset($aux[$indice])?"":strtoupper($aux[$indice]["auto"]);
-            //$obj["placa_pais_".$i] = (isset($aux[$indice])?($aux[$indice]["placa_pais"] == 1)?"SI":"NO":"");
+            $obj["placa_pais_".$i] = (isset($aux[$indice])?($aux[$indice]["placa_pais"] == 1)?"SI":"NO":"");
                
         }
         
@@ -692,7 +669,7 @@ class ReporteLesionesController  extends Controller
     private function ConsultaVictimaDefunsion($id, $cantidad, $arreglo, $obj)
     {
         $arreglo_prestador = [
-            '', 'SSA', 'PROTECCIÓN CIVIL', 'SEDENA', 'IMSS','ISSSTE', 'ISSSTECH', 'ERUM', 'BOMBEROS', 'OTROS'
+            '', 'SSA', 'CRUZ ROJA','PROTECCIÓN CIVIL', 'SEDENA', 'IMSS','ISSSTE', 'ISSSTECH', 'ERUM', 'BOMBEROS', 'OTROS'
         ];
 
         $arreglo_nivel = [

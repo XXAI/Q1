@@ -25,10 +25,23 @@
                             <button mat-raised-button color="accent" (click)="applyFilter()" *ngIf="!showAdvancedFilter.checked" style="padding: 5pt; margin-right: 5pt;">
                                 <mat-icon>search</mat-icon> 
                             </button>
-                            <button mat-raised-button color="primary" [disabled]="loadReporteExcel"  (click)="reporte()" style="padding: 5pt; margin-right: 5pt;" *ngIf="permisoImprimir">
+                            
+                            <button mat-raised-button color="primary" [disabled]="loadReporteExcel" [matMenuTriggerFor]="menu"  style="padding: 5pt; margin-right: 5pt;" *ngIf="permisoImprimir">
                                 <mat-icon>print</mat-icon>
                                 <mat-progress-bar mode="indeterminate" *ngIf="loadReporteExcel"></mat-progress-bar>
                             </button>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item (click)="reporte(2020)">2020</button>
+                                <button mat-menu-item (click)="reporte(2021)">2021</button>
+                                <button mat-menu-item (click)="reporte(2022)">2022</button>
+                                <button mat-menu-item (click)="reporte(2023)">2023</button>
+                                <button mat-menu-item (click)="reporte(2024)">2024</button>
+                            </mat-menu>
+
+                            <!-- <button mat-raised-button color="primary" [disabled]="loadReporteExcel"  (click)="reporte()" style="padding: 5pt; margin-right: 5pt;" *ngIf="permisoImprimir">
+                                <mat-icon>print</mat-icon>
+                                <mat-progress-bar mode="indeterminate" *ngIf="loadReporteExcel"></mat-progress-bar>
+                            </button> -->
                             
                             <button mat-raised-button color="primary" style="padding: 5pt;" routerLink="/lesiones/registro"  *ngIf="permisoGuardar">
                                 <mat-icon>add_circle</mat-icon> 
