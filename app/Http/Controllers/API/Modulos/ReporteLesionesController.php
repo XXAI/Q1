@@ -37,7 +37,7 @@ class ReporteLesionesController  extends Controller
     ini_set('memory_limit', '-1');
     $parametros = $request->all();
     $anio = $parametros['anio_reporte'];
-    $obj = Lesiones::join("catalogo_entidades as b", "lesiones.entidad_federativa_id", "b.id")
+    /*$obj = Lesiones::join("catalogo_entidades as b", "lesiones.entidad_federativa_id", "b.id")
                         ->leftjoin("catalogo_municipios as c", "lesiones.municipio_id", "c.id")
                         //->leftjoin("catalogo_localidades as d", "lesiones.localidad_id", "d.id")
             ->select("lesiones.id",
@@ -66,34 +66,182 @@ class ReporteLesionesController  extends Controller
             DB::RAW("IF(lesiones.tipo_camino IS NULL ,'',IF(lesiones.tipo_camino = 1,'CAMINO RURAL', IF(lesiones.tipo_camino = 2, 'CARRETERA ESTATAL', 'OTRO'))) AS tipo_camino"),
             "lesiones.otro_tipo_camino")
             ->whereBetween("fecha", [$anio.'-01-01',$anio.'-12-31'])
-            ->orderBy("fecha", "asc");
-            //->where("lesiones.id", 251);
-            //->get();
+            ->orderBy("fecha", "asc");*/
 
-        /*if($permiso_guardar == true || !$loggedUser->is_superuser)
-        {
-            $obj = $obj->where("user_id", $loggedUser->id); 
-        }*/
-            
-        $obj = $obj->get();
+        $obj = Lesiones::with("entidad","municipio", "tipoAccidente", "vehiculo.marca", "vehiculo.estado", "vehiculo.tipo", "causaConductor", "causaConductorDetalle", "causaPeaton", "causaPasajero", "fallaVehiculo", "condicionCamino", "agentes", "victimaNoFatal.CluesHospitalizacion", "victimaNoFatal.municipio", "victimaNoFatal.vehiculo.marca", "victimaNoFatal.vehiculo.tipo", "defuncion.vehiculo.marca", "defuncion.vehiculo.tipo", "defuncion.municipio", "defuncion.CluesHospitalizacion")->whereBetween("fecha", [$anio.'-01-01',$anio.'-12-31'])
+        //->where("id", 7498)
+        ->orderBy("fecha", "asc");
+           
         //Calculo de accidentes
-        $cantidad_tipo_accidente = $this->getCantidadTipoAccidente();
+        $cantidad_tipo_accidente = $this->getCantidadTipoAccidente($anio);
         //Calculo de Vehiculos
-        $cantidad_vehiculos = $this->getVehiculos();
+        $cantidad_vehiculos = $this->getVehiculos($anio);
         
         //Calculo de causas
-        $cantidad_causa_conductor = $this->getConductor();
-        $cantidad_causa_peaton = $this->getPeaton();
-        $cantidad_causa_pasajero = $this->getPasajero();
-        $cantidad_causa_falla = $this->getFalla();
-        $cantidad_causa_camino = $this->getCamino();
-        $cantidad_causa_natural = $this->getNatural();
+        $cantidad_causa_conductor = $this->getConductor($anio);
+        $cantidad_causa_peaton = $this->getPeaton($anio);
+        $cantidad_causa_pasajero = $this->getPasajero($anio);
+        $cantidad_causa_falla = $this->getFalla($anio);
+        $cantidad_causa_camino = $this->getCamino($anio);
+        $cantidad_causa_natural = $this->getNatural($anio);
         //
 
         //Calculo de vitimas
-        $cantidad_victimas_lesion = $this->getVictimaLesion();
-        $cantidad_victimas_defunsion = $this->getVictimaDefunsion();
+        $cantidad_victimas_lesion = $this->getVictimaLesion($anio);
+        $cantidad_victimas_defunsion = $this->getVictimaDefunsion($anio);
+        
+        $obj_totales = (object) array(
+            'cantidad_tipo_accidente' => $cantidad_tipo_accidente,
+            'cantidad_vehiculos' => $cantidad_vehiculos,
+            'cantidad_causa_conductor' => $cantidad_causa_conductor,
+            'cantidad_causa_peaton' => $cantidad_causa_peaton,
+            'cantidad_causa_pasajero' => $cantidad_causa_pasajero,
+            'cantidad_causa_falla' => $cantidad_causa_falla,
+            'cantidad_causa_camino' => $cantidad_causa_camino,
+            'cantidad_causa_natural' => $cantidad_causa_natural,
+            'cantidad_victimas_lesion' => $cantidad_victimas_lesion,
+            'cantidad_victimas_defunsion' => $cantidad_victimas_defunsion,
+        );
+        //Agregamos los campos a la consulta
+        //Tipo Accidente
+        /*for ($i=1; $i <= $cantidad_tipo_accidente ; $i++) { 
+            $obj = $obj->addSelect(DB::raw("'' as tipo_accidente_".$i));
+        }
+        $obj = $obj->addSelect(DB::raw("'' as otro_tipo_accidente"));
+
+
+        ///1
+        $obj = $obj->addSelect(DB::raw("'--' as cantidad_vehiculos"));
+        
+        for ($i=1; $i <= $cantidad_vehiculos; $i++) { 
+            $obj = $obj->addSelect(DB::raw("'' as tipo_vehiculo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as otro_tipo_vehiculo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as marca_vehiculo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as otro_marca_vehiculo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as uso_vehiculo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as tipo_uso_vehiculo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as puesto_disposicion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as placa_pais_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as no_ocupantes_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as color_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as modelo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as con_placas_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as entidad_pais_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as no_placa_".$i));
+        }
         //
+        //2
+        $obj = $obj->addSelect(DB::raw("'' as causa_conductor"));
+        for ($i=1; $i <= $cantidad_causa_conductor; $i++) {
+            $obj = $obj->addSelect(DB::raw("'' as conductor_".$i));
+         }
+         $obj = $obj->addSelect(DB::raw("'' as otro_causa_conductor"));
+        //
+
+        //3
+
+        $obj = $obj->addSelect(DB::raw("'' as causa_peaton"));
+        for ($i=1; $i <= $cantidad_causa_peaton; $i++) {
+            $obj = $obj->addSelect(DB::raw("'' as peaton_".$i));
+         }
+         $obj = $obj->addSelect(DB::raw("'' as otro_causa_peaton"));
+           
+        //
+
+        //4
+        $obj = $obj->addSelect(DB::raw("'' as causa_pasajero"));
+        $obj = $obj->addSelect(DB::raw("'' as causa_pasajero_descripcion"));
+        //
+
+        //5
+        $obj = $obj->addSelect(DB::raw("'' as causa_falla_vehiculo"));
+        for ($i=1; $i <= $cantidad_causa_falla; $i++) {
+            $obj = $obj->addSelect(DB::raw("'' as falla_vehiculo_".$i));
+         }
+         $obj = $obj->addSelect(DB::raw("'' as otro_causa_falla_vehiculo"));
+
+        //
+
+        //6
+        $obj = $obj->addSelect(DB::raw("'' as causa_condicion_camino"));
+        for ($i=1; $i <= $cantidad_causa_camino; $i++) {
+            $obj = $obj->addSelect(DB::raw("'' as condicion_camino_".$i));
+         }
+         $obj = $obj->addSelect(DB::raw("'' as otro_causa_condicion_camino"));
+        //
+
+        //7
+        $obj = $obj->addSelect(DB::raw("'' as causa_agente_natural"));
+        for ($i=1; $i <= $cantidad_causa_camino; $i++) {
+            $obj = $obj->addSelect(DB::raw("'' as agente_natural_".$i));
+         }
+         $obj = $obj->addSelect(DB::raw("'' as otro_agente_natural"));
+
+        //
+
+        //8
+        $obj = $obj->addSelect(DB::raw("'' as cantidad_lesionados"));
+        for ($i=1; $i <= $cantidad_victimas_lesion; $i++) { 
+            $obj = $obj->addSelect(DB::raw("'' as anonimo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as nombre_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as edad_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as silla_infantil_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as sexo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as embarazada_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as pre_hospitalizacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as no_ambulancia_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as prestador_servicio_".$i));
+
+            $obj = $obj->addSelect(DB::raw("'' as otro_prestador_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as nivel_conciencia_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as pulso_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as color_piel_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as prioridad_traslado_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as negativa_traslado_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as especifique_negativa_".$i));
+            
+            $obj = $obj->addSelect(DB::raw("'' as diagnostico_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as hospitalizacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as municipio_hospitalizacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as clues_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as casco_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as ubicacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as vehiculo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as placa_pais_".$i));
+        }
+        //
+        //9
+        $obj = $obj->addSelect(DB::raw("'' as cantidad_defunciones"));
+        for ($i=1; $i <= $cantidad_victimas_defunsion; $i++) { 
+            $obj = $obj->addSelect(DB::raw("'' as acta_certificacion_id_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as no_acta_certificacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as anonimo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as nombre_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as edad_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as silla_infantil_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as sexo_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as embarazada_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as pre_hospitalizacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as no_ambulancia_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as prestador_servicio_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as otro_prestador_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as nivel_conciencia_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as pulso_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as color_piel_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as prioridad_traslado_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as negativa_traslado_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as especifique_negativa_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as diagnostico_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as hospitalizacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as municipio_hospitalizacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as clues_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as casco_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as ubicacion_".$i));
+            $obj = $obj->addSelect(DB::raw("'' as vehiculo_".$i));
+            
+        }*/
+        //
+        $obj = $obj->get();
         //Apartado Arreglos
         $arreglo_accidente = ['','Colisión con vehículo automotor',
                                 'Atropellamiento',
@@ -123,9 +271,10 @@ class ReporteLesionesController  extends Controller
         $arreglo_agente   = ['','Llovizna','Neblina', 'Lluvia', 'Humo', 'Aguacero', 'Tolvanera', 'Nieve', 'Vientos fuertes', 'Granizo', 'Otro']; 
         
         $arreglo_usos = [$arreglo_uso, $arreglo_tipo_uso];   
-                                
+               
+        //$consulta_tipo_accidente =  RelTipoAccidente::whereRaw("lesiones_id in (select id from lesiones where fecha between '".$anio."-01-01' and '".$anio."-12-31')")->select("rel_tipo_accidente_id", "lesiones_id")->get();
         //Fin apartado arreglos                        
-        foreach ($obj as $key => $value) {
+        /*foreach ($obj as $key => $value) {
             //Consulta Otros
             $aux_otro = Lesiones::where("id",$value['id'])->first();
             //
@@ -153,18 +302,19 @@ class ReporteLesionesController  extends Controller
             
             //Fin Victimas
            
-        }    
+        }*/    
         
-        $columnas = array_keys(collect($obj[0])->toArray());
+        //$columnas = array_keys(collect($obj[0])->toArray());
         //return $columnas;
         //return $obj;
         $filename = 'reporte-general';
-        return (new DevReportExport($obj,$columnas))->download($filename.'.xlsx');
+        return response()->json(['data'=>$obj, "totales"=> $obj_totales],HttpResponse::HTTP_OK);
+        //return (new DevReportExport($obj,$columnas))->download($filename.'.xlsx');
     }
 
-    private function getCantidadTipoAccidente()
+    private function getCantidadTipoAccidente($anio)
     {
-        $cantidad = RelTipoAccidente::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelTipoAccidente::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
         ->select(DB::RAW("count(*) as cantidad"))
@@ -173,9 +323,9 @@ class ReporteLesionesController  extends Controller
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
     
-    private function getVehiculos()
+    private function getVehiculos($anio)
     {
-        $cantidad = RelVehiculos::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelVehiculos::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
         ->select(DB::RAW("count(*) as cantidad"))
@@ -184,9 +334,9 @@ class ReporteLesionesController  extends Controller
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
 
-    private function getConductor()
+    private function getConductor($anio)
     {
-        $cantidad = RelCausaConductor::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelCausaConductor::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
         ->select(DB::RAW("count(*) as cantidad"))
@@ -194,18 +344,18 @@ class ReporteLesionesController  extends Controller
 
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
-    private function getPeaton()
+    private function getPeaton($anio)
     {
-        $cantidad = RelCausaPeaton::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelCausaPeaton::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
         ->select(DB::RAW("count(*) as cantidad"))
         ->first();
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
-    private function getPasajero()
+    private function getPasajero($anio)
     {
-        $cantidad = RelCausaPasajero::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelCausaPasajero::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
         ->select(DB::RAW("count(*) as cantidad"))
@@ -214,9 +364,9 @@ class ReporteLesionesController  extends Controller
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
     
-    private function getCamino()
+    private function getCamino($anio)
     {
-        $cantidad = RelCondicionCamino::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelCondicionCamino::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
         ->select(DB::RAW("count(*) as cantidad"))
@@ -225,9 +375,9 @@ class ReporteLesionesController  extends Controller
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
 
-    private function getNatural()
+    private function getNatural($anio)
     {
-        $cantidad = RelAgente::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelAgente::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
         ->select(DB::RAW("count(*) as cantidad"))
@@ -235,9 +385,9 @@ class ReporteLesionesController  extends Controller
 
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
-    private function getFalla()
+    private function getFalla($anio)
     {
-        $cantidad = RelFallaVehiculo::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelFallaVehiculo::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
         ->select(DB::RAW("count(*) as cantidad"))
@@ -245,9 +395,9 @@ class ReporteLesionesController  extends Controller
 
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
-    private function getVictimaLesion()
+    private function getVictimaLesion($anio)
     {
-        $cantidad = RelVictimasLesionados::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelVictimasLesionados::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->where("tipo_id", 1)
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
@@ -256,9 +406,9 @@ class ReporteLesionesController  extends Controller
 
         return (isset($cantidad) == null?0:$cantidad['cantidad']);
     }
-    private function getVictimaDefunsion()
+    private function getVictimaDefunsion($anio)
     {
-        $cantidad = RelVictimasLesionados::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL)")
+        $cantidad = RelVictimasLesionados::whereRAW("lesiones_id in (SELECT id FROM lesiones WHERE deleted_at IS NULL and fecha between '".$anio."-01-01' and '".$anio."-12-31')")
         ->where("tipo_id", 2)
         ->groupBy("lesiones_id")
         ->orderByRaw("count(*) DESC")
@@ -273,7 +423,15 @@ class ReporteLesionesController  extends Controller
         $aux =  RelTipoAccidente::where("lesiones_id", $id)->select("rel_tipo_accidente_id")->get();
         $bandera_otro = 0;
         $resultado = [];
+        $cantidad = count($aux);
         for ($i=1; $i <= $cantidad; $i++) { 
+            $obj['tipo_accidente_'.$i] = strtoupper($arreglo[$aux[($i - 1)]['rel_tipo_accidente_id']]);
+            if($aux[($i - 1)]['rel_tipo_accidente_id'] == 12)
+            {
+                $bandera_otro = 1;
+            }
+        }
+        /*for ($i=1; $i <= $cantidad; $i++) { 
             $obj['tipo_accidente_'.$i] = "";
             if(isset($aux[($i - 1)]))
             {
@@ -284,7 +442,7 @@ class ReporteLesionesController  extends Controller
                 }
             }
         }
-        $obj['otro_tipo_accidente'] = "";
+        $obj['otro_tipo_accidente'] = "";*/
         if($bandera_otro == 1)
         {
             if(isset($otro['otro_tipo_accidente']))
@@ -323,6 +481,7 @@ class ReporteLesionesController  extends Controller
         {
             $obj['cantidad_vehiculos'] = $aux[0]['no_vehiculos'];
         }
+        $cantidad = count($aux);
         for ($i=1; $i <= $cantidad; $i++) { 
             
             $indice = ($i - 1);
@@ -371,7 +530,7 @@ class ReporteLesionesController  extends Controller
         }else{
             $obj['causa_conductor'] = "SI";
         }
-           
+        $cantidad = count($aux);  
         for ($i=1; $i <= $cantidad; $i++) { 
             
             $indice = ($i - 1);
@@ -416,7 +575,7 @@ class ReporteLesionesController  extends Controller
         }else{
             $obj['causa_peaton'] = "SI";
         }
-           
+        $cantidad = count($aux);  
         for ($i=1; $i <= $cantidad; $i++) { 
             
             $indice = ($i - 1);
@@ -472,7 +631,7 @@ class ReporteLesionesController  extends Controller
         }else{
             $obj['causa_falla_vehiculo'] = "SI";
         }
-           
+        $cantidad = count($aux);  
         for ($i=1; $i <= $cantidad; $i++) { 
             
             $indice = ($i - 1);
@@ -512,7 +671,7 @@ class ReporteLesionesController  extends Controller
         }else{
             $obj['causa_condicion_camino'] = "SI";
         }
-           
+        $cantidad = count($aux);  
         for ($i=1; $i <= $cantidad; $i++) { 
             
             $indice = ($i - 1);
@@ -550,7 +709,7 @@ class ReporteLesionesController  extends Controller
         }else{
             $obj['causa_agente_natural'] = "SI";
         }
-           
+        $cantidad = count($aux);  
         for ($i=1; $i <= $cantidad; $i++) { 
             
             $indice = ($i - 1);
@@ -623,6 +782,8 @@ class ReporteLesionesController  extends Controller
         {
             $obj['cantidad_lesionados'] = count($aux);
         }
+
+        $cantidad = count($aux);
         for ($i=1; $i <= $cantidad; $i++) { 
             
             $indice = ($i - 1);
@@ -715,6 +876,8 @@ class ReporteLesionesController  extends Controller
         {
             $obj['cantidad_defunciones'] = count($aux);
         }
+
+        $cantidad = count($aux);
         for ($i=1; $i <= $cantidad; $i++) { 
             
             $indice = ($i - 1);

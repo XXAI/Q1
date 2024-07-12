@@ -18,4 +18,12 @@ class RelVictimasLesionados extends Model
     public function CluesHospitalizacion(){
         return $this->belongsTo('App\Models\Catalogos\Clues', 'clues', 'clues');
     }
+
+    public function municipio(){
+        return $this->belongsTo('App\Models\Catalogos\Municipios', 'municipio_hospitalizacion', 'id');
+    }
+
+    public function vehiculo(){
+        return $this->belongsTo('App\Models\RelVehiculos', 'vehiculo_id', 'id');
+    }
 }

@@ -77,7 +77,7 @@
                                         </mat-form-field>
                                     </div>
                                     <div fxLayout="row">
-                                        <mat-action-list fxFlex [ngClass]="'roles-list'" [ngClass.xs]="{'roles-list':false}" [style.xs]="{'height':'auto'}" dense>
+                                        <mat-action-list fxFlex [ngClass]="'roles-list'" [style.xs]="{'height':'auto'}" dense>
                                             <button mat-list-item *ngFor="let role of filteredRoles$ | async" (click)="showPermissionsList(role)">
                                                 <mat-icon matListIcon *ngIf="(selectedRoleChipId == role.id)">arrow_right</mat-icon>
                                                 <h3 matLine>

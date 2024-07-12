@@ -28,10 +28,7 @@ export class LoginComponent implements OnInit {
     this.isLoading = true;
     this.authService.logIn(this.loginForm.value.usuario, this.loginForm.value.password ).subscribe(
       response => {
-        //this.isLoading = false;
-        console.log('resto');
-        console.log(response);
-
+        
         let loginHistory:any = {};
         if(localStorage.getItem('loginHistory')){
           loginHistory = JSON.parse(localStorage.getItem('loginHistory'));

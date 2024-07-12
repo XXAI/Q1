@@ -32,7 +32,12 @@ export class LesionesService {
   
   getLesionesList(payload):Observable<any> {
     if(payload.export_excel){
-      return this.http.get<any>(this.url_reporte, {params:payload, responseType: 'blob' as 'json'});
+      //return this.http.get<any>(this.url_reporte, {params:payload, responseType: 'blob' as 'json'});
+      return this.http.get<any>(this.url_reporte,{params: payload}).pipe(
+        map( response => {
+          return response;
+        })
+      );
     }
     return this.http.get<any>(this.url,{params: payload}).pipe(
       map( response => {

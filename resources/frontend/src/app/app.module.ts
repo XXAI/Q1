@@ -32,7 +32,6 @@ import { SecurityModule } from './security/security.module';
 import { ProfileModule } from './profile/profile.module';
 import { DevToolsModule } from './dev-tools/dev-tools.module';
 
-//import { PublicModule } from './public/public.module';
 
 import { LesionesModule } from './lesiones/lesiones.module';
 

@@ -11,6 +11,10 @@ class Lesiones extends Model
     protected $fillable = [ ];
     protected $table = "lesiones";
 
+    public function entidad(){
+        return $this->belongsTo('App\Models\Catalogos\Entidades', 'entidad_federativa_id', 'id');
+    }
+
     public function municipio(){
         return $this->belongsTo('App\Models\Catalogos\Municipios', 'municipio_id', 'id');
     }
@@ -31,6 +35,14 @@ class Lesiones extends Model
         return $this->hasMany('App\Models\RelVictimasLesionados');
     }
 
+    public function victimaNoFatal(){
+        return $this->hasMany('App\Models\RelVictimasLesionados')->where("tipo_id", 1);
+    }
+
+    public function defuncion(){
+        return $this->hasMany('App\Models\RelVictimasLesionados')->where("tipo_id", 2);
+    }
+
     public function causaAccidente(){
         return $this->hasMany('App\Models\RelCausaAccidente');
     }
@@ -40,7 +52,7 @@ class Lesiones extends Model
     }
 
     public function causaConductorDetalle(){
-        return $this->hasMany('App\Models\RelCausaConductorDetalles');
+        return $this->hasOne('App\Models\RelCausaConductorDetalles');
     }
 
     public function causaPeaton(){
