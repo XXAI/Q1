@@ -17,11 +17,11 @@
         <mat-progress-bar mode="indeterminate" *ngIf="loadReporteExcel"></mat-progress-bar>
     </button>
     <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="reporte(2020)">2020</button>
-        <button mat-menu-item (click)="reporte(2021)">2021</button>
+        <button mat-menu-item (click)="reporte(year)" *ngFor="let year of years">{{ year }}</button>
+        <!-- <button mat-menu-item (click)="reporte(2021)">2021</button>
         <button mat-menu-item (click)="reporte(2022)">2022</button>
         <button mat-menu-item (click)="reporte(2023)">2023</button>
-        <button mat-menu-item (click)="reporte(2024)">2024</button>
+        <button mat-menu-item (click)="reporte(2024)">2024</button> -->
     </mat-menu>
     <button mat-raised-button color="primary" style="padding: 5pt;" routerLink="/lesiones/registro"  *ngIf="permisoGuardar">
         <mat-icon>add_circle</mat-icon> 

@@ -106,6 +106,7 @@
                     <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                         <div fxFlex="none">
                             <button mat-raised-button color="primary" [disabled]="!principalForm.valid || isLoading" (click)="Guardar(1)" *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
+                            <button mat-raised-button color="warn" routerLink="/listado-lesiones" style="margin-left: 5px;"><mat-icon>format_list_bulleted</mat-icon> REGRESAR AL LISTADO </button>
                         </div>
                     </section>
                 </mat-tab>
@@ -215,6 +216,7 @@
                     <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                         <div fxFlex="none">
                             <button mat-raised-button color="primary" [disabled]="!zonaForm.valid || isLoading" (click)="Guardar(2)"  *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
+                            <button mat-raised-button color="warn" routerLink="/listado-lesiones" style="margin-left: 5px;"><mat-icon>format_list_bulleted</mat-icon> REGRESAR AL LISTADO </button>
                         </div>
                     </section>
                 
@@ -223,50 +225,57 @@
                 <mat-tab label="TIPO" [disabled]="editable">
                     <div class="flex-fill flex-column flex-gap">
                         <mat-card class="flex-column flex-gap xs-max-height-user-form" style="padding: 8px;" [formGroup]="tipoAccidenteForm">
-                            <div class="flex-row flex-xs-column flex-fill flex-gap">
-                                <div fxFlex="33" fxFlex.xs="100" appearance="fill">
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_1" #tipo1 (click)="verificacionTipo(tipo1.checked)">Colisión con vehículo automotor</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_2" #tipo2 (click)="verificacionTipo(tipo2.checked)">Atropellamiento</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_3" #tipo3 (click)="verificacionTipo(tipo3.checked)">Colisión con animal</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_4" #tipo4 (click)="verificacionTipo(tipo4.checked)">Colisión con objeto fijo</mat-checkbox>
-                                    </div>
+                            <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="10px" class="listaAccidente">
+                                <div fxFlex.xs="100" fxFlex>
+                                    <ul>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_1" #tipo1 (click)="verificacionTipo(tipo1.checked)">Colisión con vehículo automotor</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_2" #tipo2 (click)="verificacionTipo(tipo2.checked)">Atropellamiento</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_3" #tipo3 (click)="verificacionTipo(tipo3.checked)">Colisión con animal</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_4" #tipo4 (click)="verificacionTipo(tipo4.checked)">Colisión con objeto fijo</mat-checkbox>
+                                        </li>
+                                    </ul>        
                                 </div>
-                                <div fxFlex="33" fxFlex.xs="100" appearance="fill">
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_5" #tipo5 (click)="verificacionTipo(tipo5.checked)">Volcadura</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_6" #tipo6 (click)="verificacionTipo(tipo6.checked)">Caída de pasaje</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_7" #tipo7 (click)="verificacionTipo(tipo7.checked)">Salida de camino</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_8" #tipo8 (click)="verificacionTipo(tipo8.checked)">Incendio</mat-checkbox>
-                                    </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <ul>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_5" #tipo5 (click)="verificacionTipo(tipo5.checked)">Volcadura</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_6" #tipo6 (click)="verificacionTipo(tipo6.checked)">Caída de pasaje</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_7" #tipo7 (click)="verificacionTipo(tipo7.checked)">Salida de camino</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_8" #tipo8 (click)="verificacionTipo(tipo8.checked)">Incendio</mat-checkbox>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div fxFlex="33" fxFlex.xs="100" appearance="fill">
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_9" #tipo9 (click)="verificacionTipo(tipo9.checked)">Colisión con ferrocarril</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_10" #tipo10 (click)="verificacionTipo(tipo10.checked)">Colisión con motocicleta</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_11" #tipo11 (click)="verificacionTipo(tipo11.checked)">Colisión con ciclista</mat-checkbox>
-                                    </div>
-                                    <div fxFlex.xs="100" fxFlex>
-                                        <mat-checkbox formControlName="tipoAccidente_12" #tipo12 (click)="verificacionTipo(tipo12.checked)" #otroTipoAccidente>Otro</mat-checkbox>
-                                    </div>
+                                <div fxFlex.xs="100" fxFlex>
+                                    <ul>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_9" #tipo9 (click)="verificacionTipo(tipo9.checked)">Colisión con ferrocarril</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_10" #tipo10 (click)="verificacionTipo(tipo10.checked)">Colisión con motocicleta</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_11" #tipo11 (click)="verificacionTipo(tipo11.checked)">Colisión con ciclista</mat-checkbox>
+                                        </li>
+                                        <li>
+                                            <mat-checkbox formControlName="tipoAccidente_12" #tipo12 (click)="verificacionTipo(tipo12.checked)" #otroTipoAccidente>Otro</mat-checkbox>
+                                        </li>
+                                    </ul>
                                 </div>
-                            </div>
+                            </div>        
+                            
                             
                             <div class="flex-row flex-xs-column flex-fill flex-gap" *ngIf="otroTipoAccidente.checked == true">
                                 <mat-form-field appearance="fill" fxFlex>
@@ -361,6 +370,7 @@
                         <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                             <div fxFlex="none">
                                 <button mat-raised-button color="primary" [disabled]=" cantidadTipos<1" (click)="Guardar(3)"  *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar </button>
+                                <button mat-raised-button color="warn" routerLink="/listado-lesiones" style="margin-left: 5px;"><mat-icon>format_list_bulleted</mat-icon> REGRESAR AL LISTADO </button>
                             </div>
                         </section>
                     
@@ -704,6 +714,7 @@
                         <div fxFlex="none">
                             <button mat-raised-button color="primary" [disabled]="(cantidadCausas<=0 ||(chkConductor.checked?(!tipoConductorForm.valid || cantidadAccidente<=0) :false) || (chkPeaton.checked?(!tipoPeatonForm.valid || cantidadPeaton<=0) :false) || (chkPasajero.checked?!tipoPasajeroForm.valid :false) || (chkFalla.checked?(!fallaForm.valid || cantidadFalla<=0) :false) || (chkCamino.checked?(!caminoForm.valid || cantidadCamino<=0) :false) || (chkAgente.checked?(!agentesForm.valid || cantidadAgentes<=0) :false))"
                                 (click)="Guardar(4)"  *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
+                                <button mat-raised-button color="warn" routerLink="/listado-lesiones" style="margin-left: 5px;"><mat-icon>format_list_bulleted</mat-icon> REGRESAR AL LISTADO </button>
                         </div>
                     </section>
                 </mat-tab>
@@ -795,6 +806,7 @@
                     <section fxFlex="none" fxLayout="row" fxLayoutGap="5px">
                         <div fxFlex="none">
                             <button mat-raised-button color="primary" (click)="Guardar(5)"  *ngIf="permisoGuardar"><mat-icon>save</mat-icon> Guardar</button>
+                            <button mat-raised-button color="warn" routerLink="/listado-lesiones" style="margin-left: 5px;"><mat-icon>format_list_bulleted</mat-icon> REGRESAR AL LISTADO </button>
                         </div>
                     </section>
                 </mat-tab>

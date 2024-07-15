@@ -32,7 +32,7 @@ import { SecurityModule } from './security/security.module';
 import { ProfileModule } from './profile/profile.module';
 import { DevToolsModule } from './dev-tools/dev-tools.module';
 
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { LesionesModule } from './lesiones/lesiones.module';
 
 
@@ -59,6 +59,7 @@ import { LesionesModule } from './lesiones/lesiones.module';
     ProfileModule,
     AppRoutingModule,
     LesionesModule,
+    FlexLayoutModule,
     WildcardRoutingModule,
   ],
   providers: [

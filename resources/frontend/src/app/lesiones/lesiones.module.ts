@@ -16,7 +16,7 @@ import { VictimasDialogComponent } from './victimas-dialog/victimas-dialog.compo
 import { ViewImagenComponent } from './view-imagen/view-imagen.component';
 import { AgmCoreModule  } from '@agm/core';
 import { ViewDocumentComponent } from './view-document/view-document.component';
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
     declarations: [
@@ -34,7 +34,7 @@ import { ViewDocumentComponent } from './view-document/view-document.component';
         MatDatepickerModule,
         LesionesRoutingModule,
         NgxMaterialTimepickerModule,
-        
+        FlexLayoutModule,
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyDs6qDgnfMwaHCrOhA0tCvaUPgANTD0Urw'
         })

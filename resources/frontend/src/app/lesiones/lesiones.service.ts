@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 export class LesionesService {
 
   url                                     = `${environment.base_url}/lesiones`;       
+  url_anios                               = `${environment.base_url}/lesiones-anios`;       
   url_reporte                             = `${environment.base_url}/reporte-lesiones`;       
   url_catalogos                           = `${environment.base_url}/catalogos`;         
   url_catalogo_localidad                  = `${environment.base_url}/catalogo-localidad`;         
@@ -46,8 +47,14 @@ export class LesionesService {
     );
   }
   
-
-
+  getAnios() {
+    return this.http.get<any>(this.url_anios,{}).pipe(
+      map( (response: any) => {
+        return response;
+      }
+    ));
+  }
+  
   getIncidente(id) {
     return this.http.get<any>(this.url+'/'+id,{}).pipe(
       map( (response: any) => {

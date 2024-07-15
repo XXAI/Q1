@@ -34,6 +34,7 @@ Route::group(['middleware'=>'auth'],function($router){
 
     //Modulos del Sistema
     Route::apiResource('lesiones',              'API\Modulos\LesionesController');
+    Route::get('lesiones-anios',                'API\Modulos\LesionesController@getAnios');
     Route::get('catalogos',                     'API\Modulos\CatalogosController@getCatalogos');
     Route::get('catalogo-localidad',            'API\Modulos\CatalogosController@getCatalogoLocalidad');
     Route::get('catalogo-unidad',               'API\Modulos\CatalogosController@getCatalogoClues');

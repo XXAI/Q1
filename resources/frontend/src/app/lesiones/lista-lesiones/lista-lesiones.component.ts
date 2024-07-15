@@ -81,6 +81,7 @@ export class ListaLesionesComponent implements OnInit {
   loadReporteExcel:boolean = false;
   mediaSize: string;
 
+  years:number[] = [];
   showMyStepper:boolean = false;
   showReportForm:boolean = false;
   stepperConfig:any = {};
@@ -132,6 +133,7 @@ export class ListaLesionesComponent implements OnInit {
 
   ngOnInit() {
     this.loadData();
+    this.getAnios();
     this.loadPermisos();
     this.loadCatalogos();
   }
@@ -234,6 +236,28 @@ export class ListaLesionesComponent implements OnInit {
          }
          //console.log(this.permisoGuardar);
         });
+      },
+      errorResponse =>{
+        var errorMessage = "Ocurrió un error.";
+        if(errorResponse.status == 409){
+          errorMessage = errorResponse.error.message;
+        }
+        this.sharedService.showSnackBar(errorMessage, null, 3000);
+      }
+    );
+  }
+
+  public getAnios()
+  {
+    
+    this.lesionesService.getAnios().subscribe(
+      response => {
+        console.log(response);
+        let min = response.min_fecha;
+        let max = response.max_fecha;
+        for (let index = min; index <= max; index++) {
+          this.years.push(index);
+        }
       },
       errorResponse =>{
         var errorMessage = "Ocurrió un error.";
@@ -479,7 +503,7 @@ export class ListaLesionesComponent implements OnInit {
 
       JsonResponse.push(json);
     });
-    this.exportAsExcelFile(JsonResponse, "creacion");
+    this.exportAsExcelFile(JsonResponse, "OEL");
   }
 
   public addJson(info, json, campos_base, total, catalogo, campo, campo_otro, config)
@@ -643,7 +667,7 @@ export class ListaLesionesComponent implements OnInit {
     const data: Blob = new Blob([buffer], {
       type: EXCEL_TYPE
     });
-    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+    FileSaver.saveAs(data, fileName + '_SSA_' + new Date().getTime() + EXCEL_EXTENSION);
   }
 
 }

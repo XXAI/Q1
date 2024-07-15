@@ -126,6 +126,18 @@ class LesionesController extends Controller
             return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
         }
     }
+    
+    public function getAnios(Request $request)
+    {
+        try{
+            $parametros = $request->all();
+            $return_data = lesiones::select(DB::RAW("Year(max(fecha)) as max_fecha"), DB::RAW("Year(min(fecha)) as min_fecha"))->first();
+
+            return response()->json($return_data,HttpResponse::HTTP_OK);
+        }catch(\Exception $e){
+            return response()->json(['error'=>['message'=>$e->getMessage(),'line'=>$e->getLine()]], HttpResponse::HTTP_CONFLICT);
+        }
+    }
 
     /**
      * Store the specified resource in storage.
