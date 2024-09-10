@@ -363,7 +363,6 @@ export class ListaLesionesComponent implements OnInit {
         //console.log("Hola",response);
         //FileSaver.saveAs(response,'reporte_general');
         //this.exportAsExcelFile(response.data, "prueba");
-        console.log("tiempo");
         this.cargarJson(response.data, response.totales);
       },
       errorResponse =>{
@@ -446,7 +445,7 @@ export class ListaLesionesComponent implements OnInit {
         folio: 'CHIS-'+element.id,
         fecha_incidente: element.fecha,
         hora_incidente: element.hora,
-        fecha_hora_captura: element.created_at,
+        fecha_hora_captura: element.created_at.slice(0,19).replace("T"," "),
         entidad: element.entidad.descripcion,
         municipio: element.municipio.descripcion,
         localidad: element.localidad_id,
@@ -469,7 +468,7 @@ export class ListaLesionesComponent implements OnInit {
         otro_tipo_camino:element.otro_tipo_camino
       }
 
-      /*json = this.addJson(element, json,{nombre:'tipo_accidente', valor:'rel_tipo_accidente_id' }, obj_totales.cantidad_tipo_accidente, arreglo_accidente, 'tipo_accidente_', 
+      json = this.addJson(element, json,{nombre:'tipo_accidente', valor:'rel_tipo_accidente_id' }, obj_totales.cantidad_tipo_accidente, arreglo_accidente, 'tipo_accidente_', 
       {nombre_otro:'otro_tipo_accidente', valor_otro:'otro_tipo_accidente'}, 
       {indicador : 0});//Tipo accidente
       //ConsultaVehiculos
@@ -496,7 +495,7 @@ export class ListaLesionesComponent implements OnInit {
       json = this.addJson(element, json, {nombre:'agentes', valor:'rel_agente_natural_id' }, obj_totales.cantidad_causa_natural, arreglo_agente, 'agente_natural_',
       {nombre_otro:'otro_agente_natural', valor_otro:'otro_agente_camino'}, 
       {indicador:1, nombre_indicador:'causa_agente_natural', 'valor_indicador': (element.agentes.length > 0)?'SI':'NO'});//causa agentes
-*/
+
       //ConsultaVictimaLesion
       json = this.addJsonvictima({ tipo:1, data:element.victima_no_fatal}, json, obj_totales.cantidad_victimas_lesion);
       json = this.addJsonvictima({tipo: 2, data:element.defuncion}, json, obj_totales.cantidad_victimas_defunsion);

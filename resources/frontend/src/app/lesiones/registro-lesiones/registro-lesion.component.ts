@@ -328,10 +328,8 @@ export class RegistroLesionComponent implements OnInit {
     this.lesionesService.getIncidente(this.id).subscribe(
       response => {
         //Empezamos a construir los arreglos :)
-        
         let p = response;
         let principal = {fecha: p.fecha+"T18:00:00", hora: p.hora.substr(0,5) , municipio: p.municipio_id, localidad: p.localidad_id, colonia: p.colonia, calle: p.calle, cp:p.cp, no:p.numero, latitud:p.latitud, longitud:p.longitud};
-        console.log(principal);
         this.principalForm.patchValue(principal);
 
         let z = response;
@@ -400,8 +398,7 @@ export class RegistroLesionComponent implements OnInit {
               {
                 a1['otro'] = response.otro_causa_conductor;
               }
-              let co1 = response.causa_conductor_detalle[0];
-              
+              let co1 = response.causa_conductor_detalle;
               
               if(co1)
               {
